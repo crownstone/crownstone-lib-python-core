@@ -154,3 +154,13 @@ class ControlPacketsGenerator:
 		return ControlPacket(ControlType.SETUP).loadByteArray(data).getPacket()
 
 
+	@staticmethod
+	def getIBeaconConfigIdPacket(id, timestamp, interval):
+		data = []
+		data.append(id)
+		data += Conversion.uint32_to_uint8_array(timestamp)
+		data += Conversion.uint16_to_uint8_array(interval)
+
+		return ControlPacket(ControlType.SET_IBEACON_CONFIG_ID).loadByteArray(data).getPacket()
+
+

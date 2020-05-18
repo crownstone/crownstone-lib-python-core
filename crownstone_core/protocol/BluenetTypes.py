@@ -8,6 +8,7 @@ class ControlType(IntEnum):
     SET_STATE                  = 3
     GET_BOOTLOADER_VERSION     = 4
     GET_UICR_DATA              = 5
+    SET_IBEACON_CONFIG_ID      = 6
     RESET                      = 10
     GOTO_DFU                   = 11
     NO_OPERATION               = 12
