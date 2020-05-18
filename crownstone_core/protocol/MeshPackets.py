@@ -3,10 +3,6 @@
 from enum import IntEnum
 from typing import List
 
-from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
-
-from crownstone_core.protocol.BluenetTypes import ControlType, MeshCommandType
-
 
 # broadcast to all:
 # value: 1
@@ -26,7 +22,7 @@ class MeshModes(IntEnum):
 class _MeshCommandPacket:
 
     def __init__(self, crownstoneIds : List[int], payload, mesh_command_mode: MeshModes, timeout_or_transmissions):
-        self.type = MeshCommandType.CONTROL.value
+        self.type = 0 # reserved
         self.crownstoneIds = crownstoneIds
         self.payload = payload
         self.flags = mesh_command_mode.value
@@ -45,8 +41,8 @@ class _MeshCommandPacket:
 
 class MeshBroadcast(_MeshCommandPacket):
 
-    def __init__(self, packetType, payload, timeout ):
-        super().__init__(packetType, [], payload, MeshModes.BROADCAST, timeout)
+    def __init__(self, payload, timeout ):
+        super().__init__([], payload, MeshModes.BROADCAST, timeout)
 
 class MeshSetState(_MeshCommandPacket):
 
@@ -60,7 +56,7 @@ class MeshBroadcastAcked(_MeshCommandPacket):
     """
     This is currently only supported for type setIBeaconConfig
     """
-    def __init__(self, packetType, crownstoneIds: List[int], payload, numberOfAttempts):
+    def __init__(self, crownstoneIds: List[int], payload, numberOfAttempts):
         super().__init__(crownstoneIds, payload, MeshModes.BROADCAST_ACKED_IDS, numberOfAttempts)
 
 
