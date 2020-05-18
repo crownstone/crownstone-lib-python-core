@@ -1,5 +1,5 @@
 from crownstone_core.packets.CrownstoneErrors import CrownstoneErrors
-from crownstone_core.packets.seriviceDataParsers.parsers import parseOpCode5, parseOpCode6, parseOpCode4, parseOpCode3
+from crownstone_core.packets.serviceDataParsers.parsers import parseOpCode5, parseOpCode6, parseOpCode4, parseOpCode3
 from crownstone_core.protocol.BluenetTypes import DeviceType
 from crownstone_core.util.EncryptionHandler import EncryptionHandler
 
@@ -88,8 +88,6 @@ class ServiceData:
         if len(self.data) == 18:
             if DeviceType.has_value(self.data[1]):
                 self.deviceType = type
-            else:
-                self.deviceType = DeviceType.UNDEFINED
 
     def isInSetupMode(self):
         if not self.validData:

@@ -1,1 +1,4 @@
 .idea
+build
+crownstone_lib_python_core.egg-info
+dist

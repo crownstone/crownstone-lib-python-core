@@ -1,4 +1,4 @@
-from crownstone_core.packets.seriviceDataParsers.opCode3.opCode3_type1 import parseOpCode3_type1
+from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type1 import parseOpCode3_type1
 
 
 def parseOpCode3_type3(serviceData, data):

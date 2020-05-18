@@ -4,7 +4,7 @@ class DeviceCharacteristics:
 
 
 class CrownstoneCharacteristics:
-    SessionNonce   = "24f00008-7d10-4805-bfc1-7663a01c3bff"
+    SessionData    = "24f0000e-7d10-4805-bfc1-7663a01c3bff"
     FactoryReset   = "24f00009-7d10-4805-bfc1-7663a01c3bff"
     Control        = "24f0000c-7d10-4805-bfc1-7663a01c3bff"
     Result         = "24f0000d-7d10-4805-bfc1-7663a01c3bff"
@@ -14,7 +14,7 @@ class SetupCharacteristics:
     MacAddress     = "24f10002-7d10-4805-bfc1-7663a01c3bff"
     SessionKey     = "24f10003-7d10-4805-bfc1-7663a01c3bff"
     GoToDFU        = "24f10006-7d10-4805-bfc1-7663a01c3bff"
-    SessionNonce   = "24f10008-7d10-4805-bfc1-7663a01c3bff"
+    SessionData    = "24f1000e-7d10-4805-bfc1-7663a01c3bff"
     SetupControl   = "24f1000c-7d10-4805-bfc1-7663a01c3bff"
     Result         = "24f1000d-7d10-4805-bfc1-7663a01c3bff"
 

@@ -27,7 +27,7 @@ import json
 
 from crownstone_core.Exceptions import CrownstoneError
 from crownstone_core.packets.behaviour.ActiveDays import ActiveDays
-from crownstone_core.packets.behaviour.Behaviour import Behaviour
+from crownstone_core.packets.behaviour.BehaviourBase import BehaviourBase
 from crownstone_core.packets.behaviour.BehaviourTypes import BehaviourType, DAY_START_TIME_SECONDS_SINCE_MIDNIGHT
 from crownstone_core.packets.behaviour.PresenceDescription import BehaviourPresenceType, BehaviourPresence
 from crownstone_core.packets.behaviour.TimeDescription import BehaviourTimeContainer, BehaviourTime, BehaviourTimeType
@@ -75,7 +75,7 @@ def BehaviourDictionaryParser(dict, dayStartTimeSecondsSinceMidnight = DAY_START
     activeDayObject = ActiveDayParser(activeDays)
     timeObject      = TimeParser(timeDict, dayStartTimeSecondsSinceMidnight)
     
-    behaviour = Behaviour(
+    behaviour = BehaviourBase(
         profileIndex  = profileIndex,
         behaviourType = behaviourType,
         intensity     = intensity,

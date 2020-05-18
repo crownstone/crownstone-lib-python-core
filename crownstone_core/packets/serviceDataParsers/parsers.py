@@ -1,9 +1,9 @@
-from crownstone_core.packets.seriviceDataParsers.opCode3.opCode3_type0 import parseOpCode3_type0
-from crownstone_core.packets.seriviceDataParsers.opCode3.opCode3_type1 import parseOpCode3_type1
-from crownstone_core.packets.seriviceDataParsers.opCode3.opCode3_type2 import parseOpCode3_type2
-from crownstone_core.packets.seriviceDataParsers.opCode3.opCode3_type3 import parseOpCode3_type3
-from crownstone_core.packets.seriviceDataParsers.opCode4.opCode4_type0 import parseOpCode4_type0
-from crownstone_core.packets.seriviceDataParsers.opCode7.opCode7_type4 import parseOpCode7_type4
+from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type0 import parseOpCode3_type0
+from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type1 import parseOpCode3_type1
+from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type2 import parseOpCode3_type2
+from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type3 import parseOpCode3_type3
+from crownstone_core.packets.serviceDataParsers.opCode4.opCode4_type0 import parseOpCode4_type0
+from crownstone_core.packets.serviceDataParsers.opCode7.opCode7_type4 import parseOpCode7_type4
 from crownstone_core.util.Conversion import Conversion
 
 
