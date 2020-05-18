@@ -197,3 +197,6 @@ class GetPersistenceMode(IntEnum):
 class SetPersistenceMode(IntEnum):
     TEMPORARY = 0
     STORED = 1
+
+class MeshCommandType(IntEnum):
+    CONTROL = 0

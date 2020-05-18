@@ -79,11 +79,11 @@ class ControlStateGetPacket(ControlPacket):
         super().__init__(ControlType.GET_STATE)
         self.id = id
         self.loadUInt16(stateType)
-        self.persistenceMode = persistenceMode
+        self.persistenceMode = persistenceMode.value
 
 
     def getPacket(self):
-        arr = []
+        arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
         arr += Conversion.uint16_to_uint8_array(self.length + 2) # 2 for the ID size
         arr += self.payload # this is the state type
@@ -99,13 +99,13 @@ class ControlStateSetPacket(ControlPacket):
         super().__init__(ControlType.SET_STATE)
         self.stateType = stateType
         self.id = id
-        self.persistenceMode = persistenceMode
+        self.persistenceMode = persistenceMode.value
 
 
     def getPacket(self):
-        arr = []
+        arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
-        arr += Conversion.uint16_to_uint8_array(self.length + 4) # the + 2 is for the stateType uint16 and +2 for the id
+        arr += Conversion.uint16_to_uint8_array(self.length + 6) # the + 2 is for the stateType uint16, +2 for the id, +2 for persistenceMode and reserved
         arr += Conversion.uint16_to_uint8_array(self.stateType)
         arr += Conversion.uint16_to_uint8_array(self.id)
         arr.append(self.persistenceMode)

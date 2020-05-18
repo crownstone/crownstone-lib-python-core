@@ -5,7 +5,8 @@ from typing import List
 
 from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
 
-from crownstone_core.protocol.BluenetTypes import ControlType
+from crownstone_core.protocol.BluenetTypes import ControlType, MeshCommandType
+
 
 # broadcast to all:
 # value: 1
@@ -24,8 +25,8 @@ class MeshModes(IntEnum):
 
 class _MeshCommandPacket:
 
-    def __init__(self, packetType, crownstoneIds : List[int], payload, mesh_command_mode, timeout_or_transmissions):
-        self.type = packetType
+    def __init__(self, crownstoneIds : List[int], payload, mesh_command_mode: MeshModes, timeout_or_transmissions):
+        self.type = MeshCommandType.CONTROL.value
         self.crownstoneIds = crownstoneIds
         self.payload = payload
         self.flags = mesh_command_mode.value
@@ -45,8 +46,6 @@ class _MeshCommandPacket:
 class MeshBroadcast(_MeshCommandPacket):
 
     def __init__(self, packetType, payload, timeout ):
-        if packetType != ControlType.SET_TIME and packetType != ControlType.NO_OPERATION:
-            raise CrownstoneException(CrownstoneError.NOT_IMPLEMENTED_YET, "Currently only the SET_TIME and NO_OPERATION is supported by MeshBroadcast.")
         super().__init__(packetType, [], payload, MeshModes.BROADCAST, timeout)
 
 class MeshSetState(_MeshCommandPacket):
@@ -55,16 +54,14 @@ class MeshSetState(_MeshCommandPacket):
         """
         Attempts 0 uses the default amount of attempts
         """
-        super().__init__(ControlType.SET_STATE, [crownstoneId], setStatePacket, MeshModes.SINGLE_TARGET_ACKED, numberOfAttempts)
+        super().__init__([crownstoneId], setStatePacket, MeshModes.SINGLE_TARGET_ACKED, numberOfAttempts)
 
 class MeshBroadcastAcked(_MeshCommandPacket):
     """
     This is currently only supported for type setIBeaconConfig
     """
     def __init__(self, packetType, crownstoneIds: List[int], payload, numberOfAttempts):
-        if packetType != ControlType.SET_IBEACON_CONFIG_ID:
-            raise CrownstoneException(CrownstoneError.NOT_IMPLEMENTED_YET, "Currently only the SET_IBEACON_CONFIG_ID is supported by Mesh Broadcast Acked.")
-        super().__init__(packetType, crownstoneIds, payload, MeshModes.BROADCAST_ACKED_IDS, numberOfAttempts)
+        super().__init__(crownstoneIds, payload, MeshModes.BROADCAST_ACKED_IDS, numberOfAttempts)
 
 
 class StoneMultiSwitchPacket:
