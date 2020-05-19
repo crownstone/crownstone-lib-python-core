@@ -39,25 +39,31 @@ class _MeshCommandPacket:
 
         return packet
 
-class MeshBroadcast(_MeshCommandPacket):
+class MeshBroadcastPacket(_MeshCommandPacket):
 
-    def __init__(self, payload, timeout ):
-        super().__init__([], payload, MeshModes.BROADCAST, timeout)
-
-class MeshSetState(_MeshCommandPacket):
-
-    def __init__(self, crownstoneId : int, setStatePacket, numberOfAttempts = 0 ):
+    def __init__(self, payload, number_of_transmissions : int = 0):
         """
-        Attempts 0 uses the default amount of attempts
+            number_of_transmissions 0 uses the default number_of_transmissions which is 3
         """
-        super().__init__([crownstoneId], setStatePacket, MeshModes.SINGLE_TARGET_ACKED, numberOfAttempts)
+        super().__init__([], payload, MeshModes.BROADCAST, number_of_transmissions)
 
-class MeshBroadcastAcked(_MeshCommandPacket):
+class MeshSetStatePacket(_MeshCommandPacket):
+
+    def __init__(self, crownstoneId : int, setStatePacket, timeout_seconds : int = 0 ):
+        """
+        timeout_seconds 0 uses the default timeout of 10 seconds
+        """
+        super().__init__([crownstoneId], setStatePacket, MeshModes.SINGLE_TARGET_ACKED, timeout_seconds)
+
+class MeshBroadcastAckedPacket(_MeshCommandPacket):
     """
     This is currently only supported for type setIBeaconConfig
     """
-    def __init__(self, crownstoneIds: List[int], payload, numberOfAttempts):
-        super().__init__(crownstoneIds, payload, MeshModes.BROADCAST_ACKED_IDS, numberOfAttempts)
+    def __init__(self, crownstoneIds: List[int], payload, timeout_seconds : int = 0):
+        """
+        timeout_seconds 0 uses the default timeout of 10 seconds
+        """
+        super().__init__(crownstoneIds, payload, MeshModes.BROADCAST_ACKED_IDS, timeout_seconds)
 
 
 class StoneMultiSwitchPacket:
