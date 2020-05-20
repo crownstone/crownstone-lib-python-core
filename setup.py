@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name='crownstone-lib-python-core',
+    name='crownstone-core',
     version='0.5.1',
     packages=find_packages(),
     author="Crownstone B.V.",
