@@ -1,19 +1,9 @@
+from crownstone_core.Constants import UserLevel
 
-
-from enum import IntEnum
-
-from crownstone_core.Exceptions import BleError, CrownstoneBleException
+from crownstone_core.Exceptions import CrownstoneBleException, EncryptionError
 from crownstone_core.protocol.BlePackets import SUPPORTED_PROTOCOL_VERSION
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.EncryptionHandler import SESSION_KEY_LENGTH, SESSION_DATA_LENGTH
-
-
-class UserLevel(IntEnum):
-    admin   = 0
-    member  = 1
-    basic   = 2
-    setup   = 100
-    unknown = 255
 
 
 class EncryptionSettings:
@@ -72,12 +62,12 @@ class EncryptionSettings:
 
     def setSessionNonce(self, sessionNonce):
         if len(sessionNonce) != SESSION_DATA_LENGTH:
-            raise CrownstoneBleException(BleError.INVALID_SESSION_DATA, "Invalid Session Data")
+            raise CrownstoneBleException(EncryptionError.INVALID_SESSION_DATA, "Invalid Session Data")
         self.sessionNonce = sessionNonce
 
     def setValidationKey(self, validationKey):
         if len(validationKey) != SESSION_KEY_LENGTH:
-            raise CrownstoneBleException(BleError.INVALID_SESSION_DATA, "Invalid Session Data")
+            raise CrownstoneBleException(EncryptionError.INVALID_SESSION_DATA, "Invalid Session Data")
         self.validationKey = validationKey
 
     def setCrownstoneProtocolVersion(self, protocolVersion):

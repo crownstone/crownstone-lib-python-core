@@ -3,7 +3,8 @@ import random
 import math
 import pyaes
 
-from crownstone_core.Exceptions import BleError, CrownstoneBleException
+from crownstone_core.Constants import UserLevel
+from crownstone_core.Exceptions import CrownstoneBleException, EncryptionError
 from crownstone_core.util.Conversion import Conversion
 
 BLOCK_LENGTH             = 16
@@ -15,7 +16,6 @@ PACKET_NONCE_LENGTH      = 3
 CHECKSUM                 = 0xcafebabe
 
 
-from crownstone_core.core.modules.EncryptionSettings import UserLevel
 
 
 class EncryptedPackage:
@@ -28,7 +28,7 @@ class EncryptedPackage:
         prefixLength = PACKET_NONCE_LENGTH + PACKET_USER_LEVEL_LENGTH
         # 20 is the minimal size of a packet (3+1+16)
         if len(dataArray) < 20:
-            raise CrownstoneBleException(BleError.INVALID_ENCRYPTION_PACKAGE, "Invalid package for encryption. It is too short (min length 20) got " + str(len(dataArray)) + " bytes.")
+            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_PACKAGE, "Invalid package for encryption. It is too short (min length 20) got " + str(len(dataArray)) + " bytes.")
 
         self.nonce = [0] * PACKET_NONCE_LENGTH
         
@@ -36,19 +36,19 @@ class EncryptedPackage:
             self.nonce[i] = dataArray[i]
             
         if dataArray[PACKET_NONCE_LENGTH] > 2 and dataArray[PACKET_NONCE_LENGTH] != UserLevel.setup.value:
-            raise CrownstoneBleException(BleError.INVALID_ENCRYPTION_USER_LEVEL, "User level in read packet is invalid:" + str(dataArray[PACKET_NONCE_LENGTH]))
+            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_USER_LEVEL, "User level in read packet is invalid:" + str(dataArray[PACKET_NONCE_LENGTH]))
         
         try:
             self.userLevel = UserLevel(dataArray[PACKET_NONCE_LENGTH])
         except ValueError:
-            raise CrownstoneBleException(BleError.INVALID_ENCRYPTION_USER_LEVEL, "User level in read packet is invalid:" + str(dataArray[PACKET_NONCE_LENGTH]))
+            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_USER_LEVEL, "User level in read packet is invalid:" + str(dataArray[PACKET_NONCE_LENGTH]))
         
         payload = [0] * (len(dataArray) - prefixLength)
         for i in range(0, (len(dataArray) - prefixLength)):
             payload[i] = dataArray[i + prefixLength]
             
         if len(payload) % 16 != 0:
-            raise CrownstoneBleException(BleError.INVALID_ENCRYPTION_PACKAGE, "Invalid size for encrypted payload")
+            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_PACKAGE, "Invalid size for encrypted payload")
         
         self.payload = payload
 
@@ -94,10 +94,10 @@ class EncryptionHandler:
     @staticmethod
     def decrypt(data, settings):
         if settings.sessionNonce is None:
-            raise CrownstoneBleException(BleError.NO_SESSION_NONCE_SET, "Can't Decrypt: No session nonce set")
+            raise CrownstoneBleException(EncryptionError.NO_SESSION_NONCE_SET, "Can't Decrypt: No session nonce set")
     
         if settings.userLevel == UserLevel.unknown:
-            raise CrownstoneBleException(BleError.NO_ENCRYPTION_KEYS_SET, "Can't Decrypt: No encryption keys set.")
+            raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Can't Decrypt: No encryption keys set.")
         
         #unpack the session data
         package = EncryptedPackage(data)
@@ -121,7 +121,7 @@ class EncryptionHandler:
             return result
     
         else:
-            raise CrownstoneBleException(BleError.ENCRYPTION_VALIDATION_FAILED, "Failed to validate result, Could not decrypt")
+            raise CrownstoneBleException(EncryptionError.ENCRYPTION_VALIDATION_FAILED, "Failed to validate result, Could not decrypt")
             
     
     @staticmethod
@@ -160,10 +160,10 @@ class EncryptionHandler:
     @staticmethod
     def encrypt(dataArray, settings):
         if settings.sessionNonce is None:
-            raise CrownstoneBleException(BleError.NO_SESSION_NONCE_SET, "Can't Decrypt: No session nonce set")
+            raise CrownstoneBleException(EncryptionError.NO_SESSION_NONCE_SET, "Can't Decrypt: No session nonce set")
     
         if settings.userLevel == UserLevel.unknown:
-            raise CrownstoneBleException(BleError.NO_ENCRYPTION_KEYS_SET, "Can't Decrypt: No encryption keys set.")
+            raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Can't Decrypt: No encryption keys set.")
 
         packetNonce = [0] * PACKET_NONCE_LENGTH
         # create a random nonce
@@ -188,7 +188,7 @@ class EncryptionHandler:
     @staticmethod
     def _getKeyForLevel(userLevel, settings):
         if settings.initializedKeys == False and userLevel != UserLevel.setup:
-            raise CrownstoneBleException(BleError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Keys not set.")
+            raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Keys not set.")
     
         key = None
         if userLevel == UserLevel.admin:
@@ -200,10 +200,10 @@ class EncryptionHandler:
         elif userLevel == UserLevel.setup:
             key = settings.setupKey
         else:
-            raise CrownstoneBleException(BleError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Invalid key for encryption.")
+            raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Invalid key for encryption.")
     
         if key is None:
-            raise CrownstoneBleException(BleError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Keys not set.")
+            raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Keys not set.")
     
         return key
         
@@ -211,7 +211,7 @@ class EncryptionHandler:
     @staticmethod
     def generateIV(packetNonce, sessionData):
         if len(packetNonce) != PACKET_NONCE_LENGTH:
-            raise CrownstoneBleException(BleError.INVALID_SESSION_NONCE, "Invalid size for session nonce packet")
+            raise CrownstoneBleException(EncryptionError.INVALID_SESSION_NONCE, "Invalid size for session nonce packet")
         
         IV = [0] * NONCE_LENGTH
         

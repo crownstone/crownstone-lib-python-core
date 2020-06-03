@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class BleError(Enum):
+class EncryptionError(Enum):
     CAN_NOT_FIND_SERVICE              = "CAN_NOT_FIND_SERVICE"
     CAN_NOT_FIND_CHACTERISTIC         = "CAN_NOT_FIND_CHACTERISTIC"
     CAN_NOT_GET_CHARACTERISTIC        = "CAN_NOT_GET_CHARACTERISTIC"
@@ -21,6 +21,7 @@ class BleError(Enum):
     SETUP_FAILED                      = "SETUP_FAILED"
     NOT_IN_RECOVERY_MODE              = "NOT_IN_RECOVERY_MODE"
     RECOVERY_MODE_DISABLED            = "RECOVERY_MODE_DISABLED"
+
 
 class CrownstoneError(Enum):
     ADMIN_KEY_REQUIRED                = "ADMIN_KEY_REQUIRED"
