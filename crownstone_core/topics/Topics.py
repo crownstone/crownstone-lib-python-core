@@ -1,6 +1,4 @@
-from enum import Enum
-
-class Topics(Enum):
+class Topics:
     
     advertisement = "advertisement" # data is dictionary {
     #  name: string
