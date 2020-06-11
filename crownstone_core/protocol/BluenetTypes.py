@@ -116,6 +116,7 @@ class StateType(IntEnum):
     TIME                       = 136
     ERROR_BITMASK              = 139
     SUNTIMES                   = 149
+    BEHAVIOUR_SETTINGS         = 150
 
     @classmethod
     def has_value(cls, value):
