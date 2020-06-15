@@ -18,14 +18,15 @@ class EventBus:
 
     def emit(self, topic, data = True):
         if topic in self.topics:
-            for subscriptionId in self.topics[topic]:
+            callbackIds = list(self.topics[topic].keys())
+            for subscriptionId in callbackIds:
                 self.topics[topic][subscriptionId](data)
 
 
     def unsubscribe(self, subscriptionId):
         if subscriptionId is None:
             return
-        
+
         if subscriptionId in self.subscriberIds:
             topic = self.subscriberIds[subscriptionId]
             if topic in self.topics:
