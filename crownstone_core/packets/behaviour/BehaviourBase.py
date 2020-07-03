@@ -41,7 +41,7 @@ class BehaviourBase:
         return self
 
     def setTimeAllday(self, dayStartTimeSecondsSinceMidnight=DAY_START_TIME_SECONDS_SINCE_MIDNIGHT):
-        self.fromTime  = BehaviourTime().fromType(BehaviourTimeType.afterMidnight,  dayStartTimeSecondsSinceMidnight),
+        self.fromTime  = BehaviourTime().fromType(BehaviourTimeType.afterMidnight,  dayStartTimeSecondsSinceMidnight)
         self.untilTime = BehaviourTime().fromType(BehaviourTimeType.afterMidnight, dayStartTimeSecondsSinceMidnight)
         return self
     
