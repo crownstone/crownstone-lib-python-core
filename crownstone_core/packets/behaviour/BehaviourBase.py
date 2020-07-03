@@ -150,12 +150,6 @@ class BehaviourBase:
         arr += self.fromTime.getPacket()
         arr += self.untilTime.getPacket()
 
-        if self.presence is not None:
-            arr += self.presence.getPacket()
-
-        if self.endCondition is not None:
-            arr += self.endCondition.presence.getPacket()
-
         return arr
 
     def getHash(self):

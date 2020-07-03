@@ -57,23 +57,9 @@ class SwitchBehaviour(BehaviourBase):
                                                                 delay)
         return self
 
-    def setNoEndCondition(self):
-        self.endCondition = None
-        return self
-
-    def setEndConditionWhilePeopleInSphere(self):
-        self.endCondition = BehaviourPresence().setSpherePresence(BehaviourPresenceType.someoneInSphere)
-        return self
-
-    def setEndConditionWhilePeopleInLocation(self, locationId):
-        self.endCondition = BehaviourPresence().setLocationPresence(BehaviourPresenceType.somoneInLocation,
-                                                                    [locationId])
-        return self
-
     def getPacket(self):
         arr = super().getPacket()
 
-        print("new getpacket impl.")
         if self.presence is not None:
             arr += self.presence.getPacket()
         else:
