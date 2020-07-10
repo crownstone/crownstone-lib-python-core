@@ -41,7 +41,7 @@ class BehaviourBase:
         return self
 
     def setTimeAllday(self, dayStartTimeSecondsSinceMidnight=DAY_START_TIME_SECONDS_SINCE_MIDNIGHT):
-        self.fromTime  = BehaviourTime().fromType(BehaviourTimeType.afterMidnight,  dayStartTimeSecondsSinceMidnight),
+        self.fromTime  = BehaviourTime().fromType(BehaviourTimeType.afterMidnight,  dayStartTimeSecondsSinceMidnight)
         self.untilTime = BehaviourTime().fromType(BehaviourTimeType.afterMidnight, dayStartTimeSecondsSinceMidnight)
         return self
     
@@ -149,12 +149,6 @@ class BehaviourBase:
 
         arr += self.fromTime.getPacket()
         arr += self.untilTime.getPacket()
-
-        if self.presence is not None:
-            arr += self.presence.getPacket()
-
-        if self.endCondition is not None:
-            arr += self.endCondition.presence.getPacket()
 
         return arr
 
