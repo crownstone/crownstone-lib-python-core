@@ -33,6 +33,7 @@ class ControlType(IntEnum):
     BEHAVIOUR_HANDLER_SETTINGS = 65
     GET_BEHAVIOUR_DEBUG        = 69
     REGISTER_TRACKED_DEVICE    = 70
+    MICROAPP                   = 71
     UNSPECIFIED                = 65535
 
     @classmethod
@@ -105,18 +106,25 @@ class StateType(IntEnum):
     START_DIMMER_ON_ZERO_CROSSING          = 66
     TAP_TO_TOGGLE_ENABLED                  = 67
     TAP_TO_TOGGLE_RSSI_THRESHOLD_OFFSET    = 68
-    RESET_COUNTER              = 128
-    SWITCH_STATE               = 129
-    ACCUMULATED_ENERGY         = 130
-    POWER_USAGE                = 131
-    TRACKED_DEVICES            = 132
-    SCHEDULE                   = 133
-    OPERATION_MODE             = 134
-    TEMPERATURE                = 135
-    TIME                       = 136
-    ERROR_BITMASK              = 139
-    SUNTIMES                   = 149
-    BEHAVIOUR_SETTINGS         = 150
+    BEHAVIOUR_RULE                         = 69
+    TWILIGHT_RULE                          = 70
+    EXTENDED_BEHAVIOUR_RULE                = 71
+
+    RESET_COUNTER                          = 128
+    SWITCH_STATE                           = 129
+    ACCUMULATED_ENERGY                     = 130
+    POWER_USAGE                            = 131
+    TRACKED_DEVICES                        = 132
+    SCHEDULE                               = 133
+    OPERATION_MODE                         = 134
+    TEMPERATURE                            = 135
+    TIME                                   = 136
+    ERROR_BITMASK                          = 139
+    SUNTIMES                               = 149
+    BEHAVIOUR_SETTINGS                     = 150
+
+    MESH_IV_INDEX                          = 151
+    MESH_SEQ_NUMBER                        = 152
 
     @classmethod
     def has_value(cls, value):

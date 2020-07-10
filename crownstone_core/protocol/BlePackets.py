@@ -65,8 +65,6 @@ class ControlPacket(BLEPacket):
         super().__init__(packetType)
 
 
-
-
 class FactoryResetPacket(ControlPacket):
 
     def __init__(self):
@@ -85,7 +83,7 @@ class ControlStateGetPacket(ControlPacket):
     def getPacket(self):
         arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
-        arr += Conversion.uint16_to_uint8_array(self.length + 2) # 2 for the ID size
+        arr += Conversion.uint16_to_uint8_array(self.length + 6) # the + 2 is for the stateType uint16, +2 for the id, +2 for persistenceMode and reserved
         arr += self.payload # this is the state type
         arr += Conversion.uint16_to_uint8_array(self.id)
         arr.append(self.persistenceMode)
