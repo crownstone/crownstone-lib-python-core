@@ -33,3 +33,8 @@ def reconstructTimestamp(currentTimestamp, lsbTimestamp):
 		restoredTimestamp = obtainTimestamp(correctedTimestamp + 0xFFFF, lsbTimestamp)
 
 	return restoredTimestamp
+
+def getCorrectedLocalTimestamp(currentTimestamp):
+	secondsFromGMT = round(time.time() - time.mktime(time.gmtime()))
+	correctedTimestamp = currentTimestamp + secondsFromGMT
+	return correctedTimestamp
