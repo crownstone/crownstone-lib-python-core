@@ -1,4 +1,4 @@
-from BluenetLib.lib.util.fletcher import fletcher32_uint8Arr
+from crownstone_core.util.fletcher import fletcher32_uint8Arr
 import math
 
 class Microapp(object):
@@ -34,7 +34,7 @@ class MicroappPacketInternal(object):
 
     def __init__(self, data):
         self.index = 0
-        self.count = math.ceil(data.size / data.chunk_size);
+        self.count = math.ceil(data.size / data.chunk_size)
         self.checksum = 0xCAFE
         self.chunk = bytearray(data.chunk_size)
         self.data = data
@@ -86,7 +86,7 @@ class MicroappPacketInternal(object):
         else:
             # No padded by zero needed, it is already of even size
             self.checksum = fletcher32_uint8Arr(self.chunk)
-        print("LOG: checksum used: ", hex(self.checksum & 0xFFFF));
+        print("LOG: checksum used: ", hex(self.checksum & 0xFFFF))
 
     def getMetaPacket(self, offset):
         empty_buffer = bytearray([0x00] * self.data.chunk_size)

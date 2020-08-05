@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='crownstone-core',
-    version='0.5.7',
+    version='0.5.8',
     packages=find_packages(),
     author="Crownstone B.V.",
     long_description=long_description,
