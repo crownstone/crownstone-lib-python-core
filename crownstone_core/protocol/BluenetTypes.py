@@ -33,7 +33,17 @@ class ControlType(IntEnum):
     BEHAVIOUR_HANDLER_SETTINGS = 65
     GET_BEHAVIOUR_DEBUG        = 69
     REGISTER_TRACKED_DEVICE    = 70
-    MICROAPP                   = 71
+    TRACKED_DEVICE_HEARTBEAT   = 71
+    GET_UPTIME                 = 80
+    GET_ADC_RESTARTS           = 81
+    GET_SWITCH_HISTORY         = 82
+    GET_POWER_SAMPLES          = 83
+    GET_MIN_SCHEDULER_FREE     = 84
+    GET_LAST_RESET_REASON      = 85
+    GET_GPREGRET               = 86
+    GET_ADC_CHANNEL_SWAPS      = 87
+    GET_RAM_STATS              = 88
+    MICROAPP                   = 90
     UNSPECIFIED                = 65535
 
     @classmethod
@@ -206,3 +216,11 @@ class GetPersistenceMode(IntEnum):
 class SetPersistenceMode(IntEnum):
     TEMPORARY = 0
     STORED = 1
+
+class PowerSamplesType(IntEnum):
+    SWITCHCRAFT                = 0
+    SWITCHCRAFT_NON_TRIGGERED  = 1
+    NOW_FILTERED               = 2
+    NOW_UNFILTERED             = 3
+    SOFT_FUSE                  = 4
+    UNSPECIFIED                = 255

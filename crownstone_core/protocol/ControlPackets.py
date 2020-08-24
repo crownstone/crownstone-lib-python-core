@@ -208,4 +208,10 @@ class ControlPacketsGenerator:
 
 		return ControlPacket(ControlType.SET_IBEACON_CONFIG_ID).loadByteArray(data).getPacket()
 
+	@staticmethod
+	def getPowerSamplesRequestPacket(samplesType, index):
+		data = []
+		data.append(samplesType)
+		data.append(index)
+		return ControlPacket(ControlType.GET_POWER_SAMPLES).loadByteArray(data).getPacket()
 
