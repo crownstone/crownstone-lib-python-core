@@ -17,6 +17,9 @@ class DataStepper :
     def getUInt16(self):
         return Conversion.uint8_array_to_uint16(self._request(2))
 
+    def getInt16(self):
+        return Conversion.uint8_array_to_int16(self._request(2))
+
     def getUInt32(self):
         return Conversion.uint8_array_to_uint32(self._request(4))
 
@@ -25,6 +28,9 @@ class DataStepper :
 
     def getUInt64(self):
         return Conversion.uint8_array_to_uint64(self._request(8))
+
+    def getFloat(self):
+        return Conversion.uint8_array_to_float(self._request(4))
 
     def skip(self, count=1):
         self._request(count)
@@ -39,6 +45,9 @@ class DataStepper :
     def reset(self):
         self.position = self.markPosition
 
+    def remaining(self):
+        """ Return the number of bytes remaining. """
+        return self.length - self.position
 
     def _request(self, size):
         if self.position + size <= self.length:
