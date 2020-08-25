@@ -1,6 +1,5 @@
 from crownstone_core.util.DataStepper import DataStepper
 from crownstone_core.protocol.BluenetTypes import PowerSamplesType
-from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 
 class PowerSamplesPacket:
 	def __init__(self, data):
@@ -18,9 +17,13 @@ class PowerSamplesPacket:
 		self.load(data)
 
 	def load(self, data):
-		headerSize = 1 + 1 + 2 + 4 + 2 + 2 + 2 + 2 + 4
-		if (len(data) < headerSize):
-			raise CrownstoneException(CrownstoneError.INCORRECT_RESPONSE_LENGTH, "Data size too small for header")
+		"""
+		Parses data buffer to set member variables.
+
+		data : list of bytes
+
+		Raises exception when parsing fails.
+		"""
 		streamBuf = DataStepper(data)
 		self.samplesType = PowerSamplesType(streamBuf.getUInt8())
 		self.index = streamBuf.getUInt8()
@@ -31,8 +34,6 @@ class PowerSamplesPacket:
 		streamBuf.skip(2)
 		self.offset = streamBuf.getInt16()
 		self.multiplier = streamBuf.getFloat()
-		if (streamBuf.remaining() < self.count * 2):
-			raise CrownstoneException(CrownstoneError.INCORRECT_RESPONSE_LENGTH, "Data size too small for samples")
 		self.samples = []
 		for i in range(0, self.count):
 			self.samples.append(streamBuf.getInt16())

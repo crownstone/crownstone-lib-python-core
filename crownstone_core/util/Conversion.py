@@ -10,18 +10,34 @@ class Conversion:
 	####################################
 	@staticmethod
 	def uint8_to_int8(byte):
-		"""	Convert an unsigned byte to a signed byte """
+		"""	Convert a uint8 to an int8 """
 		res = byte
 		if res > 127:
 			res -= 256
 		return res
 
 	@staticmethod
+	def int8_to_uint8(byte):
+		"""	Convert an int8 to a uint8 """
+		res = byte
+		if res < 0:
+			res += 256
+		return res
+
+	@staticmethod
 	def uint16_to_int16(val):
-		""" Convert an uint16 to a int16 """
+		""" Convert a uint16 to an int16 """
 		res = val
 		if res > 32767:
 			res -= 65536
+		return res
+
+	@staticmethod
+	def int16_to_uint16(val):
+		""" Convert an int16 to a uint16 """
+		res = val
+		if res < 0:
+			res += 65536
 		return res
 
 	@staticmethod
@@ -39,15 +55,6 @@ class Conversion:
 		if res < 0:
 			res += 4294967296
 		return res
-
-	@staticmethod
-	def int8_to_uint8(byte):
-		"""	Convert a signed byte to an unsigned byte """
-		res = byte
-		if res < 0:
-			res += 256
-		return res
-
 
 	#######################################
 	# Conversions between uint8 and float #

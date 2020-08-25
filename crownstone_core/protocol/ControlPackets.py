@@ -1,7 +1,7 @@
 from crownstone_core.protocol.BlePackets import ControlPacket, FactoryResetPacket
 from crownstone_core.protocol.BluenetTypes import ControlType
 from crownstone_core.util.Conversion import Conversion
-
+from crownstone_core.util.BufferFiller import BufferFiller
 
 class ControlPacketsGenerator:
 
@@ -210,8 +210,8 @@ class ControlPacketsGenerator:
 
 	@staticmethod
 	def getPowerSamplesRequestPacket(samplesType, index):
-		data = []
-		data.append(samplesType)
-		data.append(index)
+		buffer = BufferFiller()
+		buffer.putUInt8(samplesType)
+		buffer.putUInt8(index)
+		data = buffer.getBuffer()
 		return ControlPacket(ControlType.GET_POWER_SAMPLES).loadByteArray(data).getPacket()
-
