@@ -224,3 +224,18 @@ class PowerSamplesType(IntEnum):
     NOW_UNFILTERED             = 3
     SOFT_FUSE                  = 4
     UNSPECIFIED                = 255
+
+class CommandSourceType(IntEnum):
+    ENUM                       = 0
+    BEHAVIOUR                  = 1
+    BROADCAST                  = 3
+    UNSPECIFIED                = 255
+
+class CommandSourceId(IntEnum):
+    NONE                       = 0
+    INTERNAL                   = 2
+    UART                       = 3
+    CONNECTION                 = 4
+    SWITCHCRAFT                = 5
+    TAP_TO_TOGGLE              = 6
+    UNSPECIFIED                = 255
