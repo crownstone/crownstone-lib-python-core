@@ -28,9 +28,7 @@ class PowerSamplesPacket:
 		streamBuf = DataStepper(data)
 
 		samplesTypeVal = streamBuf.getUInt8()
-		if (samplesTypeVal not in PowerSamplesType):
-			raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, "samplesType " + str(samplesTypeVal))
-		self.samplesType = PowerSamplesType(samplesTypeVal)
+		self.samplesType = PowerSamplesType(samplesTypeVal) # Throws exception of value is not in enum
 		self.index = streamBuf.getUInt8()
 		self.count = streamBuf.getUInt16()
 		self.timestamp = streamBuf.getUInt32()

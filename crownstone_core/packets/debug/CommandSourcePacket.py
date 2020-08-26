@@ -20,9 +20,7 @@ class CommandSourcePacket:
 		streamBuf = DataStepper(data)
 		byte1 = streamBuf.getUInt8()
 		sourceTypeval = (byte1 >> 5) & 7
-		if (sourceTypeval not in CommandSourceType):
-			raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, "sourceType " + str(sourceTypeval))
-		self.sourceType = CommandSourceType(sourceTypeval)
+		self.sourceType = CommandSourceType(sourceTypeval) # Throws exception of value is not in enum
 		self.viaMesh = (byte1 & (1 << 0)) != 0
 		self.sourceId = streamBuf.getUInt8()
 
