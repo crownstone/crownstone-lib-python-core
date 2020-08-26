@@ -1,5 +1,6 @@
 from crownstone_core.util.DataStepper import DataStepper
 from crownstone_core.protocol.BluenetTypes import PowerSamplesType
+from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 
 class PowerSamplesPacket:
 	def __init__(self, data):
@@ -25,7 +26,11 @@ class PowerSamplesPacket:
 		Raises exception when parsing fails.
 		"""
 		streamBuf = DataStepper(data)
-		self.samplesType = PowerSamplesType(streamBuf.getUInt8())
+
+		samplesTypeVal = streamBuf.getUInt8()
+		if (samplesTypeVal not in PowerSamplesType):
+			raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, "samplesType " + str(samplesTypeVal))
+		self.samplesType = PowerSamplesType(samplesTypeVal)
 		self.index = streamBuf.getUInt8()
 		self.count = streamBuf.getUInt16()
 		self.timestamp = streamBuf.getUInt32()
