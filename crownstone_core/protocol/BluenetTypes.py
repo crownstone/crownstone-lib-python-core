@@ -240,3 +240,12 @@ class CommandSourceId(IntEnum):
     SWITCHCRAFT                = 5
     TAP_TO_TOGGLE              = 6
     UNSPECIFIED                = 255
+
+class MicroappOpcode(IntEnum):
+    UPLOAD                     = 1
+    VALIDATE                   = 2
+    ENABLE                     = 3
+    DISABLE                    = 4
+    REQUEST                    = 5
+    UNSPECIFIED                = 255
+

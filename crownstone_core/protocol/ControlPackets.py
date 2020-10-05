@@ -97,49 +97,79 @@ class ControlPacketsGenerator:
 		return ControlPacket(ControlType.LOCK_SWITCH).loadUInt8(lockByte).getPacket()
 
 	@staticmethod
-	def getMicroAppPacket(microapp_packet):
+	def getMicroAppUploadPacket(microapp_packet):
 		"""
         :param protocol:        uint8 number
         :param app_id:          uint8 number
+        :param opcode:          uint8 number
         :param index:           uint8 number
-        :param count:           uint8 number
-        :param size:            uint16 number
         :param checksum:        uint16 number
-        :param data:            byteString (no conversion required)
+        :param buffer:          byteString (no conversion required)
         :return:
         """
 		data = []
 		data.append(microapp_packet.protocol)
 		data.append(microapp_packet.app_id)
+		data.append(microapp_packet.opcode)
 		data.append(microapp_packet.index)
-		data.append(microapp_packet.count)
-		data += Conversion.uint16_to_uint8_array(microapp_packet.size)
 		data += Conversion.uint16_to_uint8_array(microapp_packet.checksum)
 		data += list(microapp_packet.buffer)
-		print("LOG: Size: ", len(data))
-		print("LOG: size: ", microapp_packet.size)
 		return ControlPacket(ControlType.MICROAPP).loadByteArray(data).getPacket()
 
 	@staticmethod
-	def getMicroAppMetaPacket(microapp_packet):
+	def getMicroAppRequestPacket(packet):
 		"""
         :param protocol:        uint8 number
         :param app_id:          uint8 number
-        :param trigger:         uint8 number
+        :param opcode:          uint8 number
+        :param size:            uint16 number
+        :param count:           uint8 number
+        :param chunk_size:      uint8 number
+        :return:
+        """
+		data = []
+		data.append(packet.protocol)
+		data.append(packet.app_id)
+		data.append(packet.opcode)
+		data += Conversion.uint16_to_uint8_array(packet.size)
+		data.append(packet.count)
+		data.append(packet.chunk_size)
+		return ControlPacket(ControlType.MICROAPP).loadByteArray(data).getPacket()
+
+	@staticmethod
+	def getMicroAppValidatePacket(packet):
+		"""
+        :param protocol:        uint8 number
+        :param app_id:          uint8 number
+        :param opcode:          uint8 number
+        :param size:            uint16 number
+        :param checksum:        uint16 number
+        :return:
+        """
+		data = []
+		data.append(packet.protocol)
+		data.append(packet.app_id)
+		data.append(packet.opcode)
+		data += Conversion.uint16_to_uint8_array(packet.size)
+		data += Conversion.uint16_to_uint8_array(packet.checksum)
+		return ControlPacket(ControlType.MICROAPP).loadByteArray(data).getPacket()
+
+
+
+	@staticmethod
+	def getMicroAppEnablePacket(microapp_packet):
+		"""
+        :param protocol:        uint8 number
+        :param app_id:          uint8 number
         :param opcode:          uint8 number
         :param param0:          uint16 number
-        :param param1:          uint16 number
-        :param data:            byteString (no conversion required)
         :return:
         """
 		data = []
 		data.append(microapp_packet.protocol)
 		data.append(microapp_packet.app_id)
-		data.append(microapp_packet.trigger)
 		data.append(microapp_packet.opcode)
 		data += Conversion.uint16_to_uint8_array(microapp_packet.param0)
-		data += Conversion.uint16_to_uint8_array(microapp_packet.param1)
-		data += list(microapp_packet.buffer)
 		return ControlPacket(ControlType.MICROAPP).loadByteArray(data).getPacket()
 
 	@staticmethod
