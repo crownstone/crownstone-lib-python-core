@@ -223,6 +223,7 @@ class PowerSamplesType(IntEnum):
     NOW_FILTERED               = 2
     NOW_UNFILTERED             = 3
     SOFT_FUSE                  = 4
+    SWITCH                     = 5
     UNSPECIFIED                = 255
 
 class CommandSourceType(IntEnum):
