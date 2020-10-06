@@ -64,6 +64,10 @@ class DataStepper :
         """ Get N bytes of data. """
         return self._request(amount)
 
+    def getRemainingBytes(self):
+        """ Get remaining bytes of data. """
+        return self._request(self.remaining())
+
     def mark(self):
         """ Mark the current position, so you can return to it later with reset(). """
         self.markPosition = self.position
