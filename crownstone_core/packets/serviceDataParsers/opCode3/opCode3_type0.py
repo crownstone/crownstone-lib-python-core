@@ -1,5 +1,6 @@
 import time
 
+from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.Timestamp import reconstructTimestamp
 
@@ -11,7 +12,7 @@ def parseOpCode3_type0(serviceData, data):
         serviceData.stateOfExternalCrownstone = False
         
         serviceData.crownstoneId = data[1]
-        serviceData.switchState  = data[2]
+        serviceData.switchState  = SwitchState(data[2])
         serviceData.flagsBitmask = data[3]
 
         # bitmask states

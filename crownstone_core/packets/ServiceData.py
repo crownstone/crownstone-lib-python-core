@@ -1,6 +1,7 @@
 from crownstone_core.packets.CrownstoneErrors import CrownstoneErrors
 from crownstone_core.packets.serviceDataParsers.parsers import parseOpCode5, parseOpCode6, parseOpCode4, parseOpCode3
 from crownstone_core.protocol.BluenetTypes import DeviceType
+from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.EncryptionHandler import EncryptionHandler
 
 
@@ -10,7 +11,7 @@ class ServiceData:
         self.opCode = 0
         self.dataType = 0
         self.crownstoneId = 0
-        self.switchState = 0
+        self.switchState = SwitchState(0)
         self.flagsBitmask = 0
         self.temperature = 0
         self.powerFactor = 1
@@ -107,7 +108,7 @@ class ServiceData:
         returnDict["hasError"]                  = self.hasError
         returnDict["setupMode"]                 = self.isInSetupMode()
         returnDict["id"]                        = self.crownstoneId
-        returnDict["switchState"]               = self.switchState
+        returnDict["switchState"]               = self.switchState.raw
         returnDict["flagsBitmask"]              = self.flagsBitmask
         returnDict["temperature"]               = self.temperature
         returnDict["powerFactor"]               = self.powerFactor
@@ -143,7 +144,7 @@ class ServiceData:
         returnDict["id"] = self.crownstoneId
         returnDict["address"] = address
         returnDict["setupMode"] = self.isInSetupMode()
-        returnDict["switchState"] = self.switchState
+        returnDict["switchState"] = self.switchState.raw
         returnDict["temperature"] = self.temperature
         returnDict["powerFactor"] = self.powerFactor
         returnDict["powerUsageReal"] = self.powerUsageReal

@@ -1,3 +1,4 @@
+from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.DataStepper import DataStepper
 from crownstone_core.packets.debug.CommandSourcePacket import CommandSourcePacket
 
@@ -38,7 +39,7 @@ class SwitchHistoryItemPacket:
 	def __init__(self, data):
 		self.timestamp = 0     # Uint32
 		self.switchCommand = 0 # Uint8
-		self.switchState = 0   # Uint8
+		self.switchState = SwitchState(0)
 		self.source = None     # CommandSourcePacket
 		self.load(data)
 
@@ -53,7 +54,7 @@ class SwitchHistoryItemPacket:
 		streamBuf = DataStepper(data)
 		self.timestamp = streamBuf.getUInt32()
 		self.switchCommand = streamBuf.getUInt8()
-		self.switchState = streamBuf.getUInt8()
+		self.switchState = SwitchState(streamBuf.getUInt8())
 		self.source = CommandSourcePacket(streamBuf.getAmountOfBytes(CommandSourcePacket.size()))
 
 	@staticmethod

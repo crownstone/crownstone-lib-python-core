@@ -249,3 +249,7 @@ class MicroappOpcode(IntEnum):
     REQUEST                    = 5
     UNSPECIFIED                = 255
 
+class SwitchValSpecial(IntEnum):
+    TOGGLE                     = 253 # Switch OFF when currently on, switch to SMART_ON when currently off.
+    BEHAVIOUR                  = 254 # Switch to the value according to behaviour rules.
+    SMART_ON                   = 255 # Switch on, the value will be determined by behaviour rules.

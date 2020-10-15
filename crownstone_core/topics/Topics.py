@@ -12,7 +12,7 @@ class Topics:
     #    hasError:                     bool   # this crownstone has an error
     #    setupMode:                    bool   # is in setup mode
     #    id:                           int    # crownstone id (0-255)
-    #    switchState:                  int
+    #    switchState:                  int    # raw switch state (uint8)
     #    flagsBitmask:                 int
     #    temperature:                  int    # chip temp
     #    powerFactor:                  int    # factor between real and apparent
@@ -20,7 +20,7 @@ class Topics:
     #    powerUsageApparent:           int    # usage in VA
     #    accumulatedEnergy:            int
     #    timestamp:                    int    # time on Crownstone seconds since epoch with locale correction
-    #    dimmerReady:             bool   # dimming is available for use (it is not in the first 60 seconds after boot)
+    #    dimmerReady:                  bool   # dimming is available for use (it is not in the first 60 seconds after boot)
     #    dimmingAllowed:               bool   # this Crownstone can dim
     #    switchLocked:                 bool   # this Crownstone is switch-locked
     #    errorMode:                    bool   # advertisement type errorMode : the errors JSON is valid. This alternates with normal advertisements
@@ -40,14 +40,14 @@ class Topics:
     newDataAvailable = "newDataAvailable"  # data is dictionary {
     #   id:                           int    # crownstone id (0-255)
     #   setupMode:                    bool   # is in setup mode
-    #   switchState:                  int
+    #   switchState:                  int    # raw switch state (uint8)
     #   temperature:                  int    # chip temp in Celcius
     #   powerFactor:                  int    # factor between real and apparent
     #   powerUsageReal:               int    # power usage in watts (W)
     #   powerUsageApparent:           int    # power usage in VA
     #   accumulatedEnergy:            int
     #   timestamp:                    int    # time on Crownstone seconds since epoch with locale correction
-    #   dimmerReady:             bool   # dimming is available for use (it is not in the first 60 seconds after boot)
+    #   dimmerReady:                  bool   # dimming is available for use (it is not in the first 60 seconds after boot)
     #   dimmingAllowed:               bool   # this Crownstone can dim
     #   switchLocked:                 bool   # this Crownstone is switch-locked
     #   hasError:                     bool   # this crownstone has an error, if the crownstone has an error, the errors: {} dict is only valid if errorMode: true. This boolean is always valid.
