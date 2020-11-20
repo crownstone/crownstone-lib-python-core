@@ -3,6 +3,7 @@ from crownstone_core.util.Conversion import Conversion
 
 SUPPORTED_PROTOCOL_VERSION = 5
 
+# TODO: this isn't just for BLE as the name suggests.
 class BLEPacket:
 
     def __init__(self, packetType):
@@ -81,6 +82,7 @@ class ControlStateGetPacket(ControlPacket):
 
 
     def getPacket(self):
+        # TODO: make use of the base class, now there is a double implementation of the control packet.
         arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
         arr += Conversion.uint16_to_uint8_array(self.length + 6) # the + 2 is for the stateType uint16, +2 for the id, +2 for persistenceMode and reserved
@@ -101,6 +103,7 @@ class ControlStateSetPacket(ControlPacket):
 
 
     def getPacket(self):
+        # TODO: make use of the base class, now there is a double implementation of the control packet.
         arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
         arr += Conversion.uint16_to_uint8_array(self.length + 6) # the + 2 is for the stateType uint16, +2 for the id, +2 for persistenceMode and reserved

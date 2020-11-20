@@ -52,29 +52,29 @@ class ControlType(IntEnum):
 
 
 class StateType(IntEnum):
-    PWM_PERIOD                 = 5
-    IBEACON_MAJOR              = 6
-    IBEACON_MINOR              = 7
-    IBEACON_UUID               = 8
-    IBEACON_TX_POWER           = 9
-    WIFI_SETTINGS              = 10
-    TX_POWER                   = 11
-    ADVERTISEMENT_INTERVAL     = 12
-    PASSKEY                    = 13
-    MIN_ENV_TEMP               = 14
-    MAX_ENV_TEMP               = 15
-    SCAN_DURATION              = 16
-    SCAN_SEND_DELAY            = 17
-    SCAN_BREAK_DURATION        = 18
-    BOOT_DELAY                 = 19
-    MAX_CHIP_TEMP              = 20
-    SCAN_FILTER                = 21
-    SCAN_FILTER_FRACTION       = 22
-    CURRENT_LIMIT              = 23
-    MESH_ENABLED               = 24
-    ENCRYPTION_ENABLED         = 25
-    IBEACON_ENABLED            = 26
-    SCANNER_ENABLED            = 27
+    PWM_PERIOD                             = 5
+    IBEACON_MAJOR                          = 6
+    IBEACON_MINOR                          = 7
+    IBEACON_UUID                           = 8
+    IBEACON_TX_POWER                       = 9
+    WIFI_SETTINGS                          = 10
+    TX_POWER                               = 11
+    ADVERTISEMENT_INTERVAL                 = 12
+    PASSKEY                                = 13
+    MIN_ENV_TEMP                           = 14
+    MAX_ENV_TEMP                           = 15
+    SCAN_DURATION                          = 16
+    SCAN_SEND_DELAY                        = 17
+    SCAN_BREAK_DURATION                    = 18
+    BOOT_DELAY                             = 19
+    MAX_CHIP_TEMP                          = 20
+    SCAN_FILTER                            = 21
+    SCAN_FILTER_FRACTION                   = 22
+    CURRENT_LIMIT                          = 23
+    MESH_ENABLED                           = 24
+    ENCRYPTION_ENABLED                     = 25
+    IBEACON_ENABLED                        = 26
+    SCANNER_ENABLED                        = 27
     CONTINUOUS_POWER_MEASUREMENT_ENABLED   = 28
     TRACKER_ENABLED                        = 29
     ADC_SAMPLE_RATE                        = 30
@@ -135,6 +135,9 @@ class StateType(IntEnum):
 
     MESH_IV_INDEX                          = 151
     MESH_SEQ_NUMBER                        = 152
+    SOFT_ON_SPEED                          = 156
+    HUB_MODE                               = 157
+    UART_KEY                               = 158
 
     @classmethod
     def has_value(cls, value):

@@ -207,7 +207,8 @@ class Conversion:
 #		for i in range(0, len(arr8)):
 #			string += chr(arr8[i])
 #		return string
-		return str(bytearray(arr8))
+#		return str(bytearray(arr8))
+		return bytearray(arr8).decode()
 
 	@staticmethod
 	def string_to_uint8_array(string):
