@@ -40,5 +40,6 @@ def parseOpCode4_type0(serviceData, data):
                 data[10]
             ])
         )
-    
+        serviceData.accumulatedEnergy = serviceData.accumulatedEnergy * 64 # correction to display in J
+
         serviceData.uniqueIdentifier = data[11]

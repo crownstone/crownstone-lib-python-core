@@ -50,6 +50,7 @@ def parseOpCode3_type0(serviceData, data):
                 data[11]
             ])
         )
+        serviceData.accumulatedEnergy = serviceData.accumulatedEnergy * 64  # correction to display in J
         
         serviceData.partialTimestamp = Conversion.uint8_array_to_uint16([data[12], data[13]])
         serviceData.uniqueIdentifier = serviceData.partialTimestamp
