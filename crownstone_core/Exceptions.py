@@ -146,6 +146,7 @@ class CrownstoneError(Enum):
     NO_END_CONDITION_PRESENCE                           = "NO_END_CONDITION_PRESENCE"
     NO_END_CONDITION_DURATION                           = "NO_END_CONDITION_DURATION"
     PROTOCOL_NOT_SUPPORTED                              = "PROTOCOL_NOT_SUPPORTED"
+    RESULT_NOT_SUCCESS                                  = "RESULT_NOT_SUCCESS"
 
 
 class CrownstoneBleException(Exception):

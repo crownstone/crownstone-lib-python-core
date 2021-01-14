@@ -33,7 +33,17 @@ class ControlType(IntEnum):
     BEHAVIOUR_HANDLER_SETTINGS = 65
     GET_BEHAVIOUR_DEBUG        = 69
     REGISTER_TRACKED_DEVICE    = 70
-    MICROAPP                   = 71
+    TRACKED_DEVICE_HEARTBEAT   = 71
+    GET_UPTIME                 = 80
+    GET_ADC_RESTARTS           = 81
+    GET_SWITCH_HISTORY         = 82
+    GET_POWER_SAMPLES          = 83
+    GET_MIN_SCHEDULER_FREE     = 84
+    GET_LAST_RESET_REASON      = 85
+    GET_GPREGRET               = 86
+    GET_ADC_CHANNEL_SWAPS      = 87
+    GET_RAM_STATS              = 88
+    MICROAPP                   = 90
     UNSPECIFIED                = 65535
 
     @classmethod
@@ -42,29 +52,29 @@ class ControlType(IntEnum):
 
 
 class StateType(IntEnum):
-    PWM_PERIOD                 = 5
-    IBEACON_MAJOR              = 6
-    IBEACON_MINOR              = 7
-    IBEACON_UUID               = 8
-    IBEACON_TX_POWER           = 9
-    WIFI_SETTINGS              = 10
-    TX_POWER                   = 11
-    ADVERTISEMENT_INTERVAL     = 12
-    PASSKEY                    = 13
-    MIN_ENV_TEMP               = 14
-    MAX_ENV_TEMP               = 15
-    SCAN_DURATION              = 16
-    SCAN_SEND_DELAY            = 17
-    SCAN_BREAK_DURATION        = 18
-    BOOT_DELAY                 = 19
-    MAX_CHIP_TEMP              = 20
-    SCAN_FILTER                = 21
-    SCAN_FILTER_FRACTION       = 22
-    CURRENT_LIMIT              = 23
-    MESH_ENABLED               = 24
-    ENCRYPTION_ENABLED         = 25
-    IBEACON_ENABLED            = 26
-    SCANNER_ENABLED            = 27
+    PWM_PERIOD                             = 5
+    IBEACON_MAJOR                          = 6
+    IBEACON_MINOR                          = 7
+    IBEACON_UUID                           = 8
+    IBEACON_TX_POWER                       = 9
+    WIFI_SETTINGS                          = 10
+    TX_POWER                               = 11
+    ADVERTISEMENT_INTERVAL                 = 12
+    PASSKEY                                = 13
+    MIN_ENV_TEMP                           = 14
+    MAX_ENV_TEMP                           = 15
+    SCAN_DURATION                          = 16
+    SCAN_SEND_DELAY                        = 17
+    SCAN_BREAK_DURATION                    = 18
+    BOOT_DELAY                             = 19
+    MAX_CHIP_TEMP                          = 20
+    SCAN_FILTER                            = 21
+    SCAN_FILTER_FRACTION                   = 22
+    CURRENT_LIMIT                          = 23
+    MESH_ENABLED                           = 24
+    ENCRYPTION_ENABLED                     = 25
+    IBEACON_ENABLED                        = 26
+    SCANNER_ENABLED                        = 27
     CONTINUOUS_POWER_MEASUREMENT_ENABLED   = 28
     TRACKER_ENABLED                        = 29
     ADC_SAMPLE_RATE                        = 30
@@ -125,6 +135,9 @@ class StateType(IntEnum):
 
     MESH_IV_INDEX                          = 151
     MESH_SEQ_NUMBER                        = 152
+    SOFT_ON_SPEED                          = 156
+    HUB_MODE                               = 157
+    UART_KEY                               = 158
 
     @classmethod
     def has_value(cls, value):
@@ -206,3 +219,40 @@ class GetPersistenceMode(IntEnum):
 class SetPersistenceMode(IntEnum):
     TEMPORARY = 0
     STORED = 1
+
+class PowerSamplesType(IntEnum):
+    SWITCHCRAFT                = 0
+    SWITCHCRAFT_NON_TRIGGERED  = 1
+    NOW_FILTERED               = 2
+    NOW_UNFILTERED             = 3
+    SOFT_FUSE                  = 4
+    SWITCH                     = 5
+    UNSPECIFIED                = 255
+
+class CommandSourceType(IntEnum):
+    ENUM                       = 0
+    BEHAVIOUR                  = 1
+    BROADCAST                  = 3
+    UNSPECIFIED                = 255
+
+class CommandSourceId(IntEnum):
+    NONE                       = 0
+    INTERNAL                   = 2
+    UART                       = 3
+    CONNECTION                 = 4
+    SWITCHCRAFT                = 5
+    TAP_TO_TOGGLE              = 6
+    UNSPECIFIED                = 255
+
+class MicroappOpcode(IntEnum):
+    UPLOAD                     = 1
+    VALIDATE                   = 2
+    ENABLE                     = 3
+    DISABLE                    = 4
+    REQUEST                    = 5
+    UNSPECIFIED                = 255
+
+class SwitchValSpecial(IntEnum):
+    TOGGLE                     = 253 # Switch OFF when currently on, switch to SMART_ON when currently off.
+    BEHAVIOUR                  = 254 # Switch to the value according to behaviour rules.
+    SMART_ON                   = 255 # Switch on, the value will be determined by behaviour rules.

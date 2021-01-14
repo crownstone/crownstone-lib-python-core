@@ -68,14 +68,14 @@ class MeshBroadcastAckedPacket(_MeshCommandPacket):
 
 class StoneMultiSwitchPacket:
 
-    def __init__(self, crownstoneId, state):
+    def __init__(self, crownstoneId: int, switchVal: int):
         """
         :param crownstoneId:
-        :param state:  number [0..1]
+        :param switchVal:  percentage [0..100] or special value (SwitchValSpecial).
 
         """
         self.crownstoneId = crownstoneId
-        self.state = int(min(1, max(0, state)) * 100) # map to [0 .. 100]
+        self.state = switchVal
 
 
     def getPacket(self):
@@ -88,7 +88,9 @@ class StoneMultiSwitchPacket:
 
 class MeshMultiSwitchPacket:
 
-    def __init__(self, packets = []):
+    def __init__(self, packets=None):
+        if packets is None:
+            packets = []
         self.packets = packets
 
     def getPacket(self):

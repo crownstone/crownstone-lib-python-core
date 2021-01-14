@@ -1,5 +1,6 @@
 import time
 
+from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.DataStepper import DataStepper
 from crownstone_core.util.Timestamp import reconstructTimestamp
@@ -15,7 +16,7 @@ def parseOpCode7_type4(serviceData, data):
 
         payload.skip() # first byte is the  datatype.
         serviceData.crownstoneId = payload.getUInt8()
-        serviceData.switchState = payload.getUInt8()
+        serviceData.switchState = SwitchState(payload.getUInt8())
         serviceData.flagsBitmask = payload.getUInt8()
         serviceData.behaviourMasterHash = payload.getUInt16()
         payload.skip(6)
