@@ -52,6 +52,7 @@ class ControlType(IntEnum):
 
 
 class StateType(IntEnum):
+    UNKNOWN                                = 0
     PWM_PERIOD                             = 5
     IBEACON_MAJOR                          = 6
     IBEACON_MINOR                          = 7
