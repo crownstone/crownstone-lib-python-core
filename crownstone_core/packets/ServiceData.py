@@ -37,8 +37,8 @@ class ServiceData:
         self.switchCraftEnabled = False
         self.uniqueIdentifier = 0
    
-        self.validData = False
-        self.dataReadyForUse = False  # decryption is successful if this is true
+        self.validData = False # Data is parsable, data is of correct size.
+        self.dataReadyForUse = False  # Data has been decrypted and parsed again.
 
         self.tapToToggleEnabled = False
         self.behaviourEnabled = True
@@ -47,7 +47,10 @@ class ServiceData:
     
         self.deviceType = DeviceType.UNDEFINED
         self.rssiOfExternalCrownstone = 0
- 
+
+        self.microappUuid = None
+        self.microappData = []
+
         self.encryptedData = []
         self.encryptedDataStartIndex = 0
         
@@ -55,6 +58,7 @@ class ServiceData:
         self.parse(unencrypted)
 
     def parse(self, unencrypted=False):
+        # TODO: let the parse helper functions check the size.
         self.validData = True
         if len(self.data) == 18:
             self.opCode = self.data[0]
@@ -132,6 +136,9 @@ class ServiceData:
         returnDict["timeIsSet"]                 =  self.timeIsSet
 
         returnDict["rssiOfExternalCrownstone"]  = self.rssiOfExternalCrownstone
+
+        returnDict["microappUuid"]              = self.microappUuid
+        returnDict["microappData"]              = list(self.microappData)
     
         return returnDict
     

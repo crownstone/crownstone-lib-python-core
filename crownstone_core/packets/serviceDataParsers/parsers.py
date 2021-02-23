@@ -4,6 +4,7 @@ from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type2 import par
 from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type3 import parseOpCode3_type3
 from crownstone_core.packets.serviceDataParsers.opCode4.opCode4_type0 import parseOpCode4_type0
 from crownstone_core.packets.serviceDataParsers.opCode7.opCode7_type4 import parseOpCode7_type4
+from crownstone_core.packets.serviceDataParsers.opCode7.opCode7_type6 import parseOpCode7_type6
 from crownstone_core.util.Conversion import Conversion
 
 
@@ -52,6 +53,8 @@ def parseOpCode5(serviceData, data):
             serviceData.rssiOfExternalCrownstone = Conversion.uint8_to_int8(data[15])
         elif serviceData.dataType == 4:
             parseOpCode7_type4(serviceData, data)
+        elif serviceData.dataType == 6:
+            parseOpCode7_type6(serviceData, data)
         else:
             parseOpCode3_type0(serviceData, data)
 
