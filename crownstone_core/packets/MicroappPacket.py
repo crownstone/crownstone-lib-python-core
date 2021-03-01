@@ -1,4 +1,4 @@
-from crownstone_core.util.fletcher import fletcher32_uint8Arr
+from crownstone_core.util import CRC
 import math
 
 from crownstone_core.protocol.BluenetTypes import MicroappOpcode
@@ -68,18 +68,12 @@ class MicroappValidatePacket(object):
         self.app_id = command.app_id
         self.opcode = MicroappOpcode.VALIDATE
         self.size = command.size
-        self.checksum = 0xFF
+        self.checksum = 0xFFFF
         self.buffer = command.buffer
 
     def calculateChecksum(self):
-        n = len(self.buffer)
-        buf = bytearray(n)
-        buf[0:n] = self.buffer[0:n]
-        if len(buf) % 2 != 0:
-            print("To check: do we make this even as well? For checksum calc")
-            buf.append(0)
-        self.checksum = fletcher32_uint8Arr(buf)
-        print("LOG: checksum used: ", hex(self.checksum & 0xFFFF))
+        self.checksum = CRC.CRC_16_CCITT.crc(self.buffer)
+        print(f"CRC: used: {hex(self.checksum)}")
 
 # All the packet fields required by the receiving Crownstone. Expects a MicroappEnableCmd as input.
 class MicroappEnablePacket(object):
@@ -141,10 +135,5 @@ class MicroappPacketInternal(object):
         return packet
 
     def calculateChecksum(self):
-        # Needs padding if the default chunk can be odd-sized
-        buf = bytearray(len(self.chunk))
-        buf[0:len(self.chunk)] = self.chunk[0:len(self.chunk)]
-        if len(buf) % 2 != 0:
-            buf.append(0)
-        self.checksum = fletcher32_uint8Arr(buf)
-        print("LOG: checksum used: ", hex(self.checksum & 0xFFFF))
+        self.checksum = CRC.CRC_16_CCITT.crc(self.chunk)
+        print(f"Chunk CRC: {hex(self.checksum)}")
