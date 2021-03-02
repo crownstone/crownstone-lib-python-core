@@ -26,7 +26,7 @@ class ExtendedSwitchBehaviour(SwitchBehaviour):
         if self.endCondition is not None:
             arr += self.endCondition.getPacket()
         else:
-            anypresence = BehaviourPresence()
-            arr += anypresence.getPacket()
+            anyPresence = BehaviourPresence()
+            arr += anyPresence.getPacket()
 
         return arr

@@ -4,6 +4,7 @@ crownstone_lib_python_core.egg-info
 dist
 
 release.sh
+release_core.sh
 
 ###
 # https://github.com/github/gitignore/blob/master/Python.gitignore

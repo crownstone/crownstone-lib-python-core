@@ -1,4 +1,4 @@
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.protocol.BluenetTypes import PowerSamplesType
 from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 
@@ -25,7 +25,7 @@ class PowerSamplesPacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 
 		samplesTypeVal = streamBuf.getUInt8()
 		self.samplesType = PowerSamplesType(samplesTypeVal) # Throws exception of value is not in enum

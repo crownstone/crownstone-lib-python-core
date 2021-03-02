@@ -1,4 +1,4 @@
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 
 class RamStatsPacket:
 	def __init__(self, data):
@@ -16,7 +16,7 @@ class RamStatsPacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 		self.minStackEnd = streamBuf.getUInt32()
 		self.maxHeapEnd = streamBuf.getUInt32()
 		self.minFree = streamBuf.getUInt32()

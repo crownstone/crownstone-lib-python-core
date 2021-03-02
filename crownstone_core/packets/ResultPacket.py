@@ -1,5 +1,5 @@
 from crownstone_core.protocol.BluenetTypes import ResultValue, ControlType
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 
 
 class ResultPacket:
@@ -20,7 +20,7 @@ class ResultPacket:
         minSize = 7
 
         if len(data) >= minSize:
-            payload = DataStepper(data)
+            payload = BufferReader(data)
 
             self.protocol = payload.getUInt8()
             self.commandTypeUInt16 = payload.getUInt16()

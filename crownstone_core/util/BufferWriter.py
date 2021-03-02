@@ -1,7 +1,6 @@
-from crownstone_core.Exceptions import CrownstoneError
 from crownstone_core.util.Conversion import Conversion
 
-class BufferFiller :
+class BufferWriter :
     """
     Class to fill a data buffer.
 

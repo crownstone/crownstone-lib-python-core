@@ -5,9 +5,6 @@ import os
 __location__ = sys.path[0]
 
 class JsonFileStore:
-    
-    
-    
     def __init__(self, filename):
         self.memoryStore = {}
         self.filename = filename

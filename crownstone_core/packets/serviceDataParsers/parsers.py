@@ -1,74 +1,44 @@
-from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type0 import parseOpCode3_type0
-from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type1 import parseOpCode3_type1
-from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type2 import parseOpCode3_type2
-from crownstone_core.packets.serviceDataParsers.opCode3.opCode3_type3 import parseOpCode3_type3
-from crownstone_core.packets.serviceDataParsers.opCode4.opCode4_type0 import parseOpCode4_type0
-from crownstone_core.packets.serviceDataParsers.opCode7.opCode7_type4 import parseOpCode7_type4
-from crownstone_core.packets.serviceDataParsers.opCode7.opCode7_type6 import parseOpCode7_type6
-from crownstone_core.util.Conversion import Conversion
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode6_type0_setupState        import parseSetupState
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode7_type4_alternative_state import parseAlternativeState
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode7_type6_microapp          import parseMicroappServiceData
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode7_type0_state_packet      import parseStatePacket, parseExternalStatePacket
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode7_type1_error_packet      import parseErrorPacket, parseExternalErrorPacket
+from crownstone_core.packets.serviceDataParsers.serviceDataParsers.opCode7_type5_hubData           import parseHubData
+from crownstone_core.util.BufferReader import BufferReader
+from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
 
 
-def parseOpCode3(serviceData, data):
-    if len(data) == 16:
-        serviceData.dataType = data[0]
-        if serviceData.dataType == 0:
-            parseOpCode3_type0(serviceData, data)
-        elif serviceData.dataType == 1:
-            parseOpCode3_type1(serviceData, data)
-        elif serviceData.dataType == 2:
-            parseOpCode3_type2(serviceData, data)
-        elif serviceData.dataType == 3:
-            parseOpCode3_type3(serviceData, data)
-        else:
-            parseOpCode3_type0(serviceData, data)
-
-
-
-
-
-
-def parseOpCode4(serviceData, data):
-    if len(data) == 16:
-        serviceData.dataType = data[0]
-        serviceData.setupMode = True
-        if serviceData.dataType == 0:
-            parseOpCode4_type0(serviceData, data)
-        else:
-            parseOpCode4_type0(serviceData, data)
-
-
-def parseOpCode5(serviceData, data):
-    if len(data) == 16:
-        serviceData.dataType = data[0]
-
-        if serviceData.dataType == 0:
-            parseOpCode3_type0(serviceData, data)
-        elif serviceData.dataType == 1:
-            parseOpCode3_type1(serviceData, data)
-        elif serviceData.dataType == 2:
-            parseOpCode3_type2(serviceData, data)
-            serviceData.rssiOfExternalCrownstone = Conversion.uint8_to_int8(data[15])
-        elif serviceData.dataType == 3:
-            parseOpCode3_type3(serviceData, data)
-            serviceData.rssiOfExternalCrownstone = Conversion.uint8_to_int8(data[15])
-        elif serviceData.dataType == 4:
-            parseOpCode7_type4(serviceData, data)
-        elif serviceData.dataType == 6:
-            parseOpCode7_type6(serviceData, data)
-        else:
-            parseOpCode3_type0(serviceData, data)
-
-
-def parseOpCode6(serviceData, data):
-    if len(data) == 16:
-        serviceData.dataType = data[0]
+def parseOpCode6(data):
+    reader = BufferReader(data)
+    dataType = reader.getUInt8()
     
-        serviceData.setupMode = True
-        
-        if serviceData.dataType == 0:
-            parseOpCode4_type0(serviceData, data)
-        else:
-            parseOpCode4_type0(serviceData, data)
+    if dataType == 0:
+        return parseSetupState(reader)
+    elif dataType == 5:
+        return parseHubData(reader)
+    else:
+        raise CrownstoneException(CrownstoneError.UNKNOWN_SERVICE_DATA, "Could not parse this dataType")
         
 
+
+def parseOpcode7(data):
+    reader = BufferReader(data)
+    dataType = reader.getUInt8()
+
+    if dataType == 0:
+        return parseStatePacket(reader)
+    elif dataType == 1:
+        return parseErrorPacket(reader)
+    elif dataType == 2:
+        return parseExternalStatePacket(reader)
+    elif dataType == 3:
+        return parseExternalErrorPacket(reader)
+    elif dataType == 4:
+        return parseAlternativeState(reader)
+    elif dataType == 5:
+        return parseHubData(reader)
+    elif dataType == 6:
+        return parseMicroappServiceData(reader)
+    else:
+        raise CrownstoneException(CrownstoneError.UNKNOWN_SERVICE_DATA, "Could not parse this dataType")
 

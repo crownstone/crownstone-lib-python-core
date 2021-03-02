@@ -1,4 +1,4 @@
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.protocol.BluenetTypes import CommandSourceType, CommandSourceId
 from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 
@@ -17,7 +17,7 @@ class CommandSourcePacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 		byte1 = streamBuf.getUInt8()
 		sourceTypeval = (byte1 >> 5) & 7
 		self.sourceType = CommandSourceType(sourceTypeval) # Throws exception of value is not in enum

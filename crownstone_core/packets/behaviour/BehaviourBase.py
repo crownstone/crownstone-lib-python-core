@@ -4,7 +4,7 @@ from crownstone_core.packets.behaviour.ActiveDays import ActiveDays
 from crownstone_core.packets.behaviour.BehaviourTypes import BehaviourType, DAY_START_TIME_SECONDS_SINCE_MIDNIGHT
 from crownstone_core.packets.behaviour.PresenceDescription import BehaviourPresence
 from crownstone_core.packets.behaviour.TimeDescription import BehaviourTimeContainer, BehaviourTime, BehaviourTimeType
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.fletcher import fletcher32_uint8Arr
 
 
@@ -96,7 +96,7 @@ class BehaviourBase:
      """
 
     def fromData(self, data):
-        payload = DataStepper(data)
+        payload = BufferReader(data)
 
         firstByte = payload.getUInt8()
         if not BehaviourType.has_value(firstByte):
@@ -138,6 +138,7 @@ class BehaviourBase:
                 self.valid = False
                 return self
 
+
     def getPacket(self):
         arr = []
 
@@ -151,6 +152,7 @@ class BehaviourBase:
         arr += self.untilTime.getPacket()
 
         return arr
+
 
     def getHash(self):
         return fletcher32_uint8Arr(self._getPaddedPacket())

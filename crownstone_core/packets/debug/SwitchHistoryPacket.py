@@ -1,5 +1,5 @@
 from crownstone_core.protocol.SwitchState import SwitchState
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.packets.debug.CommandSourcePacket import CommandSourcePacket
 
 class SwitchHistoryListPacket:
@@ -15,7 +15,7 @@ class SwitchHistoryListPacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 		count = streamBuf.getUInt8()
 		self.list = []
 		for i in range(0, count):
@@ -51,7 +51,7 @@ class SwitchHistoryItemPacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 		self.timestamp = streamBuf.getUInt32()
 		self.switchCommand = streamBuf.getUInt8()
 		self.switchState = SwitchState(streamBuf.getUInt8())

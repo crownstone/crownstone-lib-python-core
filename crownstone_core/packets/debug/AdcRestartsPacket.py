@@ -1,4 +1,4 @@
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.protocol.BluenetTypes import PowerSamplesType
 from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 
@@ -16,7 +16,7 @@ class AdcRestartsPacket:
 
 		Raises exception when parsing fails.
 		"""
-		streamBuf = DataStepper(data)
+		streamBuf = BufferReader(data)
 		self.count = streamBuf.getUInt32()
 		self.timestamp = streamBuf.getUInt32()
 

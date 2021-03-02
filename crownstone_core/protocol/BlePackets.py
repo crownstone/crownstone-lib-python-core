@@ -1,4 +1,4 @@
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 
 from crownstone_core.protocol.BluenetTypes import ControlType, SetPersistenceMode, GetPersistenceMode, StateType
 from crownstone_core.util.Conversion import Conversion
@@ -94,7 +94,7 @@ class ControlStateGetPacket(ControlPacket):
         arr.append(0)
         return arr
 
-class ControlStateGetResultPacket():
+class ControlStateGetResultPacket:
     def __init__(self, data):
         self.stateType = StateType.UNKNOWN
         self.id = 0
@@ -103,12 +103,12 @@ class ControlStateGetResultPacket():
         self.load(data)
 
     def load(self, data):
-        stepper = DataStepper(data)
-        self.stateType = stepper.getUInt16()
-        self.id = stepper.getUInt16()
-        self.persistenceMode = stepper.getUInt8()
-        reserved = stepper.getUInt8()
-        self.payload = stepper.getRemainingBytes()
+        reader = BufferReader(data)
+        self.stateType = reader.getUInt16()
+        self.id = reader.getUInt16()
+        self.persistenceMode = reader.getUInt8()
+        reserved = reader.getUInt8()
+        self.payload = reader.getRemainingBytes()
 
 
 

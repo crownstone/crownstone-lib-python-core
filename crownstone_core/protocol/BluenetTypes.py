@@ -157,6 +157,8 @@ class DeviceType(IntEnum):
     BUILTIN                    = 3
     CROWNSTONE_USB             = 4
     BUILTIN_ONE                = 5
+    PLUG_ONE                   = 6
+    HUB                        = 7
 
     @classmethod
     def has_value(cls, value):

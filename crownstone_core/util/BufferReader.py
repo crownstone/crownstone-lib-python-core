@@ -1,8 +1,7 @@
 from crownstone_core.Exceptions import CrownstoneError
 from crownstone_core.util.Conversion import Conversion
 
-# TODO: rename to DataParser or so?
-class DataStepper :
+class BufferReader :
     """
     Class to parse a data buffer.
 
@@ -10,7 +9,7 @@ class DataStepper :
 
     Function calls will raise an exception on error.
     """
-    def __init__(self, data):
+    def __init__(self, data: list[int]):
         """
         Constructor
 
@@ -58,15 +57,15 @@ class DataStepper :
     def skip(self, count=1):
         """ Advance the position by N bytes. """
         self._request(count)
+        return self
 
-    # TODO: rename to getRawBytes() or so, now it looks as if you're getting the buffer size.
-    def getAmountOfBytes(self, amount):
+    def getBytes(self, amount: int) -> list[int]:
         """ Get N bytes of data. """
         return self._request(amount)
 
     def getRemainingBytes(self):
         """ Get remaining bytes of data. """
-        return self._request(self.remaining())
+        return self._request(self.getRemainingByteCount())
 
     def mark(self):
         """ Mark the current position, so you can return to it later with reset(). """
@@ -76,9 +75,16 @@ class DataStepper :
         """ Reset the position to the last marked position. """
         self.position = self.markPosition
 
-    def remaining(self):
+    def getRemainingByteCount(self) -> int:
         """ Return the number of bytes remaining in the buffer. """
         return self.length - self.position
+
+    def stepBack(self, count=1):
+        """ Step back count steps """
+        self.position -= count
+        if self.position < 0:
+            self.position = 0
+        return self
 
     def _request(self, size):
         if self.position + size <= self.length:

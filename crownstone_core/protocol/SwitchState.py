@@ -14,7 +14,7 @@ class SwitchState:
 		self.relay = (rawSwitchState & 0x80 == 1)
 
 		self.dimmer = (rawSwitchState & 0x7F)
-		if (self.dimmer > 100):
+		if self.dimmer > 100:
 			self.dimmer = 100
 
 		self.intensity = rawSwitchState

@@ -1,7 +1,7 @@
 from enum import IntEnum
 
 from crownstone_core.util.Conversion import Conversion
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 
 DEFAULT_PRESENCE_DELAY = 300 # seconds = 5 minutes
 
@@ -41,7 +41,7 @@ class BehaviourPresence:
             self.valid = False
             return self
 
-        payload = DataStepper(data)
+        payload = BufferReader(data)
         firstByte = payload.getUInt8()
         if not BehaviourPresenceType.has_value(firstByte):
             self.valid = False

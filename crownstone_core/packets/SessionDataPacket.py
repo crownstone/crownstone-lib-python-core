@@ -1,5 +1,5 @@
 from crownstone_core.protocol.BluenetTypes import ControlType
-from crownstone_core.util.DataStepper import DataStepper
+from crownstone_core.util.BufferReader import BufferReader
 
 
 class SessionDataPacket:
@@ -17,7 +17,7 @@ class SessionDataPacket:
 
     def load(self, data):
         if len(data) == 16:
-            payload = DataStepper(data)
+            payload = BufferReader(data)
 
             self.validation = payload.getUInt32()
             self.protocol = payload.getUInt8()
