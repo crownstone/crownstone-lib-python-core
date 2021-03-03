@@ -1,7 +1,15 @@
+from enum import Enum
+
 from crownstone_core.packets.ServiceData import ServiceData
 from crownstone_core.protocol.Services import DFU_ADVERTISEMENT_SERVICE_UUID
 from crownstone_core.util.Conversion import Conversion
 
+
+class CrownstoneOperationMode(Enum):
+    NORMAL = 0
+    SETUP  = 1
+    DFU    = 2
+    UNKNOWN = 255
 
 class Advertisement:
     
@@ -12,7 +20,7 @@ class Advertisement:
 
         self.serviceUUID = serviceUUID
         self.serviceData = None
-        self.operationMode = None
+        self.operationMode = CrownstoneOperationMode.UNKNOWN
 
         dataString = serviceData
         
@@ -28,17 +36,12 @@ class Advertisement:
 
             if dataArray:
                 self.serviceData = ServiceData(dataArray)
-    
-            self.operationMode = "NORMAL"
 
-    
-    def isInDFUMode(self):
-        return False
-    
-    def isInSetupMode(self):
-        if self.serviceData is not None:
-            return self.serviceData.setupMode
-        return False
+            if self.serviceUUID == DFU_ADVERTISEMENT_SERVICE_UUID:
+                self.operationMode = CrownstoneOperationMode.DFU
+            else:
+                self.operationMode = self.serviceData.getOperationMode()
+
     
     def isCrownstoneFamily(self):
         return self.serviceUUID == 0xC001 or self.serviceUUID == 0xC002 or self.serviceUUID == 0xC003 or self.serviceUUID == DFU_ADVERTISEMENT_SERVICE_UUID
@@ -54,25 +57,25 @@ class Advertisement:
         if self.serviceData:
             self.serviceData.decrypt(key)
             
-    def getDictionary(self):
-        data = {}
-    
-        data["name"] = self.name
-        data["rssi"] = self.rssi
-        data["address"] = self.address
-        
-        if self.serviceUUID is not None:
-            data["serviceUUID"] = self.serviceUUID
-            
-        if self.serviceData is not None:
-            data["serviceData"] = self.serviceData.getDictionary()
-    
-        return data
-    
-    def getSummary(self):
-        data = {}
-        if self.serviceData is not None:
-            data = self.serviceData.getSummary(self.address)
-        return data
+    # def getDictionary(self):
+    #     data = {}
+    #
+    #     data["name"] = self.name
+    #     data["rssi"] = self.rssi
+    #     data["address"] = self.address
+    #
+    #     if self.serviceUUID is not None:
+    #         data["serviceUUID"] = self.serviceUUID
+    #
+    #     if self.serviceData is not None:
+    #         data["serviceData"] = self.serviceData.getDictionary()
+    #
+    #     return data
+    #
+    # def getSummary(self):
+    #     data = {}
+    #     if self.serviceData is not None:
+    #         data = self.serviceData.getSummary(self.address)
+    #     return data
 
     
