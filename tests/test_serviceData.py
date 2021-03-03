@@ -14,6 +14,5 @@ def test_AdvClasses():
     payload = [2,70,0,179,39,127,231,255,6,153,1,0,217,153,0,250]
     assert(len(payload) == 16)
     result = parseOpcode7(payload)
-    print(result.timestamp)
-    assert(False)
+    assert(result.timestamp == 1614780889)
 
