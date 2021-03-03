@@ -1,15 +1,9 @@
-from enum import Enum
+from crownstone_core.Enums import CrownstoneOperationMode
 
 from crownstone_core.packets.ServiceData import ServiceData
 from crownstone_core.protocol.Services import DFU_ADVERTISEMENT_SERVICE_UUID
 from crownstone_core.util.Conversion import Conversion
 
-
-class CrownstoneOperationMode(Enum):
-    NORMAL = 0
-    SETUP  = 1
-    DFU    = 2
-    UNKNOWN = 255
 
 class Advertisement:
     

@@ -5,7 +5,7 @@ from crownstone_core.protocol.SwitchState   import SwitchState
 from crownstone_core.util.BufferReader       import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneState import AdvCrownstoneState
 from crownstone_core.packets.serviceDataParsers.containers.AdvFlags import AdvFlags
-from crownstone_core.packets.serviceDataParsers.containers.AdvExternalCrownstoneState import AdvMeshCrownstoneState
+from crownstone_core.packets.serviceDataParsers.containers.AdvExternalCrownstoneState import AdvExternalCrownstoneState
 
 
 def parseStatePacket(reader: BufferReader):
@@ -14,7 +14,7 @@ def parseStatePacket(reader: BufferReader):
     return packet
 
 def parseExternalStatePacket(reader: BufferReader):
-    packet = AdvMeshCrownstoneState()
+    packet = AdvExternalCrownstoneState()
     _parseStatePacket(packet, reader)
     # position 13 on the state packet is the global flags, it is used in the external state for rssi
     packet.rssiOfExternalCrownstone = reader.stepBack(2).getInt8()

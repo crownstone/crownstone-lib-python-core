@@ -2,7 +2,7 @@ import time
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.Timestamp import reconstructTimestamp
 from crownstone_core.packets.serviceDataParsers.containers.AdvMicroappData import AdvMicroappData
-from packets.serviceDataParsers.containers.AdvMicroappFlags import AdvMicroappFlags
+from crownstone_core.packets.serviceDataParsers.containers.AdvMicroappFlags import AdvMicroappFlags
 
 
 def parseMicroappServiceData(reader: BufferReader):

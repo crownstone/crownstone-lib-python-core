@@ -9,7 +9,7 @@ class BufferReader :
 
     Function calls will raise an exception on error.
     """
-    def __init__(self, data: list[int]):
+    def __init__(self, data: list):
         """
         Constructor
 
@@ -59,7 +59,7 @@ class BufferReader :
         self._request(count)
         return self
 
-    def getBytes(self, amount: int) -> list[int]:
+    def getBytes(self, amount: int) -> list:
         """ Get N bytes of data. """
         return self._request(amount)
 

@@ -13,7 +13,7 @@ class MicroappUploadCmd(object):
         self.size = len(buf)
         self.chunk_size = chunk_size
 
-# Object to be filld by the user.
+# Object to be filled by the user.
 class MicroappRequestCmd(object):
     def __init__(self, protocol, app_id, buf, chunk_size):
         self.protocol = protocol
@@ -22,7 +22,7 @@ class MicroappRequestCmd(object):
         self.count = math.ceil(self.size / chunk_size)
         self.chunk_size = chunk_size
 
-# Object to be filld by the user. We need the entire buffer to calculate a checksum
+# Object to be filled by the user. We need the entire buffer to calculate a checksum
 class MicroappValidateCmd(object):
     def __init__(self, protocol, app_id, buf, chunk_size):
         self.protocol = protocol
@@ -38,8 +38,6 @@ class MicroappEnableCmd(object):
         self.app_id = app_id
         self.enable = enable
         self.param0 = offset
-
-
 
 # All the packet fields required by the receiving Crownstone. 
 class MicroappUploadPacket(object):

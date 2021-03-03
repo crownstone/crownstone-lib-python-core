@@ -1,11 +1,11 @@
+from crownstone_core.Enums import CrownstoneOperationMode
+
 from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
 
 from crownstone_core.util.BufferReader import BufferReader
-
 from crownstone_core.packets.serviceDataParsers.parsers import parseOpCode6, parseOpcode7
 from crownstone_core.protocol.BluenetTypes import DeviceType
 from crownstone_core.util.EncryptionHandler import EncryptionHandler
-from crownstone_core.packets.Advertisement import CrownstoneOperationMode
 
 
 class ServiceData:
@@ -31,10 +31,10 @@ class ServiceData:
 
         if self.opCode == 7:
             self.encryptedData = reader.getRemainingBytes()
-            self.payload = parseOpcode7(self, reader.getRemainingBytes())
+            self.payload = parseOpcode7(reader.getRemainingBytes())
             self.operationMode = CrownstoneOperationMode.NORMAL
         elif self.opCode == 6:
-            self.payload = parseOpCode6(self, reader.getRemainingBytes())
+            self.payload = parseOpCode6(reader.getRemainingBytes())
             self.operationMode = CrownstoneOperationMode.SETUP
         else:
             raise CrownstoneException(CrownstoneError.INVALID_SERVICE_DATA, "Protocol not supported.")
