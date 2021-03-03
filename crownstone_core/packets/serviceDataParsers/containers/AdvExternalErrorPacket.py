@@ -1,6 +1,10 @@
+from crownstone_core.packets.serviceDataParsers.containers.AdvTypes import AdvType
+
 
 class AdvExternalErrorPacket:
     def __init__(self):
+        self.type = AdvType.EXTERNAL_ERROR
+
         self.crownstoneId              = None
         self.errorsBitmask             = None
         self.errorTimestamp            = None

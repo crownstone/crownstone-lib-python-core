@@ -1,12 +1,12 @@
 import time
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.Timestamp import reconstructTimestamp
-from crownstone_core.packets.serviceDataParsers.containers.AdvMicroappData import AdvMicroappData
 from crownstone_core.packets.serviceDataParsers.containers.AdvHubFlags import AdvHubFlags
+from crownstone_core.packets.serviceDataParsers.containers.AdvHubState import AdvHubState
 
 
 def parseHubData(reader: BufferReader):
-    packet = AdvMicroappData()
+    packet = AdvHubState()
 
     packet.crownstoneId = reader.getUInt8()
     packet.flags        = AdvHubFlags(reader.getUInt8())

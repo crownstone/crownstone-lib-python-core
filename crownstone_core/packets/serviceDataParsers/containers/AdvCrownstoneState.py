@@ -1,6 +1,10 @@
+from crownstone_core.packets.serviceDataParsers.containers.AdvTypes import AdvType
+
 
 class AdvCrownstoneState:
     def __init__(self):
+        self.type = AdvType.CROWNSTONE_STATE
+
         self.crownstoneId              = None
         self.switchState               = None
         self.flags                     = None
