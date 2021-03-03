@@ -31,7 +31,7 @@ class ServiceData:
 
         if self.opCode == 7:
             self.encryptedData = reader.getRemainingBytes()
-            self.payload = parseOpcode7(self.encryptedData)
+            self.payload       = parseOpcode7(self.encryptedData)
             self.operationMode = CrownstoneOperationMode.NORMAL
         elif self.opCode == 6:
             self.payload = parseOpCode6(reader.getRemainingBytes())
@@ -51,7 +51,7 @@ class ServiceData:
                     # the first 2 bytes are opcode and device type
                     self.data[i + 2] = result[i]
 
-                self.parse()
+                self.parse(self.data)
                 self.decrypted = True
         else:
             raise CrownstoneException(CrownstoneError.COULD_NOT_DECRYPT)

@@ -15,7 +15,6 @@ def parseHubData(reader: BufferReader):
     reader.skip()
     packet.validation   = reader.getUInt8()
 
-    packet.flags.timeIsSet
     packet.uniqueIdentifier = partialTimestamp
     if packet.flags.timeIsSet:
         packet.timestamp = reconstructTimestamp(time.time(), partialTimestamp)

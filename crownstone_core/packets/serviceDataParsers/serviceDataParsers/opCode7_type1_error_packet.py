@@ -31,7 +31,7 @@ def _parseErrorPacket(packet, reader: BufferReader):
     packet.flags            = AdvFlags(reader.getUInt8())
     packet.temperature      = reader.getInt8()
     partialTimestamp        = reader.getUInt16()
-    packet.uniqueIdentifier = packet.partialTimestamp
+    packet.uniqueIdentifier = partialTimestamp
 
     if packet.flags.timeIsSet:
         packet.timestamp = reconstructTimestamp(time.time(), partialTimestamp)

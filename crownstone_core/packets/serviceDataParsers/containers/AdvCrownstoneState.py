@@ -23,7 +23,7 @@ class AdvCrownstoneState:
            f"crownstoneId:         {self.crownstoneId      }\n" \
            f"switchState:          {self.switchState       }\n" \
            f"flags:                {self.flags             }\n" \
-           f"behaviourEnabled:     {self.behaviourEnabled  }\n" \
+           f"globalFlags:          {self.globalFlags       }\n" \
            f"temperature:          {self.temperature       }\n" \
            f"powerFactor:          {self.powerFactor       }\n" \
            f"powerUsageReal:       {self.powerUsageReal    }\n" \
