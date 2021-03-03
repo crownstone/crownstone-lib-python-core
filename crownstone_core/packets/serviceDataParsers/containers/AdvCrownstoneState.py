@@ -8,6 +8,7 @@ class AdvCrownstoneState:
         self.crownstoneId              = None
         self.switchState               = None
         self.flags                     = None
+        self.globalFlags               = None
         self.temperature               = None
         self.powerFactor               = None
         self.powerUsageReal            = None
@@ -15,5 +16,19 @@ class AdvCrownstoneState:
         self.accumulatedEnergy         = None
         self.timestamp                 = None
         self.uniqueIdentifier          = None
-        self.behaviourEnabled          = None
         self.validation                = None
+
+    def __str__(self):
+        return f"{self.type}\n"\
+           f"crownstoneId:         {self.crownstoneId      }\n" \
+           f"switchState:          {self.switchState       }\n" \
+           f"flags:                {self.flags             }\n" \
+           f"behaviourEnabled:     {self.behaviourEnabled  }\n" \
+           f"temperature:          {self.temperature       }\n" \
+           f"powerFactor:          {self.powerFactor       }\n" \
+           f"powerUsageReal:       {self.powerUsageReal    }\n" \
+           f"powerUsageApparent:   {self.powerUsageApparent}\n" \
+           f"accumulatedEnergy:    {self.accumulatedEnergy }\n" \
+           f"timestamp:            {self.timestamp         }\n" \
+           f"uniqueIdentifier:     {self.uniqueIdentifier  }\n" \
+           f"validation:           {self.validation        }\n"

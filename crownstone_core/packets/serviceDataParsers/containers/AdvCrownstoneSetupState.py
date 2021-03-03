@@ -13,3 +13,14 @@ class AdvCrownstoneSetupState:
         self.powerUsageApparent        = None
         self.errorBitmask              = None
         self.uniqueIdentifier          = None
+
+    def __str__(self):
+        return f"{self.type}\n"\
+           f"switchState:        {self.switchState       }\n" \
+           f"flags:              \n{self.flags             }\n" \
+           f"temperature:        {self.temperature       }\n" \
+           f"powerFactor:        {self.powerFactor       }\n" \
+           f"powerUsageReal:     {self.powerUsageReal    }\n" \
+           f"powerUsageApparent: {self.powerUsageApparent}\n" \
+           f"errorBitmask:       {self.errorBitmask      }\n" \
+           f"uniqueIdentifier:   {self.uniqueIdentifier  }\n"

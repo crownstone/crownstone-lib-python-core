@@ -1,15 +1,15 @@
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.packets.serviceDataParsers.containers.AdvTypes import AdvType
 
-class AdvMicroappFlags:
+class AdvGlobalFlags:
 
     def __init__(self, byte):
         self.type = AdvType.MICROAPP_FLAGS
 
         bitmaskArray = Conversion.uint8_to_bit_array(byte)
 
-        self.timeIsSet = bitmaskArray[0]
+        self.behaviourEnabled = bitmaskArray[0]
 
     def __str__(self):
         return \
-           f"    timeIsSet: {self.timeIsSet}"
+           f"    behaviourEnabled: {self.behaviourEnabled}"

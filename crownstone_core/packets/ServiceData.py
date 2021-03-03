@@ -31,7 +31,7 @@ class ServiceData:
 
         if self.opCode == 7:
             self.encryptedData = reader.getRemainingBytes()
-            self.payload = parseOpcode7(reader.getRemainingBytes())
+            self.payload = parseOpcode7(self.encryptedData)
             self.operationMode = CrownstoneOperationMode.NORMAL
         elif self.opCode == 6:
             self.payload = parseOpCode6(reader.getRemainingBytes())

@@ -17,3 +17,14 @@ class AdvFlags:
         self.switchCraftEnabled  = bitmaskArray[5]
         self.tapToToggleEnabled  = bitmaskArray[6]
         self.behaviourOverridden = bitmaskArray[7]
+
+    def __str__(self):
+        return \
+           f"    dimmerReady:         {self.dimmerReady        }\n" \
+           f"    dimmingAllowed:      {self.dimmingAllowed     }\n" \
+           f"    hasError:            {self.hasError           }\n" \
+           f"    switchLocked:        {self.switchLocked       }\n" \
+           f"    timeIsSet:           {self.timeIsSet          }\n" \
+           f"    switchCraftEnabled:  {self.switchCraftEnabled }\n" \
+           f"    tapToToggleEnabled:  {self.tapToToggleEnabled }\n" \
+           f"    behaviourOverridden: {self.behaviourOverridden}"

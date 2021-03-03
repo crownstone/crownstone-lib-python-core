@@ -13,3 +13,14 @@ class AdvErrorPacket:
         self.timestamp                 = None
         self.uniqueIdentifier          = None
         self.powerUsageReal            = None
+
+    def __str__(self):
+        return f"{self.type}\n"\
+           f"crownstoneId:      {self.crownstoneId    }\n" \
+           f"errorsBitmask:     {self.errorsBitmask   }\n" \
+           f"errorTimestamp:    {self.errorTimestamp  }\n" \
+           f"flags:             \n{self.flags           }\n" \
+           f"temperature:       {self.temperature     }\n" \
+           f"timestamp:         {self.timestamp       }\n" \
+           f"uniqueIdentifier:  {self.uniqueIdentifier}\n" \
+           f"powerUsageReal:    {self.powerUsageReal  }\n"

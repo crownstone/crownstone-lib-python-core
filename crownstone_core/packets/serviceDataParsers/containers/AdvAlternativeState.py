@@ -12,3 +12,13 @@ class AdvAlternativeState:
         self.timestamp           = None
         self.uniqueIdentifier    = None
         self.validation          = None
+
+    def __str__(self):
+        return f"{self.type}\n"\
+           f"crownstoneId         {self.crownstoneId       }\n" \
+           f"switchState          {self.switchState        }\n" \
+           f"flags                \n{self.flags              }\n" \
+           f"behaviourMasterHash  {self.behaviourMasterHash}\n" \
+           f"timestamp            {self.timestamp          }\n" \
+           f"uniqueIdentifier     {self.uniqueIdentifier   }\n" \
+           f"validation           {self.validation         }\n"

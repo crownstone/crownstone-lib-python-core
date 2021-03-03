@@ -17,3 +17,12 @@ class AdvCrownstoneErrors:
         self.temperatureDimmer  = bitArray[31 - 3]
         self.dimmerOnFailure    = bitArray[31 - 4]
         self.dimmerOffFailure   = bitArray[31 - 5]
+
+    def __str__(self):
+        return \
+               f"    overCurrent:       {self.overCurrent       }\n"\
+               f"    overCurrentDimmer: {self.overCurrentDimmer }\n"\
+               f"    temperatureChip:   {self.temperatureChip   }\n"\
+               f"    temperatureDimmer: {self.temperatureDimmer }\n"\
+               f"    dimmerOnFailure:   {self.dimmerOnFailure   }\n"\
+               f"    dimmerOffFailure:  {self.dimmerOffFailure  }\n"
