@@ -2,7 +2,7 @@ from crownstone_core.util.Conversion import Conversion
 from crownstone_core.packets.serviceDataParsers.containers import AdvTypes
 
 
-class AdvCrownstoneErrors:
+class AdvCrownstoneErrorBitmask:
     
     def __init__(self, bitMask):
         self.type = AdvTypes.CROWNSTONE_ERRORS

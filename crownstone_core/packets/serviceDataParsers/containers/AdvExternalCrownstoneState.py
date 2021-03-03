@@ -23,7 +23,7 @@ class AdvExternalCrownstoneState:
         return f"{self.type}\n"\
            f"crownstoneId:             {self.crownstoneId            }\n" \
            f"switchState:              {self.switchState             }\n" \
-           f"flags:                    \n{self.flags                   }\n" \
+           f"flags:                  \n{self.flags                   }\n" \
            f"temperature:              {self.temperature             }\n" \
            f"powerFactor:              {self.powerFactor             }\n" \
            f"powerUsageReal:           {self.powerUsageReal          }\n" \

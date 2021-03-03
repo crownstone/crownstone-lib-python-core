@@ -1,6 +1,6 @@
 import time
 
-from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneErrors import AdvCrownstoneErrors
+from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneErrorBitmask import AdvCrownstoneErrorBitmask
 from crownstone_core.util.Timestamp           import reconstructTimestamp
 from crownstone_core.util.BufferReader        import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvErrorPacket import AdvErrorPacket
@@ -26,7 +26,7 @@ def parseExternalErrorPacket(reader: BufferReader):
 
 def _parseErrorPacket(packet, reader: BufferReader):
     packet.crownstoneId     = reader.getUInt8()
-    packet.errorsBitmask    = AdvCrownstoneErrors(reader.getUInt32())
+    packet.errorsBitmask    = AdvCrownstoneErrorBitmask(reader.getUInt32())
     packet.errorTimestamp   = reader.getUInt32()
     packet.flags            = AdvFlags(reader.getUInt8())
     packet.temperature      = reader.getInt8()
