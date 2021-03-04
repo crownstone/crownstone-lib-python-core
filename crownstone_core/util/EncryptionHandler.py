@@ -16,8 +16,6 @@ PACKET_NONCE_LENGTH      = 3
 CHECKSUM                 = 0xcafebabe
 
 
-
-
 class EncryptedPackage:
     
     def __init__(self, dataArray):
