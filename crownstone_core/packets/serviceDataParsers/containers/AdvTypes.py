@@ -12,6 +12,8 @@ class AdvType(Enum):
 
     SETUP_STATE        = 100
 
+    UNKNOWN_DATA       = 200
+
     CROWNSTONE_FLAGS   = 300
     HUB_FLAGS          = 301
     MICROAPP_FLAGS     = 302

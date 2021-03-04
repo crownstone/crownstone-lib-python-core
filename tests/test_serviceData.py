@@ -34,4 +34,3 @@ def test_decryptingServiceData():
     serviceData = ServiceData(data)
     serviceData.parse(key)
     assert serviceData.decrypted
-
