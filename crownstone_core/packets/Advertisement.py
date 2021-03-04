@@ -12,7 +12,11 @@ class Advertisement:
         self.rssi = rssi
         self.name = nameText
 
-        self.serviceUUID = serviceUUID
+        usedUUID = serviceUUID
+        if isinstance(serviceUUID, str):
+            usedUUID = serviceUUID.lower()
+
+        self.serviceUUID = usedUUID
         self.serviceData = None
         self.operationMode = CrownstoneOperationMode.UNKNOWN
 
@@ -36,21 +40,21 @@ class Advertisement:
             else:
                 self.operationMode = self.serviceData.getOperationMode()
 
-    
+
     def isCrownstoneFamily(self):
-        return self.serviceUUID == 0xC001 or self.serviceUUID == 0xC002 or self.serviceUUID == 0xC003 or self.serviceUUID == DFU_ADVERTISEMENT_SERVICE_UUID
+        return self.serviceUUID == 0xC001 or self.serviceUUID == DFU_ADVERTISEMENT_SERVICE_UUID
 
     def hasScanResponse(self):
         return self.serviceData is not None
     
     def getCrownstoneId(self):
         if self.hasScanResponse() and self.isCrownstoneFamily():
-            return self.serviceData.crownstoneId
+            return self.serviceData.payload.crownstoneId
     
-    def decrypt(self, key):
-        if self.serviceData:
-            self.serviceData.decrypt(key)
-            
+    def parse(self, decryptionKey = None):
+        if self.hasScanResponse() and self.isCrownstoneFamily():
+            return self.serviceData.parse(decryptionKey = decryptionKey)
+
     # def getDictionary(self):
     #     data = {}
     #

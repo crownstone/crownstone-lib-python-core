@@ -1,11 +1,11 @@
+from crownstone_core.packets.serviceDataParsers.containers.AdvTypes import AdvType
 from crownstone_core.util.Conversion import Conversion
-from crownstone_core.packets.serviceDataParsers.containers import AdvTypes
 
 
 class AdvCrownstoneErrorBitmask:
     
     def __init__(self, bitMask):
-        self.type = AdvTypes.CROWNSTONE_ERRORS
+        self.type = AdvType.CROWNSTONE_ERRORS
 
         self.bitMask = bitMask
     
