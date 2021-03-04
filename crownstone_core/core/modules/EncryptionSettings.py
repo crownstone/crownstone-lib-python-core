@@ -18,7 +18,6 @@ class EncryptionSettings:
         self.meshApplicationKey = None
         self.meshNetworkKey = None
 
-        self.referenceId = None
         self.sessionNonce = None
         self.crownstoneProtocolVersion = None
         self.validationKey = None
@@ -27,7 +26,7 @@ class EncryptionSettings:
         self.userLevel = UserLevel.unknown
 
 
-    def loadKeys(self, adminKey, memberKey, basicKey, serviceDataKey, localizationKey, meshApplicationKey, meshNetworkKey, referenceId):
+    def loadKeys(self, adminKey, memberKey, basicKey, serviceDataKey, localizationKey, meshApplicationKey, meshNetworkKey):
         self.adminKey  = Conversion.ascii_or_hex_string_to_16_byte_array(adminKey)
         self.memberKey = Conversion.ascii_or_hex_string_to_16_byte_array(memberKey)
         self.basicKey  = Conversion.ascii_or_hex_string_to_16_byte_array(basicKey)
@@ -36,8 +35,6 @@ class EncryptionSettings:
         self.meshApplicationKey = Conversion.ascii_or_hex_string_to_16_byte_array(meshApplicationKey)
         self.meshNetworkKey  = Conversion.ascii_or_hex_string_to_16_byte_array(meshNetworkKey)
 
-        self.referenceId = referenceId
-        
         self.initializedKeys = True
         self.determineUserLevel()
         
