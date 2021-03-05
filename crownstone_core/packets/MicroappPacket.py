@@ -1,4 +1,4 @@
-from crownstone_core.util import CRC
+from crownstone_core.util.CRC import crc16ccitt
 import math
 
 from crownstone_core.protocol.BluenetTypes import MicroappOpcode
@@ -70,7 +70,7 @@ class MicroappValidatePacket(object):
         self.buffer = command.buffer
 
     def calculateChecksum(self):
-        self.checksum = CRC.CRC_16_CCITT.crc(self.buffer)
+        self.checksum = crc16ccitt(self.buffer)
         print(f"CRC: used: {hex(self.checksum)}")
 
 # All the packet fields required by the receiving Crownstone. Expects a MicroappEnableCmd as input.
@@ -99,11 +99,11 @@ class MicroappPacketInternal(object):
 
     def update(self):
         # if next is available, go to next index
-        if (not self.nextAvailable()):
+        if not self.nextAvailable():
             return
         self.index += 1
         offset = self.index * self.data.chunk_size
-        if (not self.last()):
+        if not self.last():
             self.chunk[0 : self.data.chunk_size] = self.data.buffer[offset : offset + self.data.chunk_size]
         else:
             print("LOG: last piece")
@@ -122,7 +122,7 @@ class MicroappPacketInternal(object):
         return True
 
     def nextAvailable(self):
-        if ((self.index + 1) < self.count):
+        if (self.index + 1) < self.count:
             return True
         return False
 
@@ -133,5 +133,5 @@ class MicroappPacketInternal(object):
         return packet
 
     def calculateChecksum(self):
-        self.checksum = CRC.CRC_16_CCITT.crc(self.chunk)
+        self.checksum = crc16ccitt(self.chunk)
         print(f"Chunk CRC: {hex(self.checksum)}")

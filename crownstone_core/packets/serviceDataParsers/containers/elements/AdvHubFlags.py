@@ -1,5 +1,5 @@
 from crownstone_core.util.Conversion import Conversion
-from crownstone_core.packets.serviceDataParsers.containers.AdvTypes import AdvType
+from packets.serviceDataParsers.containers.elements.AdvTypes import AdvType
 
 class AdvHubFlags:
 

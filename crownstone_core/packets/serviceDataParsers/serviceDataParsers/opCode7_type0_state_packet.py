@@ -3,9 +3,9 @@ from crownstone_core.util.Timestamp         import reconstructTimestamp
 from crownstone_core.protocol.SwitchState   import SwitchState
 from crownstone_core.util.BufferReader       import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneState import AdvCrownstoneState
-from crownstone_core.packets.serviceDataParsers.containers.AdvFlags import AdvFlags
+from packets.serviceDataParsers.containers.elements.AdvFlags import AdvFlags
 from crownstone_core.packets.serviceDataParsers.containers.AdvExternalCrownstoneState import AdvExternalCrownstoneState
-from crownstone_core.packets.serviceDataParsers.containers.AdvGlobalFlags import AdvGlobalFlags
+from packets.serviceDataParsers.containers.elements.AdvGlobalFlags import AdvGlobalFlags
 
 
 def parseStatePacket(reader: BufferReader):

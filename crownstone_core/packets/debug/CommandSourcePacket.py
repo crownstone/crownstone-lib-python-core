@@ -1,6 +1,6 @@
-from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.protocol.BluenetTypes import CommandSourceType, CommandSourceId
-from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
+from crownstone_core.util.BufferReader import BufferReader
+
 
 class CommandSourcePacket:
 	def __init__(self, data):

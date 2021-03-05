@@ -69,5 +69,5 @@ class ServiceData:
 
                 self.decrypted = True
         else:
-            raise CrownstoneException(CrownstoneError.COULD_NOT_DECRYPT)
+            raise CrownstoneException(CrownstoneError.COULD_NOT_DECRYPT, "ServiceData decryption failed. Invalid key or invalid data.")
 

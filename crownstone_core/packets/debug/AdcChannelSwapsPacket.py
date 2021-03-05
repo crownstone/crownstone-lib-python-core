@@ -1,6 +1,5 @@
 from crownstone_core.util.BufferReader import BufferReader
-from crownstone_core.protocol.BluenetTypes import PowerSamplesType
-from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
+
 
 class AdcChannelSwapsPacket:
 	def __init__(self, data):

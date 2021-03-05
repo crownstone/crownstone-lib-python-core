@@ -5,7 +5,7 @@ from crownstone_core.packets.behaviour.BehaviourTypes import BehaviourType, DAY_
 from crownstone_core.packets.behaviour.PresenceDescription import BehaviourPresence
 from crownstone_core.packets.behaviour.TimeDescription import BehaviourTimeContainer, BehaviourTime, BehaviourTimeType
 from crownstone_core.util.BufferReader import BufferReader
-from crownstone_core.util.fletcher import fletcher32_uint8Arr
+from crownstone_core.util.Fletcher import fletcher32_uint8Arr
 
 
 def DEFAULT_ACTIVE_DAYS():

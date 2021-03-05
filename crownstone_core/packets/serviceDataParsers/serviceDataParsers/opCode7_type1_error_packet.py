@@ -1,10 +1,10 @@
 import time
 
-from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneErrorBitmask import AdvCrownstoneErrorBitmask
+from packets.serviceDataParsers.containers.elements.AdvCrownstoneErrorBitmask import AdvCrownstoneErrorBitmask
 from crownstone_core.util.Timestamp           import reconstructTimestamp
 from crownstone_core.util.BufferReader        import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvErrorPacket import AdvErrorPacket
-from crownstone_core.packets.serviceDataParsers.containers.AdvFlags import AdvFlags
+from packets.serviceDataParsers.containers.elements.AdvFlags import AdvFlags
 from crownstone_core.packets.serviceDataParsers.containers.AdvExternalErrorPacket import AdvExternalErrorPacket
 
 
