@@ -1,4 +1,5 @@
 import uuid
+from typing import Callable, Any
 
 class EventBus:
 
@@ -6,7 +7,15 @@ class EventBus:
         self.topics = {}
         self.subscriberIds = {}
 
-    def subscribe(self, topic: object, callback: object) -> object:
+
+    def once(self, topic: str, callback: Callable[[Any], None]):
+        def cleanup(bus, subId, data):
+            bus.unsubscribe(subId)
+            callback(data)
+
+        subscriptionId = self.subscribe(topic, lambda data: cleanup(self, subscriptionId, data))
+
+    def subscribe(self, topic: str, callback: Callable[[Any], None]) -> str:
         if topic not in self.topics:
             self.topics[topic] = {}
 
@@ -16,14 +25,14 @@ class EventBus:
 
         return subscriptionId
 
-    def emit(self, topic, data = True):
+    def emit(self, topic: str, data: Any = True):
         if topic in self.topics:
             callbackIds = list(self.topics[topic].keys())
             for subscriptionId in callbackIds:
                 self.topics[topic][subscriptionId](data)
 
 
-    def unsubscribe(self, subscriptionId):
+    def unsubscribe(self, subscriptionId: str):
         if subscriptionId is None:
             return
 

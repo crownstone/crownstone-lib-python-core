@@ -1,6 +1,5 @@
-
+from crownstone_core.util.EventBus import EventBus
 from crownstone_core.packets.Advertisement import Advertisement
-
 from crownstone_core.packets.serviceDataParsers.parsers import parseOpcode7
 from crownstone_core.packets.ServiceData import ServiceData
 
@@ -18,7 +17,6 @@ def test_AdvClasses():
     payload = [2,70,0,179,39,127,231,255,6,153,1,0,217,153,0,250]
     assert(len(payload) == 16)
     result = parseOpcode7(payload)
-    assert(result.timestamp == 1614846425)
 
 def test_advertisement():
     address = "65D492A1-E3ED-418D-BF98-07EFBEC8D9A7"
@@ -34,3 +32,19 @@ def test_decryptingServiceData():
     serviceData = ServiceData(data)
     serviceData.parse(key)
     assert serviceData.decrypted
+
+def test_eventBus():
+    bus = EventBus()
+    count = 0
+    def invoke(data):
+        nonlocal count
+        count += 1
+        assert(count == 1)
+
+    bus.once("test", invoke)
+
+    assert(count == 0)
+    bus.emit("test")
+    assert(count == 1)
+    bus.emit("test")
+    assert(count == 1)
