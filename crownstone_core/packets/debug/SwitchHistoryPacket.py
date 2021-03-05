@@ -19,7 +19,7 @@ class SwitchHistoryListPacket:
 		count = streamBuf.getUInt8()
 		self.list = []
 		for i in range(0, count):
-			self.list.append(SwitchHistoryItemPacket(streamBuf.getAmountOfBytes(SwitchHistoryItemPacket.size())))
+			self.list.append(SwitchHistoryItemPacket(streamBuf.getBytes(SwitchHistoryItemPacket.size())))
 
 	def toString(self):
 		msg = "SwitchHistoryListPacket("
@@ -55,7 +55,7 @@ class SwitchHistoryItemPacket:
 		self.timestamp = streamBuf.getUInt32()
 		self.switchCommand = streamBuf.getUInt8()
 		self.switchState = SwitchState(streamBuf.getUInt8())
-		self.source = CommandSourcePacket(streamBuf.getAmountOfBytes(CommandSourcePacket.size()))
+		self.source = CommandSourcePacket(streamBuf.getBytes(CommandSourcePacket.size()))
 
 	@staticmethod
 	def size():

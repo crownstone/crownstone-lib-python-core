@@ -107,8 +107,8 @@ class BehaviourBase:
         self.intensity = payload.getUInt8()
         self.profileIndex = payload.getUInt8()
         self.activeDays = ActiveDays().fromData(payload.getUInt8())
-        self.fromTime = BehaviourTime().fromData(payload.getAmountOfBytes(5))  # 4 5 6 7 8
-        self.untilTime = BehaviourTime().fromData(payload.getAmountOfBytes(5))  # 9 10 11 12 13
+        self.fromTime = BehaviourTime().fromData(payload.getBytes(5))  # 4 5 6 7 8
+        self.untilTime = BehaviourTime().fromData(payload.getBytes(5))  # 9 10 11 12 13
 
         if self.fromTime.valid == False or self.untilTime.valid == False:
             self.valid = False
@@ -117,7 +117,7 @@ class BehaviourBase:
         if self.behaviourType == BehaviourType.behaviour:
             if payload.length >= 14 + 13:
                 self.presence = BehaviourPresence().fromData(
-                    payload.getAmountOfBytes(13))  # 14 15 16 17 18 19 20 21 22 23 24 25 26
+                    payload.getBytes(13))  # 14 15 16 17 18 19 20 21 22 23 24 25 26
                 if not self.presence.valid:
                     self.valid = False
                     return self
@@ -127,7 +127,7 @@ class BehaviourBase:
 
         if self.behaviourType == BehaviourType.smartTimer:
             if payload.length >= 14 + 13 + 17:
-                presence = BehaviourPresence().fromData(payload.getAmountOfBytes(17))
+                presence = BehaviourPresence().fromData(payload.getBytes(17))
                 if not presence.valid:
                     self.valid = False
                     return self
