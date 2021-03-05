@@ -8,12 +8,14 @@ class EventBus:
         self.subscriberIds = {}
 
 
-    def once(self, topic: str, callback: Callable[[Any], None]):
+    def once(self, topic: str, callback: Callable[[Any], None]) -> str:
         def cleanup(bus, subId, data):
+            if subscriptionId in self.subscriberIds:
+                callback(data)
             bus.unsubscribe(subId)
-            callback(data)
 
         subscriptionId = self.subscribe(topic, lambda data: cleanup(self, subscriptionId, data))
+        return subscriptionId
 
     def subscribe(self, topic: str, callback: Callable[[Any], None]) -> str:
         if topic not in self.topics:
