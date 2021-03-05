@@ -1,7 +1,7 @@
 from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneSetupState import AdvCrownstoneSetupState
-from packets.serviceDataParsers.containers.elements.AdvFlags import AdvFlags
+from crownstone_core.packets.serviceDataParsers.containers.elements.AdvFlags import AdvFlags
 
 
 def parseSetupState(reader: BufferReader):

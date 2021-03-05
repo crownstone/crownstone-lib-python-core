@@ -1,7 +1,7 @@
 import time
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.Timestamp import reconstructTimestamp
-from packets.serviceDataParsers.containers.elements.AdvHubFlags import AdvHubFlags
+from crownstone_core.packets.serviceDataParsers.containers.elements.AdvHubFlags import AdvHubFlags
 from crownstone_core.packets.serviceDataParsers.containers.AdvHubState import AdvHubState
 
 
