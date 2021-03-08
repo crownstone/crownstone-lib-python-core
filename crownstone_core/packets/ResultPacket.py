@@ -17,6 +17,8 @@ class ResultPacket:
     
 
     def load(self, data) :
+        # TODO: remove minSize, and use: self.payload = payload.getRemainingBytes()
+        # TODO: raise error instead of setting self.valid.
         minSize = 7
 
         if len(data) >= minSize:
