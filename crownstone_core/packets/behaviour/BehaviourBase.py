@@ -106,9 +106,9 @@ class BehaviourBase:
         self.behaviourType = BehaviourType(firstByte)
         self.intensity = payload.getUInt8()
         self.profileIndex = payload.getUInt8()
-        self.activeDays = ActiveDays().fromData(payload.getUInt8())
-        self.fromTime = BehaviourTime().fromData(payload.getBytes(5))  # 4 5 6 7 8
-        self.untilTime = BehaviourTime().fromData(payload.getBytes(5))  # 9 10 11 12 13
+        self.activeDays   = ActiveDays().fromData(payload.getUInt8())
+        self.fromTime     = BehaviourTime().fromData(payload.getBytes(5))  # 4 5 6 7 8
+        self.untilTime    = BehaviourTime().fromData(payload.getBytes(5))  # 9 10 11 12 13
 
         if self.fromTime.valid == False or self.untilTime.valid == False:
             self.valid = False

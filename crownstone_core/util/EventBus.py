@@ -47,5 +47,4 @@ class EventBus:
             self.subscriberIds.pop(subscriptionId)
         else:
             pass
-            #print("ERROR: BluenetEventBus: Subscription ID ", subscriptionId, " cannot be found.")
 

@@ -44,15 +44,15 @@ class Advertisement:
     def isCrownstoneFamily(self):
         return self.serviceUUID == 0xC001 or self.serviceUUID == DFU_ADVERTISEMENT_SERVICE_UUID
 
-    def hasScanResponse(self):
+    def hasServiceData(self):
         return self.serviceData is not None
     
     def getCrownstoneId(self):
-        if self.hasScanResponse() and self.isCrownstoneFamily():
+        if self.hasServiceData() and self.isCrownstoneFamily():
             return self.serviceData.payload.crownstoneId
     
     def parse(self, decryptionKey = None):
-        if self.hasScanResponse() and self.isCrownstoneFamily():
+        if self.hasServiceData() and self.isCrownstoneFamily():
             return self.serviceData.parse(decryptionKey = decryptionKey)
 
     # def getDictionary(self):
