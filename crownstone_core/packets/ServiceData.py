@@ -12,15 +12,18 @@ from crownstone_core.packets.serviceDataParsers.containers.AdvUnknownData import
 class ServiceData:
     
     def __init__(self, data):
+        """
+        The parsed data ends up in the self.payload. These will be one of the Adv* classes defined in the ./containers/ folder.
+        """
         self.opCode        = 0
         self.deviceType    = DeviceType.UNDEFINED
         self.operationMode = CrownstoneOperationMode.UNKNOWN
         self.payload       = None
         self.decrypted     = False
 
-        self.data = data
+        self._data = data
 
-        reader = BufferReader(self.data)
+        reader = BufferReader(self._data)
         self.opCode = reader.getUInt8()
         if self.opCode == 7:
             self.operationMode = CrownstoneOperationMode.NORMAL
@@ -35,7 +38,7 @@ class ServiceData:
         if decryptionKey is not None:
             self.decrypt(decryptionKey)
 
-        reader = BufferReader(self.data)
+        reader = BufferReader(self._data)
         reader.skip(2)
 
         if self.opCode == 7:
@@ -43,13 +46,13 @@ class ServiceData:
                 self.payload = parseOpcode7(reader.getRemainingBytes())
             except CrownstoneException:
                 self.payload = AdvUnknownData()
-                self.payload.data = self.data
+                self.payload.data = self._data
                 raise CrownstoneException(CrownstoneError.INVALID_SERVICE_DATA, "Protocol not supported. Unknown data type. Could be because decryption failed.")
         elif self.opCode == 6:
             self.payload = parseOpCode6(reader.getRemainingBytes())
         else:
             self.payload = AdvUnknownData()
-            self.payload.data = self.data
+            self.payload.data = self._data
             raise CrownstoneException(CrownstoneError.INVALID_SERVICE_DATA, "Protocol not supported. Unknown opcode.")
 
 
@@ -57,15 +60,15 @@ class ServiceData:
         return self.operationMode
 
     def decrypt(self, keyHexString):
-        if len(keyHexString) >= 16 and len(self.data) == 18:
+        if len(keyHexString) >= 16 and len(self._data) == 18:
             if self.operationMode == CrownstoneOperationMode.NORMAL:
-                reader = BufferReader(self.data)
+                reader = BufferReader(self._data)
                 encryptedData = reader.skip(2).getRemainingBytes()
                 result = EncryptionHandler.decryptECB(encryptedData, keyHexString)
 
                 for i in range(0, len(encryptedData)):
                     # the first 2 bytes are opcode and device type
-                    self.data[i + 2] = result[i]
+                    self._data[i + 2] = result[i]
 
                 self.decrypted = True
         else:

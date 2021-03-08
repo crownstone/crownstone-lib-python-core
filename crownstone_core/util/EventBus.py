@@ -27,7 +27,7 @@ class EventBus:
 
         return subscriptionId
 
-    def emit(self, topic: str, data: Any = True):
+    def emit(self, topic: str, data: Any = None):
         if topic in self.topics:
             callbackIds = list(self.topics[topic].keys())
             for subscriptionId in callbackIds:
@@ -46,5 +46,4 @@ class EventBus:
             self.subscriberIds.pop(subscriptionId)
         else:
             pass
-            #print("ERROR: BluenetEventBus: Subscription ID ", subscriptionId, " cannot be found.")
 
