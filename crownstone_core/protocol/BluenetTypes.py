@@ -43,7 +43,13 @@ class ControlType(IntEnum):
     GET_GPREGRET               = 86
     GET_ADC_CHANNEL_SWAPS      = 87
     GET_RAM_STATS              = 88
-    MICROAPP                   = 90
+    MICROAPP_GET_INFO          = 90
+    MICROAPP_UPLOAD            = 91
+    MICROAPP_VALIDATE          = 92
+    MICROAPP_ENABLE            = 94
+    MICROAPP_DISABLE           = 95
+
+
     UNSPECIFIED                = 65535
 
     @classmethod
