@@ -1,5 +1,4 @@
 from crownstone_core.packets.BasePacket import BasePacket
-from crownstone_core.packets.microapp.MicroappHeaderPacket import MicroappHeaderPacket
 from crownstone_core.packets.microapp.MicroappSdkVersionPacket import MicroappSdkVersionPacket
 from crownstone_core.packets.microapp.MicroappTestsPacket import MicroappTestsPacket
 from crownstone_core.util.BufferReader import BufferReader

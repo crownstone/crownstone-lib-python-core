@@ -46,6 +46,7 @@ class ControlType(IntEnum):
     MICROAPP_GET_INFO          = 90
     MICROAPP_UPLOAD            = 91
     MICROAPP_VALIDATE          = 92
+    MICROAPP_REMOVE            = 93
     MICROAPP_ENABLE            = 94
     MICROAPP_DISABLE           = 95
 
@@ -174,9 +175,11 @@ class DeviceType(IntEnum):
 class ResultValue(IntEnum):
     SUCCESS                    = 0      # Completed successfully.
     WAIT_FOR_SUCCESS           = 1      # Command is successful so far, but you need to wait for SUCCESS.
+    SUCCESS_NO_CHANGE          = 2      # Completed successfully, but nothing changed.
     BUFFER_UNASSIGNED          = 16     # No buffer was assigned for the command.
     BUFFER_LOCKED              = 17     # Buffer is locked, failed queue command.
     BUFFER_TO_SMALL            = 18
+    NOT_ALIGNED                = 19     # Buffer is not aligned.
     WRONG_PAYLOAD_LENGTH       = 32     # Wrong payload length provided.
     WRONG_PARAMETER            = 33     # Wrong parameter provided.
     INVALID_MESSAGE            = 34     # invalid message provided.
@@ -190,6 +193,7 @@ class ResultValue(IntEnum):
     ERR_TIMEOUT                = 42     # Operation timed out.
     ERR_CANCELED               = 43     # Operation was canceled.
     ERR_PROTOCOL_UNSUPPORTED   = 44     # The protocol is not supported.
+    MISMATCH                   = 45     # There is a mismatch, usually in CRC/checksum/hash.
     NO_ACCESS                  = 48     # Invalid access for this command.
     ERR_UNSAFE                 = 49     # Invalid access for this command.
     NOT_AVAILABLE              = 64     # Command currently not available.
@@ -198,6 +202,7 @@ class ResultValue(IntEnum):
     ERR_NOT_STARTED            = 68     # Something must first be started.
     WRITE_DISABLED             = 80     # Write is disabled for given type.
     ERR_WRITE_NOT_ALLOWED      = 81     # Direct write is not allowed for this type, use command instead.
+    READ_FAILED                = 82     # Failed to read.
     ADC_INVALID_CHANNEL        = 96     # Invalid adc input channel selected.
     ERR_EVENT_UNHANDLED        = 112    # The event or command was not handled.
     UNSPECIFIED                = 65535

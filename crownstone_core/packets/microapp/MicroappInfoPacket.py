@@ -1,10 +1,9 @@
 import logging
+from typing import List
 
 from crownstone_core.packets.BasePacket import BasePacket
-from crownstone_core.packets.microapp.MicroappHeaderPacket import MicroappHeaderPacket
 from crownstone_core.packets.microapp.MicroappSdkVersionPacket import MicroappSdkVersionPacket
 from crownstone_core.packets.microapp.MicroappStatusPacket import MicroappStatusPacket
-from crownstone_core.packets.microapp.MicroappTestsPacket import MicroappTestsPacket
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.BufferWriter import BufferWriter
 
@@ -18,7 +17,7 @@ class MicroappInfoPacket(BasePacket):
 		self.maxChunkSize = 0
 		self.maxRamUsage = 0
 		self.sdkVersion = MicroappSdkVersionPacket()
-		self.appsStatus = []
+		self.appsStatus: List[MicroappStatusPacket] = []
 
 		if data is not None:
 			self.parse(data)
