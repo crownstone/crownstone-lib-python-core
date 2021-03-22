@@ -1,10 +1,15 @@
-import sys, os
-from py.cuckoofilter import CuckooFilter
+"""
+Generates a <filename>.py.cuck file for a given <filename>.csv.cuck file. Generated file should match
+the pregenerated file <filename>.cuck.
+Generated .py.cuck files removed after script finishes.
+"""
+import sys, os, filecmp
+from crownstone_core.util.cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
 def assertCsv(fname):
-    if not fname[-4:] == ".csv":
-        print(F"file should be .csv, got {fname}")
+    if not fname[-9:] == ".csv.cuck":
+        print(F"file should be .csv.cuck, got {fname}")
         quit()
 
 def getPathFromFileName(fname):
@@ -32,7 +37,7 @@ def loadFilter(infile):
         operation = columns[0]
 
         if operation == "cuckoofilter":
-            print("processing operation cuckoofilter")
+            print("Constructing cuckoofilter from file")
             if not columns_len == 3:
                 print("invalid amount of arguments for construction of cuckoofilter")
                 continue
@@ -42,7 +47,7 @@ def loadFilter(infile):
 
             buck_count = int(columns[1], 16)
             nest_count = int(columns[2], 16)
-            print("constructing arguments for cuckoo filter:", buck_count, nest_count)
+            print("construction arguments for cuckoo filter:", buck_count, nest_count)
             filter = CuckooFilter(buck_count, nest_count)
         elif operation == "add":
             if filter is None:
@@ -65,34 +70,36 @@ def write_uint16(outfile, val):
 
 
 if __name__ == "__main__":
-    """
-    Generates a <filename>.py.cuck file for a given <filename>.csv file. Generated file should match 
-    the pregenerated file <filename>.cuck. 
-    """
-    ### arg parsing
-    if len(sys.argv) < 1 + 1:
-        print("Usage: python3 generate_testfile.py cuckootestfile.csv len({0})".format(len(sys.argv)))
-        print(sys.argv)
-        print("arg 0: input filename relative to this script (e.g. ./testdb.csv)")
-        quit()
+    # change this if necessary.
+    in_fname = "./cuckoo_size_128_4_len_6_20.csv.cuck"
 
-    in_fname = sys.argv[0 + 1]
+    ### arg parsing
+    if len(sys.argv) > 1 + 1:
+        """
+        "Usage: python3 generate_testfile.py cuckootestfile.csv len({0})"
+        "arg 0: input filename relative to this script (e.g. ./testdb.csv)"
+        """
+        in_fname = sys.argv[0 + 1]
 
     assertCsv(in_fname)
 
-    out_fname = in_fname[:-4] + ".py.cuck"
-    print(getPathFromFileName(out_fname))
-    print(getPathFromFileName(in_fname))
+    result_fname = in_fname[:-9] + ".py.cuck"
+    expect_fname = in_fname[:-9] + ".cuck"
+
+    cuck_in_path = getPathFromFileName(in_fname)
+    cuck_result_path = getPathFromFileName(result_fname)
+    cuck_expect_path =  getPathFromFileName(expect_fname)
 
     filter = None
-    with open(getPathFromFileName(in_fname), "r") as F_in:
+    with open(cuck_in_path, "r") as F_in:
         filter = loadFilter(F_in)
 
     if filter is None:
-        print("failed to load filter")
+        print("[FAIL] filter couldn't be loaded")
         quit()
 
-    with open(getPathFromFileName(out_fname), "w+") as F_out:
+    print("writing result file")
+    with open(cuck_result_path, "w+") as F_out:
         # header / meta data part:
         write_uint8(F_out, filter.bucket_count)
         write_uint8(F_out, filter.nests_per_bucket)
@@ -103,3 +110,15 @@ if __name__ == "__main__":
         # fingerprint array part:
         for fingerprint in filter.bucket_array:
             write_uint16(F_out, fingerprint)
+
+    # check file equality
+    if not filecmp.cmp(cuck_expect_path, cuck_result_path, shallow=False):
+        print("[FAIL] Files unequal")
+    else:
+        print("[OK] Files equal")
+
+    print("cleaning up")
+    # delete generated file
+    os.remove(cuck_result_path)
+    filecmp.clear_cache()
+

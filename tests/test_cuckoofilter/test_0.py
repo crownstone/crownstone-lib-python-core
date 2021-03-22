@@ -1,18 +1,11 @@
-from py.cuckoofilter import CuckooFilter
+from crownstone_core.util.cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
-from colorama import Fore, Back, Style
 
 def Status(fails):
     if fails > 0:
-        return "{0}[FAIL]{1} ({2})".format(Style.BRIGHT + Fore.RED, Style.RESET_ALL, fails)
+        return "{0}[FAIL]{1} ({2})".format("*", "*", fails)
     else:
-        return "{0}[OK]{1}".format(Style.BRIGHT + Fore.GREEN, Style.RESET_ALL)
-
-def goodbad(good, message):
-    if not good:
-        return "{0}[{2}]{1}".format(Style.BRIGHT + Fore.RED, Style.RESET_ALL, message)
-    else:
-        return "{0}[{2}]{1}".format(Style.BRIGHT + Fore.GREEN, Style.RESET_ALL, message)
+        return "[OK]"
 
 
 # Checks if

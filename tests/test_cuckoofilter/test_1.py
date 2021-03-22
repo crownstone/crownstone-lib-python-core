@@ -1,11 +1,11 @@
-from py.cuckoofilter import CuckooFilter
-from colorama import Fore, Back, Style
+from crownstone_core.util.cuckoofilter import CuckooFilter
 
 def Status(fails):
     if fails > 0:
-        return "{0}[FAIL]{1} ({2})".format(Style.BRIGHT + Fore.RED, Style.RESET_ALL, fails)
+        return "{0}[FAIL]{1} ({2})".format("*", "*", fails)
     else:
-        return "{0}[OK]{1}".format(Style.BRIGHT + Fore.GREEN, Style.RESET_ALL)
+        return "[OK]"
+
     
 """
 Checks if the sequence _new, _contains, _add, _contains, _remove, contains, _free does what it is expected to do.
