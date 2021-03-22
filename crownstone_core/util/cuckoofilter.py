@@ -4,7 +4,7 @@ from itertools import chain
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion
 
-from py.randomgenerator import RandomGenerator
+from crownstone_core.util.randomgenerator import RandomGenerator
 
 class CuckooFilter:
     """
@@ -247,11 +247,12 @@ class CuckooFilter:
     @staticmethod
     def sizeof(typ) -> uint32:
         D = {
-            uint8: 1,
-            uint16: 2,
-            uint32: 4,
-            uint64: 8,
-            CuckooFilter: 1 + 1 + 2,
+            'uint8': 1,
+            'uint16': 2,
+            'uint32': 4,
+            'uint64': 8,
+            'CuckooFilter': 1 + 1 + 2,
+            'FingerprintType': 2,
         }
         if typ in D:
             return D[typ]
@@ -263,7 +264,7 @@ class CuckooFilter:
 
     @staticmethod
     def getbuffersize(bucket_count: 'IndexType', nests_per_bucket: 'IndexType') -> uint32:
-        return CuckooFilter.getfingerprintcount(bucket_count, nests_per_bucket) * CuckooFilter.sizeof(CuckooFilter.FingerprintType)
+        return CuckooFilter.getfingerprintcount(bucket_count, nests_per_bucket) * CuckooFilter.sizeof('FingerprintType')
 
     @staticmethod
     def getsize(bucket_count: 'IndexType', nests_per_bucket: 'IndexType') -> uint32:
@@ -287,10 +288,10 @@ if __name__ == "__main__":
     print("size: " + str(f.size()))
     print("buffersize: " + str(f.buffersize()))
     print("fingerprints: " + str(f.fingerprintcount()))
-    print("sizeof overhead: " + str(CuckooFilter.sizeof(CuckooFilter)))
+    print("sizeof overhead: " + str(CuckooFilter.sizeof('CuckooFilter')))
     f.getExtendedFingerprint([1, 2, 3, 4, 5, 6])
     f.add([1, 2, 3, 4, 5, 6])
-    print("contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "not contained!")
+    print("[OK] contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "[FAIL] not contained!")
     f.remove([1, 2, 3, 4, 5, 6])
-    print("contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "not contained!")
+    print("[FAIL] contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "[OK] not contained!")
     print("end")
