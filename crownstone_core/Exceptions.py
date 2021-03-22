@@ -152,12 +152,14 @@ class CrownstoneError(Enum):
     UNKNOWN_SERVICE_DATA                                = "UNKNOWN_SERVICE_DATA"
 
 
+# TODO: why is there a BLE exception in the core lib? How is it different?
 class CrownstoneBleException(Exception):
     code    = None
     type    = None
     message = None
-    
+
     def __init__(self, type, message="", code=0):
+        # TODO: what is type, and code?
         self.type = type
         self.message = message
         self.code = code
@@ -169,6 +171,7 @@ class CrownstoneException(Exception):
     message = None
     
     def __init__(self, type, message, code=0):
+        # TODO: what is type, and code?
         self.type = type
         self.message = message
         self.code = code
