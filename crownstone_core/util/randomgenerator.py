@@ -3,8 +3,6 @@ As we need consistent cross-platform pseudo random number generation. This is a 
 Middle Square Weyl Sequence Random Number Generator found on https://mswsrng.wixsite.com/rand .
 """
 
-from numpy import uint64, uint32
-
 class Bitmasks:
     ff64 = 0xffffffffffffffff
     ff32 = 0xffffffff
@@ -14,11 +12,19 @@ class Bitmasks:
 class Msws:
     class State:
         def __init__(self, x , w, s):
+            """
+            x,w,s: int
+
+            Note: s must be uneven for a proper Msws sequence
+            """
             self.x = int(x) & Bitmasks.ff64
             self.w = int(w) & Bitmasks.ff64
-            self.s = int(s) & Bitmasks.ff64 # (must be uneven)
+            self.s = int(s) & Bitmasks.ff64
 
-    def __init__(self, seed : uint64 = None):
+    def __init__(self, seed = None):
+        """
+        seed: int
+        """
         if seed == None:
             # default seed
             self.state = Msws.State(0, 0, 0xb5ad4eceda1ce2a9)
@@ -30,8 +36,13 @@ class Msws:
         return Msws._msws(self.state)
 
     @staticmethod
-    def _msws(state : 'State') -> uint32:
-        """ Returns random value and updates the state objects internals values. """
+    def _msws(state):
+        """
+        Returns random value and updates the state objects internals values.
+
+        state: State
+        returns: int
+        """
         state.x = (state.x * state.x) & Bitmasks.ff64
         state.w = (state.w + state.s) & Bitmasks.ff64
         state.x = (state.x + state.w) & Bitmasks.ff64
@@ -51,7 +62,12 @@ class Msws:
 
     @staticmethod
     def _seed(seed):
-        """ Returns an initial State object based on the given seed. """
+        """
+        Returns an initial State object based on the given seed.
+
+        seed: int
+        returns: State
+        """
         n = int(seed) & Bitmasks.ff64
         r = int(n / 100000000)
         t = int(n % 100000000)
@@ -91,12 +107,21 @@ class Msws:
 
 class RandomGenerator:
     def __init__(self, seed = None):
+        """
+        seed: int
+        """
         self.engine = Msws(seed)
 
     def rand(self):
+        """
+        Return the next pseudo random number and update internal state.
+        """
         return self.engine.get()
 
     def __call__(self):
+        """
+        Shorthand for self.rand()
+        """
         return self.rand()
 
 
