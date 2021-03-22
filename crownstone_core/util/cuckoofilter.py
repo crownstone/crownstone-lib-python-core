@@ -1,5 +1,3 @@
-from typing import List
-from numpy import uint8, uint16, uint32, uint64
 from itertools import chain
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion
@@ -9,20 +7,20 @@ from crownstone_core.util.randomgenerator import RandomGenerator
 class CuckooFilter:
     """
     Cuckoo filter implementation, currently supporting only 16 bit fingerprints.
+
+    Expected types for arguments and return values:
+    - ByteArrayType = List[uint8]
+    - FingerprintType = uint16
+    - IndexType = uint8
+    - FingerprintArrayType = List[FingerprintType]
     """
     max_kick_attempts = int(100)
 
-    # Type aliases, introduced to allow future improvements for other bit-sized fingerprints
-    ByteArrayType = List[uint8]
-    FingerprintType = uint16
-    IndexType = uint8
-    FingerprintArrayType = List[FingerprintType]
-
     class ExtendedFingerprint:
-        def __init__(self, fingerprint : 'FingerprintType', bucketA : 'IndexType', bucketB : 'IndexType'):
-            self.fingerprint : 'FingerprintType' = fingerprint
-            self.bucketA : 'IndexType' = bucketA
-            self.bucketB : 'IndexType' = bucketB
+        def __init__(self, fingerprint, bucketA, bucketB):
+            self.fingerprint = fingerprint
+            self.bucketA = bucketA
+            self.bucketB = bucketB
 
         def __str__(self):
             return f"CuckooFilter.ExtendedFingerprint({self.fingerprint:#0{6}x},{self.bucketA:#0{4}x},{self.bucketB:#0{4}x})"
@@ -34,8 +32,11 @@ class CuckooFilter:
                    (self.bucketB == other.bucketA and self.bucketA == other.bucketB)
             )
 
-
-    def getExtendedFingerprint(self, key : 'ByteArrayType') -> 'ExtendedFingerprint':
+    def getExtendedFingerprint(self, key):
+        """
+        key: FingerprintType
+        returns ExtendedFingerprint
+        """
         finger = self.hash(key)
         hashed_finger = self.hash(Conversion.uint16_to_uint8_array(finger))
 
@@ -44,20 +45,30 @@ class CuckooFilter:
             hashed_finger % self.bucket_count,
             (hashed_finger ^ finger) % self.bucket_count)
 
-    def getExtendedFingerprintFromFingerprintAndBucket(self, fingerprint : 'FingerprintType', bucket_index : 'IndexType'):
-        bucket_a = uint8(bucket_index % self.bucket_count)
-        bucket_b = uint8((bucket_index ^ fingerprint) % self.bucket_count)
+    def getExtendedFingerprintFromFingerprintAndBucket(self, fingerprint, bucket_index):
+        """
+        fingerprint: FingerprintType
+        bucket_index: IndexType
+        returns: ExtendedFingerprint
+        """
+        bucket_a = (bucket_index % self.bucket_count) & 0xff
+        bucket_b =((bucket_index ^ fingerprint) % self.bucket_count) & 0xff
         return CuckooFilter.ExtendedFingerprint (fingerprint, bucket_a, bucket_b)
 
     # -------------------------------------------------------------
     # Run time variables
     # -------------------------------------------------------------
 
-    def __init__(self, bucket_count : 'IndexType', nests_per_bucket : 'IndexType'):
-        self.bucket_count     : 'IndexType'            = bucket_count
-        self.nests_per_bucket : 'IndexType'            = nests_per_bucket
-        self.victim: 'FingerprintType' = CuckooFilter.ExtendedFingerprint(0,0,0)
-        self.bucket_array: 'FingerprintArrayType'
+    def __init__(self, bucket_count, nests_per_bucket):
+        """
+        bucket_count: IndexType
+        nests_per_bucket: IndexType
+        returns: n/a
+        """
+        self.bucket_count = bucket_count
+        self.nests_per_bucket = nests_per_bucket
+        self.victim = CuckooFilter.ExtendedFingerprint(0,0,0)
+        self.bucket_array = []
 
         self.clear()
 
@@ -65,45 +76,53 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
-    def filterhash(self) -> 'FingerprintType':
-        # flatten the uint16 array to uint8 array in little endian. Must match firmware.
-        as_uint8_list = list(chain.from_iterable([Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]))
+    def filterhash(self):
+        """
+        Flatten the uint16 array of fingerprints to uint8 array in little endian. Must match firmware.
+
+        returns: FingerprintType
+        """
+        as_uint8_list = list(chain.from_iterable(
+            [Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]
+        ))
         return self.hash(as_uint8_list)
 
-    def getFingerprint(self, key : 'ByteArrayType') -> 'FingerprintType':
+    def getFingerprint(self, key):
+        """
+        key: IndexType
+        returns: FingerprintType
+        """
         return self.hash(key)
 
-    def hash(self, data : 'ByteArrayType') -> 'FingerprintType':
-        return uint16(crc16ccitt(data))
-
-    def scramble(self, fingerprint : 'FingerprintType') -> 'FingerprintType':
+    def hash(self, data):
         """
-         this implementation hinges on the fact that 2**16+1 is prime,
-         and that n-> n^17 is a bijection mod 2**16 + 1.
-        :param fingerprint:
-        :return:
+        data: ByteArraytype
+        returns: FingerprintType
         """
-        x = int(uint16(fingerprint)) # native python int does't overflow, but input needs to be truncated.
+        return crc16ccitt(data)
 
-        if x == 0:
-            # lift 0 to 2**16 to get rid of silly problems involving 0.
-            x = 0x10000
-
-        y = (x * x) % 0x10001  # y == x^2  mod (2**16+1)
-        y = (y * y) % 0x10001  # y == x^4  mod (2**16+1)
-        y = (y * y) % 0x10001  # y == x^8  mod (2**16+1)
-        y = (y * y) % 0x10001  # y == x^16 mod (2**16+1)
-        y = (y * x) % 0x10001  # y == x^17 mod (2**16+1)
-
-        return uint16(y) # intentional truncation to 16 bits (0x10000 -> 0)
-
-    def lookup_fingerprint(self, bucket_number : 'IndexType', finger_index : 'IndexType') -> 'FingerprintType':
+    def lookup_fingerprint(self, bucket_number, finger_index):
+        """
+        bucket_number: IndexType
+        finger_index: IndexType
+        returns: FingerprintType
+        """
         return self.bucket_array[self.lookup_fingerprint_index(bucket_number, finger_index)]
 
-    def lookup_fingerprint_index(self, bucket_number : 'IndexType', finger_index : 'IndexType') -> 'FingerprintType':
-         return (bucket_number * self.nests_per_bucket) + finger_index
+    def lookup_fingerprint_index(self, bucket_number, finger_index):
+        """
+        bucket_number: IndexType
+        finger_index: IndexType
+        returns: int
+        """
+        return (bucket_number * self.nests_per_bucket) + finger_index
 
-    def add_fingerprint_to_bucket (self, fingerprint : 'FingerprintType', bucket_number : 'IndexType') -> bool:
+    def add_fingerprint_to_bucket (self, fingerprint, bucket_number):
+        """
+        fignerprint: FingerprintType
+        bucket_number: IndexType
+        returns: bool
+        """
         for ii in range(self.nests_per_bucket):
             fingerprint_index = self.lookup_fingerprint_index(bucket_number, ii)
             if 0 == self.bucket_array[fingerprint_index]:
@@ -111,7 +130,12 @@ class CuckooFilter:
                 return True
         return False
 
-    def remove_fingerprint_from_bucket (self, fingerprint : 'FingerprintType', bucket_number : 'IndexType') -> bool :
+    def remove_fingerprint_from_bucket (self, fingerprint, bucket_number):
+        """
+        fignerprint: FingerprintType
+        bucket_number: IndexType
+        returns: bool
+        """
         for ii in range(self.nests_per_bucket):
             candidate = self.lookup_fingerprint_index(bucket_number, ii) # candidate_fingerprint_for_removal_in_array_index
 
@@ -128,7 +152,11 @@ class CuckooFilter:
         return False
 
     # -------------------------------------------------------------
-    def moveExtendedFingerprint(self, entry_to_insert : 'ExtendedFingerprint') -> bool:
+    def moveExtendedFingerprint(self, entry_to_insert):
+        """
+        entry_to_insert: ExtendedFingerprint
+        returns: bool
+        """
         # seeding with a hash for this filter guarantees exact same sequence of
         # random integers used for moving fingerprints in the filter on every crownstone.
         seed = self.filterhash()
@@ -168,18 +196,26 @@ class CuckooFilter:
 
         return False
 
-    def addExtendedFingerprint(self, efp : 'ExtendedFingerprint') -> bool:
-        if self.containsExtendedFingerprint(efp):
+    def addExtendedFingerprint(self, extended_finger):
+        """
+        extended_finger: ExtendedFingerprint
+        returns: bool
+        """
+        if self.containsExtendedFingerprint(extended_finger):
             return True
 
         if self.victim.fingerprint != 0: # already full.
             return False
 
-        return self.moveExtendedFingerprint(efp)
+        return self.moveExtendedFingerprint(extended_finger)
 
-    def removeExtendedFingerprint(self, efp : 'ExtendedFingerprint') -> bool:
-        if self.remove_fingerprint_from_bucket(efp.fingerprint, efp.bucketA) or \
-                self.remove_fingerprint_from_bucket(efp.fingerprint, efp.bucketB):
+    def removeExtendedFingerprint(self, extended_finger):
+        """
+        extended_finger: ExtendedFingerprint
+        returns: bool
+        """
+        if self.remove_fingerprint_from_bucket(extended_finger.fingerprint, extended_finger.bucketA) or \
+                self.remove_fingerprint_from_bucket(extended_finger.fingerprint, extended_finger.bucketB):
             # short ciruits nicely:
             #    tries bucketA,
             #    on fail try B,
@@ -190,44 +226,74 @@ class CuckooFilter:
             return True
         return False
 
-    def containsExtendedFingerprint(self, efp : 'ExtendedFingerprint') -> bool:
+    def containsExtendedFingerprint(self, extended_finger):
+        """
+        extended_finger: ExtendedFingerprint
+        returns: bool
+        """
         # (loops are split to improve cache hit rate)
         # search bucketA
         for ii in range(self.nests_per_bucket):
-            if efp.fingerprint == self.lookup_fingerprint(efp.bucketA, ii):
+            if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketA, ii):
                 return True
         # search bucketA
         for ii in range(self.nests_per_bucket):
-            if efp.fingerprint == self.lookup_fingerprint(efp.bucketB, ii):
+            if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketB, ii):
                 return True
 
         return False
 
     # -------------------------------------------------------------
 
-    def addFingerprintType(self, fp : 'FingerprintType', bucket_index : 'IndexType') -> bool:
+    def addFingerprintType(self, fingerprint, bucket_index):
+        """
+        fingerprint: FingerprintType
+        returns: bool
+        """
         return self.addExtendedFingerprint(
-            self.getExtendedFingerprintFromFingerprintAndBucket(fp, bucket_index))
+            self.getExtendedFingerprintFromFingerprintAndBucket(fingerprint, bucket_index))
 
 
-    def removeFingerprintType(self, fp : 'FingerprintType', bucket_index : 'IndexType') -> bool:
+    def removeFingerprintType(self, fingerprint, bucket_index):
+        """
+        fingerprint: FingerprintType
+        bucket_index: Indextype
+        returns: bool
+        """
         return self.removeExtendedFingerprint(
-            self.getExtendedFingerprintFromFingerprintAndBucket(fp, bucket_index))
+            self.getExtendedFingerprintFromFingerprintAndBucket(fingerprint, bucket_index))
 
 
-    def containsFingerprintType(self, fp : 'FingerprintType', bucket_index : 'IndexType') -> bool:
+    def containsFingerprintType(self, fingerprint, bucket_index):
+        """
+        fingerprint: FingerprintType
+        bucket_index: IndexType
+        returns: bool
+        """
         return self.containsExtendedFingerprint(
-            self.getExtendedFingerprintFromFingerprintAndBucket(fp, bucket_index))
+            self.getExtendedFingerprintFromFingerprintAndBucket(fingerprint, bucket_index))
 
     # -------------------------------------------------------------
 
-    def add(self, key : 'ByteArrayType') -> bool:
+    def add(self, key):
+        """
+        key: ByteArrayType
+        returns: bool
+        """
         return self.addExtendedFingerprint(self.getExtendedFingerprint(key))
 
-    def remove(self, key : 'ByteArrayType') -> bool:
+    def remove(self, key):
+        """
+        key: ByteArrayType
+        returns: bool
+        """
         return self.removeExtendedFingerprint(self.getExtendedFingerprint(key))
 
-    def contains(self, key : 'ByteArrayType') -> bool:
+    def contains(self, key):
+        """
+        key: ByteArrayType
+        returns: bool
+        """
         return self.containsExtendedFingerprint(self.getExtendedFingerprint(key))
 
 
@@ -236,47 +302,74 @@ class CuckooFilter:
     # -------------------------------------------------------------
 
     def clear(self):
-        self.victim: 'FingerprintType' = CuckooFilter.ExtendedFingerprint(0,0,0)
-        self.bucket_array: 'FingerprintArrayType' = [uint16(0)] * CuckooFilter.getfingerprintcount(self.bucket_count,
-                                                                                                   self.nests_per_bucket)
+        """
+        returns: None
+        """
+        self.victim = CuckooFilter.ExtendedFingerprint(0,0,0)
+        self.bucket_array = [0x00] * CuckooFilter.getfingerprintcount(self.bucket_count, self.nests_per_bucket)
 
     # -------------------------------------------------------------
     # Size stuff.
     # -------------------------------------------------------------
 
     @staticmethod
-    def sizeof(typ) -> uint32:
-        D = {
+    def sizeof(typ):
+        size_dict = {
             'uint8': 1,
             'uint16': 2,
             'uint32': 4,
             'uint64': 8,
             'CuckooFilter': 1 + 1 + 2,
             'FingerprintType': 2,
+            'IndexType': 1
         }
-        if typ in D:
-            return D[typ]
+        if typ in size_dict:
+            return size_dict[typ]
         return -1
 
     @staticmethod
-    def getfingerprintcount(bucket_count : 'IndexType', nests_per_bucket : 'IndexType') -> uint32:
-        return uint32(bucket_count * nests_per_bucket)
+    def getfingerprintcount(bucket_count, nests_per_bucket):
+        """
+        bucket_count: IndexType
+        nests_per_bucket: IndexType
+        returns: int
+        """
+        return bucket_count * nests_per_bucket
 
     @staticmethod
-    def getbuffersize(bucket_count: 'IndexType', nests_per_bucket: 'IndexType') -> uint32:
+    def getbuffersize(bucket_count, nests_per_bucket):
+        """
+        bucket_count: IndexType
+        nests_per_bucket: IndexType
+        returns: int
+        """
         return CuckooFilter.getfingerprintcount(bucket_count, nests_per_bucket) * CuckooFilter.sizeof('FingerprintType')
 
     @staticmethod
-    def getsize(bucket_count: 'IndexType', nests_per_bucket: 'IndexType') -> uint32:
-        return CuckooFilter.sizeof(CuckooFilter) + CuckooFilter.getbuffersize(bucket_count, nests_per_bucket)
+    def getsize(bucket_count, nests_per_bucket):
+        """
+        bucket_count: IndexType
+        nests_per_bucket: IndexType
+        returns: int
+        """
+        return CuckooFilter.sizeof('CuckooFilter') + CuckooFilter.getbuffersize(bucket_count, nests_per_bucket)
 
-    def fingerprintcount(self) -> uint32:
+    def fingerprintcount(self):
+        """
+        returns: int
+        """
         return CuckooFilter.getfingerprintcount(self.bucket_count, self.nests_per_bucket)
 
-    def buffersize(self) -> uint32:
+    def buffersize(self):
+        """
+        returns: int
+        """
         return CuckooFilter.getbuffersize(self.bucket_count, self.nests_per_bucket)
 
-    def size(self) -> uint32:
+    def size(self):
+        """
+        returns: int
+        """
         return CuckooFilter.getsize(self.bucket_count, self.nests_per_bucket)
 
 
