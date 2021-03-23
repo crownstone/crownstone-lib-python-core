@@ -373,18 +373,3 @@ class CuckooFilter:
         return CuckooFilter.getsize(self.bucket_count, self.nests_per_bucket)
 
 
-if __name__ == "__main__":
-    f = CuckooFilter(50, 4)
-
-    print("filter hash: " + hex(f.filterhash()))
-    print("fingerprint array len: " + str(len(f.bucket_array)) )
-    print("size: " + str(f.size()))
-    print("buffersize: " + str(f.buffersize()))
-    print("fingerprints: " + str(f.fingerprintcount()))
-    print("sizeof overhead: " + str(CuckooFilter.sizeof('CuckooFilter')))
-    f.getExtendedFingerprint([1, 2, 3, 4, 5, 6])
-    f.add([1, 2, 3, 4, 5, 6])
-    print("[OK] contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "[FAIL] not contained!")
-    f.remove([1, 2, 3, 4, 5, 6])
-    print("[FAIL] contained!" if f.contains([1, 2, 3, 4, 5, 6]) else "[OK] not contained!")
-    print("end")
