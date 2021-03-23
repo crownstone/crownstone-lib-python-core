@@ -7,10 +7,6 @@ import sys, os, filecmp
 from crownstone_core.util.cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
-def assertCsv(fname):
-    if not fname[-9:] == ".csv.cuck":
-        print(F"file should be .csv.cuck, got {fname}")
-        quit()
 
 def getPathFromFileName(fname):
     if not fname.find(os.path.pathsep):
@@ -60,7 +56,6 @@ def loadFilter(infile):
 
     return filter
 
-
 def write_uint8(outfile, val):
     outfile.write(f"{val:#0{4}x},")
 
@@ -68,19 +63,10 @@ def write_uint16(outfile, val):
     for byt in Conversion.uint16_to_uint8_array(val):
         write_uint8(outfile, byt)
 
+def assertCsv(fname):
+    assert fname[-9:] == ".csv.cuck", "file extension should be .csv.cuck"
 
-if __name__ == "__main__":
-    # change this if necessary.
-    in_fname = "./cuckoo_size_128_4_len_6_20.csv.cuck"
-
-    ### arg parsing
-    if len(sys.argv) > 1 + 1:
-        """
-        "Usage: python3 generate_testfile.py cuckootestfile.csv len({0})"
-        "arg 0: input filename relative to this script (e.g. ./testdb.csv)"
-        """
-        in_fname = sys.argv[0 + 1]
-
+def process_test_file(in_fname):
     assertCsv(in_fname)
 
     result_fname = in_fname[:-9] + ".py.cuck"
@@ -121,4 +107,8 @@ if __name__ == "__main__":
     # delete generated file
     os.remove(cuck_result_path)
     filecmp.clear_cache()
+
+
+def test_cross_platform_consistency_0():
+    process_test_file("./cuckoo_size_128_4_len_6_20.csv.cuck")
 
