@@ -7,10 +7,11 @@ def Status(fails):
         return "[OK]"
 
     
-"""
-Checks if the sequence _new, _contains, _add, _contains, _remove, contains, _free does what it is expected to do.
-"""
-if __name__ == "__main__":
+
+def test_add_contains_remove_contains():
+    """
+    Checks if the sequence _contains, _add, _contains, _remove, contains does what it is expected to do.
+    """
     # Settings for this test
     max_buckets = 128
     nests_per_bucket = 4
@@ -25,34 +26,34 @@ if __name__ == "__main__":
     if filter.contains("test".encode("utf-8")):
         fails += 1
     
-    print("CONTAINS 0" , Status(fails) )
+    assert fails == 0, "Contains incorrect on empty filter"
     fails = 0
 
     # add "test"
     if filter.add("test".encode("utf-8")) == False:
         fails += 1
     
-    print("ADD 0" , Status(fails) )
+    assert fails == 0, "Add fails on empty filter"
     fails = 0
 
     # check if it contains "test"
     if filter.contains("test".encode("utf-8")) == False:
         fails += 1
     
-    print("CONTAINS 1" , Status(fails) )
+    assert fails == 0, "Contains incorrect immediately after adding"
     fails = 0
 
     # remove "test"
     if filter.remove("test".encode("utf-8")) == False:
         fails += 1
     
-    print("REMOVE" , Status(fails) )
+    assert fails == 0, "Remove fails"
     fails = 0
 
     # check if it contains "test"
     if filter.contains("test".encode("utf-8")):
         fails += 1
     
-    print("CONTAINS 2" , Status(fails) )
+    assert fails == 0, "Contains incorrect immediately after removal"
     fails = 0
 

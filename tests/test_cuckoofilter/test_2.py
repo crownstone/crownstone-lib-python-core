@@ -1,25 +1,9 @@
 from crownstone_core.util.cuckoofilter import CuckooFilter
 from crownstone_core.util.randomgenerator import RandomGenerator
 
-def Status(fails):
-    if fails > 0:
-        return "{0}[FAIL]{1} ({2})".format("*", "*", fails)
-    else:
-        return "[OK]"
-
-
-
-def StatusRelative(fails, total, tolerance):
+def CheckTolerance(fails, total, tolerance):
     fails_rel = fails / total
-    fail = fails_rel > tolerance
-
-    return "{0} {1} {2} {3}".format(
-        "* [FAIL] *" if fail else "[OK]",
-        "{0:.2f}%".format(100*fails_rel),
-        "<=",
-        "{0:.2f}%".format(100 * tolerance)
-    )
-
+    return not fails_rel > tolerance
 
 def random_string(length, rand = RandomGenerator()):
     """
@@ -31,10 +15,10 @@ def random_string(length, rand = RandomGenerator()):
     return tuple(chrs[rand() % len_chrs] for i in range(length))
 
 
-# Allocates FILTER_COUNT filters, then adds the same sequence to each,
-# tests if this sequence is passes containment check and frees the filters.
-#
-if __name__ == "__main__":
+def test_false_positive_rate():
+    """
+    Adds load_factor random entries to a filter and check if false positive rate stays below reasonable bounds.
+    """
     # Settings for this test
     max_buckets = 128
     nests_per_bucket = 4
@@ -62,15 +46,15 @@ if __name__ == "__main__":
         if not filter.add(mac):
             fails+= 1
 
-    print("ADD 0: ", Status(fails))
+    assert fails == 0, "Adding fails for given load_factor ({0:.1}%)".format(100*load_factor)
     fails = 0
     
     # check if all the passlisted items pass the filter
     for mac in my_mac_passlist:
         if not filter.contains(mac):
             fails+= 1
-    
-    print("CONTAINS 0: ", Status(fails))
+
+    assert fails == 0, "Contains incorrect after filling filter up to load_factor ({0:.1}%)".format(100 * load_factor)
     fails = 0
     
     # check if the random ones fail to pass the passlist    
@@ -88,9 +72,5 @@ if __name__ == "__main__":
             else:
                 false_negatives += 1
 
-    print("CONTAINS false negatives ",
-          StatusRelative(false_negatives, len(random_mac_addresses), 0.00),
-          "total: {0} / {1}.".format(false_negatives, len(random_mac_addresses)))
-    print("CONTAINS false positives ",
-          StatusRelative(false_positives, len(random_mac_addresses), 0.05),
-          "total: {0} / {1}.".format(false_positives, len(random_mac_addresses)))
+    assert CheckTolerance(false_negatives, len(random_mac_addresses), 0.00), "False negatives should not occur"
+    assert CheckTolerance(false_positives, len(random_mac_addresses), 0.05), "False positive rate too high"

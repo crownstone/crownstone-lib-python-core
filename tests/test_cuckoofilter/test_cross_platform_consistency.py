@@ -9,8 +9,8 @@ from crownstone_core.util.Conversion import Conversion
 
 
 def getPathFromFileName(fname):
-    if not fname.find(os.path.pathsep):
-        fname = os.path.join(os.path.dirname(__file__), fname)
+    if not os.path.isabs(fname):
+        return os.path.join(os.path.dirname(__file__), fname)
     return fname
 
 
@@ -33,25 +33,18 @@ def loadFilter(infile):
         operation = columns[0]
 
         if operation == "cuckoofilter":
-            print("Constructing cuckoofilter from file")
-            if not columns_len == 3:
-                print("invalid amount of arguments for construction of cuckoofilter")
-                continue
-            if filter is not None:
-                print("Ignoring second cuckoofilter definition in file.")
-                continue
+            # Constructing cuckoofilter from file
+            assert columns_len == 3, "Testfile corrput: invalid amount of arguments for construction of cuckoofilter"
+            assert filter is None, "Testfile corrupt: second cuckoofilter definition in file."
 
             buck_count = int(columns[1], 16)
             nest_count = int(columns[2], 16)
-            print("construction arguments for cuckoo filter:", buck_count, nest_count)
             filter = CuckooFilter(buck_count, nest_count)
         elif operation == "add":
-            if filter is None:
-                print("skipping add command, filter not yet constructed")
-                continue
+            assert filter is not None, "Testfile corrupt: add command found before filter is constructed"
             filter.add([ int(x, 16) for x in columns[1:] ])
         else:
-            print("operation not recognized: ")
+            # operation not recognized, ignore
             continue
 
     return filter
@@ -80,11 +73,9 @@ def process_test_file(in_fname):
     with open(cuck_in_path, "r") as F_in:
         filter = loadFilter(F_in)
 
-    if filter is None:
-        print("[FAIL] filter couldn't be loaded")
-        quit()
+    assert filter is not None,"filter couldn't be loaded"
 
-    print("writing result file")
+    # writing result file
     with open(cuck_result_path, "w+") as F_out:
         # header / meta data part:
         write_uint8(F_out, filter.bucket_count)
@@ -98,12 +89,8 @@ def process_test_file(in_fname):
             write_uint16(F_out, fingerprint)
 
     # check file equality
-    if not filecmp.cmp(cuck_expect_path, cuck_result_path, shallow=False):
-        print("[FAIL] Files unequal")
-    else:
-        print("[OK] Files equal")
+    assert filecmp.cmp(cuck_expect_path, cuck_result_path, shallow=False), "Generated test file unequal precomputed file"
 
-    print("cleaning up")
     # delete generated file
     os.remove(cuck_result_path)
     filecmp.clear_cache()

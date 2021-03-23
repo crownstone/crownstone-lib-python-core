@@ -1,20 +1,15 @@
 from crownstone_core.util.cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
-def Status(fails):
-    if fails > 0:
-        return "{0}[FAIL]{1} ({2})".format("*", "*", fails)
-    else:
-        return "[OK]"
+def test_add_contains():
+    """
+    Checks if
+    _add(0), _add(1), ..., _add(max_items),
+    _contains(0), _contains(1), ..., _contains(max_items),
+    does what it 's supposed to do. A load factor is incorporated
+    since cuckoo filters will not fit their theoretical max load.
+    """
 
-
-# Checks if
-# _add(0), _add(1), ..., _add(max_items),
-# _contains(0), _contains(1), ..., _contains(max_items),
-# does what it 's supposed to do. A load factor is incorporated
-# since cuckoo filters will not fit their theoretical max load.
-
-if __name__ == "__main__":
     # Settings for this test
     max_buckets = 128
     nests_per_bucket = 4
@@ -33,7 +28,7 @@ if __name__ == "__main__":
         if not filter.add(i_as_uint8_list):
             fails += 1
 
-    print("ADD: ", Status(fails))
+    assert fails == 0, "Add failed"
     fails = 0
 
     # check if they ended up in the filter
@@ -42,5 +37,5 @@ if __name__ == "__main__":
         if not filter.contains(i_as_uint8_list):
             fails += 1
 
-    print("CONTAINS: ", Status(fails))
+    assert fails == 0, "Contains failed"
     fails = 0
