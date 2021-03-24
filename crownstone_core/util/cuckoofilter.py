@@ -319,7 +319,7 @@ class CuckooFilter:
             'uint16': 2,
             'uint32': 4,
             'uint64': 8,
-            'CuckooFilter': 1 + 1 + 2,
+            'CuckooFilter': 1 + 1 + 2 + 1 + 1,
             'FingerprintType': 2,
             'IndexType': 1
         }

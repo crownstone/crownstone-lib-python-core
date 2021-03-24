@@ -6,7 +6,7 @@ def test_cuckoofilter_api():
     """
     fingerprintsize = 2
     indexsize = 1
-    header_size = fingerprintsize + 2 * indexsize
+    header_size = fingerprintsize + 4 * indexsize
 
     bucks = 64
     nests = 4
