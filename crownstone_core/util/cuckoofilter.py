@@ -76,16 +76,26 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
+    def asUint8Array(self):
+        cuckoofilter_as_uint8_array = []
+        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.bucket_count)
+        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.nests_per_bucket)
+        cuckoofilter_as_uint8_array += Conversion.uint16_to_uint8_array(self.victim.fingerprint)
+        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.victim.bucketA)
+        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.victim.bucketB)
+        cuckoofilter_as_uint8_array += list(chain.from_iterable(
+            [Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]
+        ))
+
+        return cuckoofilter_as_uint8_array
+
     def filterhash(self):
         """
         Flatten the uint16 array of fingerprints to uint8 array in little endian. Must match firmware.
 
         returns: FingerprintType
         """
-        as_uint8_list = list(chain.from_iterable(
-            [Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]
-        ))
-        return self.hash(as_uint8_list)
+        return self.hash(self.asUint8Array())
 
     def getFingerprint(self, key):
         """
