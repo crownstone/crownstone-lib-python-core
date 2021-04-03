@@ -1,4 +1,6 @@
 from itertools import chain
+
+from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion
 
@@ -77,17 +79,14 @@ class CuckooFilter:
     # -------------------------------------------------------------
 
     def asUint8Array(self):
-        cuckoofilter_as_uint8_array = []
-        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.bucket_count)
-        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.nests_per_bucket)
-        cuckoofilter_as_uint8_array += Conversion.uint16_to_uint8_array(self.victim.fingerprint)
-        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.victim.bucketA)
-        cuckoofilter_as_uint8_array += Conversion.uint8_to_uint8_array(self.victim.bucketB)
-        cuckoofilter_as_uint8_array += list(chain.from_iterable(
-            [Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]
-        ))
-
-        return cuckoofilter_as_uint8_array
+        data = CuckooFilterData()
+        data.bucketCountLog2 = self.bucket_count
+        data.nestsPerBucket = self.nests_per_bucket
+        data.victim.fingerprint = self.victim.fingerprint
+        data.victim.bucketA = self.victim.bucketA
+        data.victim.bucketB = self.victim.bucketB
+        data.bucketArray = self.bucket_array
+        return data.getPacket()
 
     def filterhash(self):
         """
