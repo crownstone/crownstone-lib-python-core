@@ -24,38 +24,56 @@ class PacketBase:
                 value = t(value)
         self.__dict__[name] = value
 
+    def __str__(self):
+        return "{0}({1})".format(
+            type(self).__name__,
+            ", ".join([f"{k}: {str(v)}" for k, v in self.__dict__.items()])
+        )
+
 
 # ----- literal types -------
-class Uint8:
+class Uint8(PacketBase):
     def __init__(self, val=0):
         self.val = int(val)
 
     def getPacket(self):
         return Conversion.uint8_to_uint8_array(self.val)
 
+    def __str__(self):
+        return f"{str(self.val)}"
 
-class Uint16:
+
+class Uint16(PacketBase):
     def __init__(self, val=0):
         self.val = int(val)
 
     def getPacket(self):
         return Conversion.uint16_to_uint8_array(self.val)
 
+    def __str__(self):
+        return f"{str(self.val)}"
 
-class Uint8Array:
+
+class Uint8Array(PacketBase):
     def __init__(self, val=[]):
         self.val = list([int(x) for x in val])
 
     def getPacket(self):
         return self.val
 
+    def __str__(self):
+        return f"{str(self.val)}"
 
-class Uint16Array:
+
+class Uint16Array(PacketBase):
     def __init__(self, val=[]):
         self.val = list([int(x) for x in val])
 
     def getPacket(self):
         return Conversion.uint16_array_to_uint8_array(self.val)
+
+    def __str__(self):
+        return f"{str(self.val)}"
 
 
 class CsUint8Enum(IntEnum):

@@ -30,7 +30,8 @@ class AliasPacket(Uint8Array):              # PacketBase is alias friendly
     pass
 
 class EmptyPacket(PacketBase):              # PacketBase is empty packet friendly
-    pass
+    def doSometing(self):                   # even if you add methods
+        print("empty packet says: hi!")
 
 # ---------------------------------------
 # ------------ example usage ------------
@@ -40,15 +41,19 @@ if __name__ == "__main__":
     s = SomePacket(0xab, 0xabcd)
     s.x = 3  # overwrite .x, leave y as constructed.
 
-    print("somepacket:      ", [hex(x) for x in s.getPacket()])
+    print("some packet: " , s)
+    print("some packet:      ", [hex(x) for x in s.getPacket()])
 
     a = AliasPacket([8, 7, 6, 5, 4, 3, 23, 2])
 
     print()
-    print("aliaspacket:     ", [hex(x) for x in a.getPacket()])
+    print("alias packet", a)
+    print("alias packet:     ", [hex(x) for x in a.getPacket()])
 
     empty = EmptyPacket()
     print()
+    empty.doSometing()
+    print("empty packet:", empty)
     print("empty packet: ", empty.getPacket())
 
     d = DerrivedPacket()
@@ -57,7 +62,8 @@ if __name__ == "__main__":
     d.z = d.y
 
     print()
-    print("derrivedpacket:            ", [hex(x) for x in d.getPacket()])
+    print("derrived packet: ", d)
+    print("derrived packet:            ", [hex(x) for x in d.getPacket()])
     print("expanded derrivedpacket:  ",
           [hex(x) for x in d.x.getPacket()],
           [hex(x) for x in d.y.getPacket()],
@@ -69,7 +75,8 @@ if __name__ == "__main__":
     c.l = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
 
     print()
-    print("compositepacket:             ", [hex(x) for x in c.getPacket()])
+    print("composite packet:", c)
+    print("composite packet:             ", [hex(x) for x in c.getPacket()])
     print("expanded composite packet: ",
           [hex(x) for x in c.t.getPacket()],
           [hex(x) for x in c.b.getPacket()],

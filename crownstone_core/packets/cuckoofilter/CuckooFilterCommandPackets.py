@@ -26,18 +26,18 @@ class GetFilterSummariesCommandPacket(PacketBase):
 # ------------------ Return values ------------------
 
 
-class trackable_parser_cmd_upload_filter_ret :
+class UploadFilterReturnPacket(PacketBase):
 	pass
 
 
-class trackable_parser_cmd_remove_filter_ret :
+class RemoveFilterReturnPacket(PacketBase):
 	pass
 
 
-class trackable_parser_cmd_commit_filter_changes_ret :
+class CommitFilterChangesReturnPacket(PacketBase):
 	pass
 
 
-class trackable_parser_cmd_get_filer_summaries_ret :
+class GetFilterSummariesReturnPacket(PacketBase):
 	pass
 

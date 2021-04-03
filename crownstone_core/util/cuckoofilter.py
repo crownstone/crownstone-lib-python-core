@@ -78,7 +78,7 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
-    def asUint8Array(self):
+    def getPacket(self):
         data = CuckooFilterData()
         data.bucketCountLog2 = self.bucket_count
         data.nestsPerBucket = self.nests_per_bucket
@@ -94,7 +94,7 @@ class CuckooFilter:
 
         returns: FingerprintType
         """
-        return self.hash(self.asUint8Array())
+        return self.hash(self.getPacket())
 
     def getFingerprint(self, key):
         """
