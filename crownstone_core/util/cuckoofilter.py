@@ -78,7 +78,7 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
-    def getPacket(self):
+    def getData(self):
         data = CuckooFilterData()
         data.bucketCountLog2 = self.bucket_count
         data.nestsPerBucket = self.nests_per_bucket
@@ -86,7 +86,10 @@ class CuckooFilter:
         data.victim.bucketA = self.victim.bucketA
         data.victim.bucketB = self.victim.bucketB
         data.bucketArray = self.bucket_array
-        return data.getPacket()
+        return data
+
+    def getPacket(self):
+        return self.getData().getPacket()
 
     def filterhash(self):
         """

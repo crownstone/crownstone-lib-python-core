@@ -2,20 +2,21 @@ from crownstone_core.packets.TrackableParser.TrackableParserPacketsUtil import P
 
 class FilterInputType(CsEnum8):
     MacAddress = 0
-    AdData     = 1
+    AdDataIdentity = 1
+    AdDataCategory = 2
 
 
 class TrackingFilterMetaData(PacketBase):
     def __init__(self):
         self.protocol = Uint8()
         self.version = Uint16()
-        self.profileId = Uint16()
-        self.inputType = FilterInputType.MacAddress # must choose default value for IntEnum
+        self.profileId = Uint8()
+        self.inputType = FilterInputType.MacAddress
         self.flags = Uint8() # bitmask not implemented yet
 
 
-class CuckooPacket(PacketBase):
-    def __init__(self, cuckoo = None):
+class CuckooFilterData(PacketBase):
+    def __init__(self):
         self.bucket_count = Uint8()
         self.nests_per_bucket = Uint8()
         self.victim_fingerprint = Uint16()
@@ -23,28 +24,20 @@ class CuckooPacket(PacketBase):
         self.victim_bucketB = Uint8()
         self.fingerprintarray = Uint16Array()
 
-        if cuckoo is not None:
-            self.loadCuckooFilter(cuckoo)
-
-    def loadCuckooFilter(self, cuckoo):
-        self.bucket_count = cuckoo.bucket_count
-        self.nests_per_bucket = cuckoo.nests_per_bucket
-        self.victim_fingerprint = cuckoo.victim.fingerprint
-        self.victim_bucketA = cuckoo.victim.bucketA
-        self.victim_bucketB = cuckoo.victim.bucketB
-        self.fingerprintarray = cuckoo.bucket_array
-
-
 class TrackingFilterData(PacketBase):
     def __init__(self):
         self.metadata = TrackingFilterMetaData()
-        self.filter = CuckooPacket()
+        self.filter = CuckooFilterData()
 
 
 class TrackingFilterUpload(PacketBase):
+    """
+     Packet definition for command upload filter.
+
+    """
     def __init__(self):
         self.filterId = Uint8()
         self.chunkStartIndex = Uint16()
         self.totalSize = Uint16()
-        self.chunkSize = Uint16()
+        self.chunkSize = Uint16() # @Bart: is this chunk size necessary or can it be computed upon reception?
         self.chunk = Uint8Array()

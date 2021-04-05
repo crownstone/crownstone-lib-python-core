@@ -21,7 +21,8 @@ class PacketBase:
         """
         if name in self.__dict__:
             t = type(self.__dict__[name])
-            if t is not type(value):
+            tv = type(value)
+            if t is not tv:
                 value = t(value)
         self.__dict__[name] = value
 
