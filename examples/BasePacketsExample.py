@@ -1,4 +1,4 @@
-from crownstone_core.packets.cuckoofilter.BasePackets import *
+from crownstone_core.util.BasePackets import *
 
 # ------------------------------------------
 # --- custom example packet definitions ----

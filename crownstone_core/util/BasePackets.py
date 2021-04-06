@@ -9,6 +9,10 @@ from crownstone_core.util.Conversion import Conversion
 
 class PacketBase:
     def getPacket(self):
+        """
+        Serializes the whole object by calling getPacket on each member variable and
+        appending the return values to a list.
+        """
         packet = []
         for name, val in self.__dict__.items():
             packet += val.getPacket()

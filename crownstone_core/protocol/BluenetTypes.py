@@ -2,6 +2,10 @@ from enum import IntEnum
 
 
 class ControlType(IntEnum):
+    """
+    The control type is an identifier for control commands. These are documented in docs/PROTOCOL.md on
+    the bluenet github repository.
+    """
     SETUP                            = 0
     FACTORY_RESET                    = 1
     GET_STATE                        = 2
