@@ -14,7 +14,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 5 + 1:
         print("Usage: python3 generate_testfile.py cuckootestfile 50 4 100 6 20")
         print("arg 0: outputfilename (.csv.cuck will be appended")
-        print("arg 1: cuckoo num buckets")
+        print("arg 1: cuckoo num buckets log 2")
         print("arg 2: cuckoo num items per bucket")
         print("arg 3: number of items to generate")
         print("arg 4: min length of an item")

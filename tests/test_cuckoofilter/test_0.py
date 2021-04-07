@@ -11,14 +11,14 @@ def test_add_contains():
     """
 
     # Settings for this test
-    max_buckets = 128
+    max_buckets_log2 = 7
     nests_per_bucket = 4
     load_factor = 0.75
 
-    filter = CuckooFilter(max_buckets, nests_per_bucket)
+    filter = CuckooFilter(max_buckets_log2, nests_per_bucket)
 
     # setup test variables
-    max_items = max_buckets * nests_per_bucket
+    max_items = filter.fingerprintcount()
     num_items_to_test = int(max_items * load_factor)
     fails = 0
 

@@ -77,7 +77,7 @@ def process_test_file(in_fname):
 
     # writing result file
     with open(cuck_result_path, "w+") as F_out:
-        for byt in filter.asUint8Array():
+        for byt in filter.getPacket():
             write_uint8(F_out, byt)
 
     # check file equality

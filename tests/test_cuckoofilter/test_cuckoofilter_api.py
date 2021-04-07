@@ -8,14 +8,14 @@ def test_cuckoofilter_api():
     indexsize = 1
     header_size = fingerprintsize + 4 * indexsize
 
-    bucks = 64
+    bucks_log2 = 6
     nests = 4
 
-    num_fingerprints = bucks * nests
+    num_fingerprints = (1 << bucks_log2)  * nests
     fingerprint_array_size = num_fingerprints * fingerprintsize
     total_size = header_size + fingerprint_array_size
 
-    f = CuckooFilter(bucks, nests)
+    f = CuckooFilter(bucks_log2, nests)
 
     assert f.filterhash() <= 0xffff, "filter hash too big"
     assert f.fingerprintcount() == num_fingerprints, "Number of fingerprints in array incorrect"
