@@ -17,8 +17,8 @@ class RemoveFilterCommandPacket(PacketBase):
 	"""
 	 Packet definition for ControlType.TRACKABLE_PARSER_REMOVE_FILTER
 	"""
-	def __init__(self):
-		self.filterId = Uint8()
+	def __init__(self, filterId = None):
+		self.filterId = Uint8(filterId if filterId is not None else 0)
 
 
 class CommitFilterChangesCommandPacket(PacketBase):
