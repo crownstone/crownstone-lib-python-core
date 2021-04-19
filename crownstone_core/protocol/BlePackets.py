@@ -25,6 +25,10 @@ class BLEPacket:
         self.payload = [Conversion.int8_to_uint8(integer)]
         return self._process()
 
+    def loadInt8(self, int8):
+        self.payload = [Conversion.int8_to_uint8(int8)]
+        return self._process()
+
     def loadUInt8(self, uint8):
         self.payload = [uint8]
         return self._process()
@@ -33,8 +37,16 @@ class BLEPacket:
         self.payload = Conversion.uint16_to_uint8_array(uint16)
         return self._process()
 
+    def loadInt16(self, uint16):
+        self.payload = Conversion.int16_to_uint8_array(uint16)
+        return self._process()
+
     def loadUInt32(self, uint32):
         self.payload = Conversion.uint32_to_uint8_array(uint32)
+        return self._process()
+
+    def loadInt32(self, int32):
+        self.payload = Conversion.int32_to_uint8_array(int32)
         return self._process()
 
     def loadFloat(self, float):
