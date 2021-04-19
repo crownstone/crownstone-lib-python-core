@@ -13,11 +13,11 @@ def test_add_contains_remove_contains():
     Checks if the sequence _contains, _add, _contains, _remove, contains does what it is expected to do.
     """
     # Settings for this test
-    max_buckets = 128
+    max_buckets_log2 = 7
     nests_per_bucket = 4
     load_factor = 0.75
 
-    filter = CuckooFilter(max_buckets, nests_per_bucket)
+    filter = CuckooFilter(max_buckets_log2, nests_per_bucket)
 
     # setup test variables
     fails = 0

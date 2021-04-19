@@ -77,16 +77,8 @@ def process_test_file(in_fname):
 
     # writing result file
     with open(cuck_result_path, "w+") as F_out:
-        # header / meta data part:
-        write_uint8(F_out, filter.bucket_count)
-        write_uint8(F_out, filter.nests_per_bucket)
-        write_uint16(F_out, filter.victim.fingerprint)
-        write_uint8(F_out, filter.victim.bucketA)
-        write_uint8(F_out, filter.victim.bucketB)
-
-        # fingerprint array part:
-        for fingerprint in filter.bucket_array:
-            write_uint16(F_out, fingerprint)
+        for byt in filter.getPacket():
+            write_uint8(F_out, byt)
 
     # check file equality
     assert filecmp.cmp(cuck_expect_path, cuck_result_path, shallow=False), "Generated test file unequal precomputed file"

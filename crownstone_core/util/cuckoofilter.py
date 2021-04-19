@@ -1,4 +1,6 @@
 from itertools import chain
+
+from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion
 
@@ -42,8 +44,8 @@ class CuckooFilter:
 
         return CuckooFilter.ExtendedFingerprint(
             finger,
-            hashed_finger % self.bucket_count,
-            (hashed_finger ^ finger) % self.bucket_count)
+            hashed_finger % self.bucketCount(),
+            (hashed_finger ^ finger) % self.bucketCount())
 
     def getExtendedFingerprintFromFingerprintAndBucket(self, fingerprint, bucket_index):
         """
@@ -51,22 +53,22 @@ class CuckooFilter:
         bucket_index: IndexType
         returns: ExtendedFingerprint
         """
-        bucket_a = (bucket_index % self.bucket_count) & 0xff
-        bucket_b =((bucket_index ^ fingerprint) % self.bucket_count) & 0xff
+        bucket_a = (bucket_index % self.bucketCount()) & 0xff
+        bucket_b =((bucket_index ^ fingerprint) % self.bucketCount()) & 0xff
         return CuckooFilter.ExtendedFingerprint (fingerprint, bucket_a, bucket_b)
 
     # -------------------------------------------------------------
     # Run time variables
     # -------------------------------------------------------------
 
-    def __init__(self, bucket_count, nests_per_bucket):
+    def __init__(self, bucketCountLog2, nests_per_bucket):
         """
-        bucket_count: IndexType
+        bucketCountLog2: IndexType. Number of buckets allocated is 2**bucketCountLog2.
         nests_per_bucket: IndexType
         returns: n/a
         """
-        self.bucket_count = bucket_count
-        self.nests_per_bucket = nests_per_bucket
+        self.bucketCountLog2 = int(bucketCountLog2)
+        self.nests_per_bucket = int(nests_per_bucket)
         self.victim = CuckooFilter.ExtendedFingerprint(0,0,0)
         self.bucket_array = []
 
@@ -76,16 +78,26 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
+    def getData(self):
+        data = CuckooFilterData()
+        data.bucketCountLog2 = self.bucketCountLog2
+        data.nestsPerBucket = self.nests_per_bucket
+        data.victim.fingerprint = self.victim.fingerprint
+        data.victim.bucketA = self.victim.bucketA
+        data.victim.bucketB = self.victim.bucketB
+        data.bucketArray = self.bucket_array
+        return data
+
+    def getPacket(self):
+        return self.getData().getPacket()
+
     def filterhash(self):
         """
         Flatten the uint16 array of fingerprints to uint8 array in little endian. Must match firmware.
 
         returns: FingerprintType
         """
-        as_uint8_list = list(chain.from_iterable(
-            [Conversion.uint16_to_uint8_array(fingerprint) for fingerprint in self.bucket_array]
-        ))
-        return self.hash(as_uint8_list)
+        return self.hash(self.getPacket())
 
     def getFingerprint(self, key):
         """
@@ -306,7 +318,7 @@ class CuckooFilter:
         returns: None
         """
         self.victim = CuckooFilter.ExtendedFingerprint(0,0,0)
-        self.bucket_array = [0x00] * CuckooFilter.getfingerprintcount(self.bucket_count, self.nests_per_bucket)
+        self.bucket_array = [0x00] * CuckooFilter.getfingerprintcount(self.bucketCount(), self.nests_per_bucket)
 
     # -------------------------------------------------------------
     # Size stuff.
@@ -319,7 +331,7 @@ class CuckooFilter:
             'uint16': 2,
             'uint32': 4,
             'uint64': 8,
-            'CuckooFilter': 1 + 1 + 2,
+            'CuckooFilter': 1 + 1 + 2 + 1 + 1,
             'FingerprintType': 2,
             'IndexType': 1
         }
@@ -358,18 +370,21 @@ class CuckooFilter:
         """
         returns: int
         """
-        return CuckooFilter.getfingerprintcount(self.bucket_count, self.nests_per_bucket)
+        return CuckooFilter.getfingerprintcount(self.bucketCount(), self.nests_per_bucket)
+
+    def bucketCount(self):
+        return 1 << self.bucketCountLog2
 
     def buffersize(self):
         """
         returns: int
         """
-        return CuckooFilter.getbuffersize(self.bucket_count, self.nests_per_bucket)
+        return CuckooFilter.getbuffersize(self.bucketCount(), self.nests_per_bucket)
 
     def size(self):
         """
         returns: int
         """
-        return CuckooFilter.getsize(self.bucket_count, self.nests_per_bucket)
+        return CuckooFilter.getsize(self.bucketCount(), self.nests_per_bucket)
 
 
