@@ -160,6 +160,8 @@ class CuckooFilter:
 
                     if self.bucket_array[last] != 0:
                         self.bucket_array[candidate] = self.bucket_array[last]
+                        self.bucket_array[last] = 0
+                        break
                 return True
         return False
 
