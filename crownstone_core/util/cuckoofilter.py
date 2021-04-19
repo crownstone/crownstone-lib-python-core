@@ -250,7 +250,7 @@ class CuckooFilter:
         for ii in range(self.nests_per_bucket):
             if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketA, ii):
                 return True
-        # search bucketA
+        # search bucketB
         for ii in range(self.nests_per_bucket):
             if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketB, ii):
                 return True

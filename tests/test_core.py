@@ -1,3 +1,5 @@
+from crownstone_core.util.CRC import crc16ccitt
+
 from crownstone_core.util.EventBus import EventBus
 from crownstone_core.packets.Advertisement import Advertisement
 from crownstone_core.packets.serviceDataParsers.parsers import parseOpcode7
@@ -48,3 +50,9 @@ def test_eventBus():
     assert(count == 1)
     bus.emit("test")
     assert(count == 1)
+
+def test_crc16_ccitt():
+    assert(crc16ccitt([1,2,3,4,5]) == 37636)
+    assert(crc16ccitt([63,63]) == 53016)
+    assert(crc16ccitt([99,51]) == 17734)
+    assert(crc16ccitt([170,251]) == 45518)

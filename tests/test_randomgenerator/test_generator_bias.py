@@ -1,5 +1,9 @@
 from crownstone_core.util.randomgenerator import RandomGenerator
 
+def test_random_generator():
+    rand = RandomGenerator()
+    assert rand() == 3048033998, "generating seeded random number failed expected value"
+
 def test_generator_bias():
     """
     Small empirical analysis of even/odd bias in start values of random generator.
