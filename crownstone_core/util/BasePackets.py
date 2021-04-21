@@ -35,8 +35,39 @@ class PacketBase:
         )
 
 
+# ----- common int packet details -----
+
+
+class IntPacket(PacketBase):
+    """
+    Used as base class for the integers to support common operations among them and
+    enable explicit cast to int.
+    Subclasses are required to contain a field with the name 'val'.
+    """
+    def __eq__(self, other):
+        return self.val == other.val
+
+    def __ne__(self, other):
+        return self.val != other.val
+
+    def __lt__(self, other):
+        return self.val < other.val
+
+    def __le__(self, other):
+        return self.val <= other.val
+
+    def __gt__(self, other):
+        return self.val > other.val
+
+    def __ge__(self, other):
+        return self.val >= other.val
+
+    def __int__(self):
+        return self.val
+
+
 # ----- literal types -------
-class Uint8(PacketBase):
+class Uint8(IntPacket):
     def __init__(self, val=0):
         self.val = int(val)
 
@@ -47,7 +78,7 @@ class Uint8(PacketBase):
         return f"{str(self.val)}"
 
 
-class Uint16(PacketBase):
+class Uint16(IntPacket):
     def __init__(self, val=0):
         self.val = int(val)
 
