@@ -23,3 +23,10 @@ class TrackingFilterData(PacketBase):
     def __init__(self):
         self.metadata = TrackingFilterMetaData()
         self.filter = CuckooFilterData()
+
+class TrackingFilterSummary(PacketBase):
+    def __init__(self):
+        self.id = Uint8()
+        self.flags = Uint8()
+        self.version = Uint16()
+        self.crc = Uint16()

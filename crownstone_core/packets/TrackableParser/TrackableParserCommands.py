@@ -1,4 +1,5 @@
 from crownstone_core.util.BasePackets import *
+from crownstone_core.packets.TrackableParser.TrackableParserPackets import TrackingFilterSummary
 
 # ------------------ Command packets ------------------
 
@@ -52,4 +53,11 @@ class CommitFilterChangesReturnPacket(PacketBase):
 
 
 class GetFilterSummariesReturnPacket(PacketBase):
-	pass
+	"""
+	Definition of return packet ControlType.TRACKABLE_PARSER_GET_SUMMARIES
+	"""
+	def __init__(self):
+		self.masterVersion = Uint16()
+		self.masterCrc = Uint16()
+		self.freeSpace = Uint16()
+		self.summaries = PacketBaseList(cls=TrackingFilterSummary)
