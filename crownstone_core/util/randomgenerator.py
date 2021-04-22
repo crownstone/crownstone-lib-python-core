@@ -2,12 +2,7 @@
 As we need consistent cross-platform pseudo random number generation. This is a port of the
 Middle Square Weyl Sequence Random Number Generator found on https://mswsrng.wixsite.com/rand .
 """
-
-class Bitmasks:
-    ff64 = 0xffffffffffffffff
-    ff32 = 0xffffffff
-    ff16 = 0xffff
-    ff8  = 0xff
+from crownstone_core.util.Bitmasks import Bitmasks
 
 class Msws:
     class State:

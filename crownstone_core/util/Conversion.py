@@ -3,6 +3,8 @@ __author__ = 'Bart van Vliet'
 import binascii
 import struct
 
+from crownstone_core.util.Bitmasks import Bitmasks
+
 class Conversion:
 
     ####################################
@@ -220,6 +222,11 @@ class Conversion:
         for i in range(0, len(string)):
             arr8.append(ord(string[i]))
         return bytes(arr8)
+
+    @staticmethod
+    def uint8_array_to_uint8(arr8):
+        return int(arr8[0] & Bitmasks.ff8)
+
 
 
     ########################
