@@ -27,14 +27,13 @@ class PacketBase:
         Failure to setPacket invocations are required to throw an exception of type ValueError.
         """
         for name, val in self.__dict__.items():
-            print("loading ", type(self),".", name)
             bytelist = self.__dict__[name].setPacket(bytelist)
         return bytelist
 
 
     def __setattr__(self, name, value):
         """
-        Enforces type equality after assignment
+        Enforces type equality after assignment.
         """
         if name in self.__dict__:
             t = type(self.__dict__[name])
@@ -93,7 +92,6 @@ class Uint8(IntPacket):
         if len(bytelist) < 1:
             raise ValueError("Deserialization failed, not enough bytes left")
         self.val = Conversion.uint8_array_to_uint8(bytelist[:1])
-        print("loaded uint8:", self.val)
         return bytelist[1:]
 
     def __repr__(self):
@@ -111,7 +109,6 @@ class Uint16(IntPacket):
         if len(bytelist) < 2:
             raise ValueError("Deserialization failed, not enough bytes left")
         self.val = Conversion.uint8_array_to_uint16(bytelist[:2])
-        print("loaded uint16:", self.val)
         return bytelist[2:]
 
     def __repr__(self):

@@ -1,6 +1,20 @@
 from crownstone_core.util.BasePackets import *
 from crownstone_core.packets.TrackableParser.TrackableParserPackets import TrackingFilterSummary
 
+# ------------------ command wrapper packet ------------------
+class TrackableParserCommandWrapper(PacketBase):
+	"""
+	Packet definition for trackable parser command wrapper.
+	Construct using one of the command packets as argument,
+	possibly a default constructed one E.g.:
+
+	packet = UploadFilterCommandPacket()
+	wrap = trackableParserCommandWrapper(packet)
+	"""
+	def __init__(self, commandpacket):
+		self.commandProtocolVersion = Uint8()
+		self.payload = commandpacket
+
 # ------------------ Command packets ------------------
 
 class UploadFilterCommandPacket(PacketBase):
