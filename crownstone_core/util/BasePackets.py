@@ -44,6 +44,8 @@ class PacketBase:
             t = value.__class__.__name__
             if t == "Uint8":
                 value.val = reader.getUInt8()
+            elif t == "Int8":
+                value.val = reader.getInt8()
             elif t == "Uint16":
                 value.val = reader.getUInt16()
             elif t == "Uint32":
@@ -53,12 +55,33 @@ class PacketBase:
             elif t == "CsUint16Enum":
                 value.val = reader.getUInt16()
             elif t == "Uint8Array":
-                raise Exception("CANT_AUTOMATICALLY_PARSE_UINT8_ARRAY")
+                if value.size is None:
+                    raise Exception("CANT_AUTOMATICALLY_PARSE_UINT8_ARRAY")
+                value.val = reader.getBytes(value.size)
             elif t == "Uint16Array":
-                raise Exception("CANT_AUTOMATICALLY_PARSE_UINT16_ARRAY")
+                if value.size is None:
+                    raise Exception("CANT_AUTOMATICALLY_PARSE_UINT16_ARRAY")
+                data = reader.getBytes(value.size)
+                reader = BufferReader(data)
+
+                while reader.getRemainingByteCount() > 1:
+                    data.append(reader.getUInt16())
+                value.val = data
 
 
 # ----- literal types -------
+class Int8(PacketBase):
+    def __init__(self, val=0):
+        if val is None:
+            val = 0
+        self.val = int(val)
+
+    def getPacket(self):
+        return [Conversion.int8_to_uint8(self.val)]
+
+    def __str__(self):
+        return f"{str(self.val)}"
+
 class Uint8(PacketBase):
     def __init__(self, val=0):
         if val is None:
@@ -70,6 +93,7 @@ class Uint8(PacketBase):
 
     def __str__(self):
         return f"{str(self.val)}"
+
 
 
 class Uint16(PacketBase):
@@ -98,7 +122,8 @@ class Uint32(PacketBase):
 
 
 class Uint8Array(PacketBase):
-    def __init__(self, val=[]):
+    def __init__(self, val=[], size : int = None):
+        self.size = size
         if val is None:
             val = []
         self.val = list([int(x) for x in val])
@@ -110,8 +135,10 @@ class Uint8Array(PacketBase):
         return f"{str(self.val)}"
 
 
+
 class Uint16Array(PacketBase):
-    def __init__(self, val=[]):
+    def __init__(self, val=[], size : int = None):
+        self.size = size
         if val is None:
             val = []
         self.val = list([int(x) for x in val])
