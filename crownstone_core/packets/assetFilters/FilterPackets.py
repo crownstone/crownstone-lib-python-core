@@ -32,7 +32,7 @@ class FilterSummaries:
         self.freeSpaceLeft : int = 0
         self.summaries     : [FilterSummary] = []
 
-    def fromPacket(self, data: [int]):
+    def fromData(self, data: [int]):
         reader = BufferReader(data)
         self.supportedFilterProtocol = reader.getUInt8()
         self.masterVersion           = reader.getUInt16()
@@ -43,7 +43,7 @@ class FilterSummaries:
 
         for i in range(0, amountOfFilters):
             summary = FilterSummary()
-            summary.fromPacket(reader.getBytes(FILTER_SUMMARY_SIZE))
+            summary.fromData(reader.getBytes(FILTER_SUMMARY_SIZE))
             self.summaries.append(summary)
 
 class FilterSummary(PacketBase):

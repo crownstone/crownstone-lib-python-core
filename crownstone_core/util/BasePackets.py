@@ -37,7 +37,11 @@ class PacketBase:
             ", ".join([f"{k}: {str(v)}" for k, v in self.__dict__.items()])
         )
 
-    def fromPacket(self, data: [int]):
+    def fromData(self, data: [int]):
+        """
+        This will fill all the fields back from a data array. Is more or less the inverse of the getPacket.
+        The main difference is that arrays will throw an error if you have not defined a size.
+        """
         reader = BufferReader(data)
 
         for name, value in self.__dict__.items():
@@ -123,6 +127,9 @@ class Uint32(PacketBase):
 
 class Uint8Array(PacketBase):
     def __init__(self, val=[], size : int = None):
+        """
+        The size here is used to allow fromData parsing. It is optional for normal usage.
+        """
         self.size = size
         if val is None:
             val = []
@@ -138,6 +145,9 @@ class Uint8Array(PacketBase):
 
 class Uint16Array(PacketBase):
     def __init__(self, val=[], size : int = None):
+        """
+        The size here is used to allow fromData parsing. It is optional for normal usage.
+        """
         self.size = size
         if val is None:
             val = []
