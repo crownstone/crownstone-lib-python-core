@@ -11,7 +11,7 @@ class SwitchState:
 		"""
 		:param rawSwitchState: state according to protocol (uint8).
 		"""
-		self.relay = (rawSwitchState & 0x80 == 1)
+		self.relay = (rawSwitchState & 0x80 != 0)
 
 		self.dimmer = (rawSwitchState & 0x7F)
 		if self.dimmer > 100:
