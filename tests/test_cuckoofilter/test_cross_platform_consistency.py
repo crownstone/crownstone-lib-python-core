@@ -4,7 +4,7 @@ the pregenerated file <filename>.cuck.
 Generated .py.cuck files removed after script finishes.
 """
 import sys, os, filecmp
-from crownstone_core.util.cuckoofilter import CuckooFilter
+from crownstone_core.util.Cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
 
@@ -16,7 +16,7 @@ def getPathFromFileName(fname):
 
 def loadFilter(infile):
     filter = None
-
+    fails = 0
     for line in infile:
         # strip trailing comments:
         line = line.strip()
@@ -32,6 +32,8 @@ def loadFilter(infile):
         columns_len = len(columns)
         operation = columns[0]
 
+
+
         if operation == "cuckoofilter":
             # Constructing cuckoofilter from file
             assert columns_len == 3, "Testfile corrput: invalid amount of arguments for construction of cuckoofilter"
@@ -42,11 +44,13 @@ def loadFilter(infile):
             filter = CuckooFilter(buck_count, nest_count)
         elif operation == "add":
             assert filter is not None, "Testfile corrupt: add command found before filter is constructed"
-            filter.add([ int(x, 16) for x in columns[1:] ])
+            if not filter.add([ int(x, 16) for x in columns[1:] ]):
+                fails += 1
         else:
             # operation not recognized, ignore
             continue
 
+    assert fails == 0
     return filter
 
 def write_uint8(outfile, val):

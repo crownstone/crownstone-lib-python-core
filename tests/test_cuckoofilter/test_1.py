@@ -1,4 +1,4 @@
-from crownstone_core.util.cuckoofilter import CuckooFilter
+from crownstone_core.util.Cuckoofilter import CuckooFilter
 
 def Status(fails):
     if fails > 0:
