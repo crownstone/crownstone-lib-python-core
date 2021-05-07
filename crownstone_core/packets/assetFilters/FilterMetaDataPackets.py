@@ -2,14 +2,6 @@ from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8E
 from crownstone_core.packets.assetFilters.FilterTypes import FilterInputType
 
 
-class FilterMetaData(PacketBase):
-
-    def __init__(self):
-        self.type              = Uint8()
-        self.profileId         = Uint8()
-        self.input             = Uint8Array()
-        self.outputDescription = Uint8Array()
-
 class FilterFormatMacAddress(PacketBase):
 
     def __init__(self):
@@ -37,3 +29,12 @@ class FilterOutputDescription(PacketBase):
         self.type = Uint8(output_type)
         if formatPacket is not None:
             self.format = Uint8Array(formatPacket.getPacket())
+
+
+class FilterMetaData(PacketBase):
+
+    def __init__(self, type: int, profileId: int, input: FilterFormatMacAddress or FilterFormatMaskedAdData or FilterFormatMaskedAdData, outputDescription: FilterOutputDescription):
+        self.type              = Uint8(type)
+        self.profileId         = Uint8(profileId)
+        self.input             = Uint8Array(input.getPacket())
+        self.outputDescription = Uint8Array(outputDescription.getPacket())
