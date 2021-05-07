@@ -1,4 +1,4 @@
-from crownstone_core.util.cuckoofilter import CuckooFilter
+from crownstone_core.util.Cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
 def test_add_contains():

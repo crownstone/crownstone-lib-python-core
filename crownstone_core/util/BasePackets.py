@@ -5,6 +5,9 @@ Example usage can (for now) be found in ExampleBasePackets.py
 """
 
 from enum import IntEnum
+
+from crownstone_core.util.BufferReader import BufferReader
+
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.Bitmasks import Bitmasks
 
@@ -48,6 +51,41 @@ class PacketBase:
             ", ".join([f"{k}: {str(v)}" for k, v in self.__dict__.items()])
         )
 
+    def fromData(self, data: [int]):
+        """
+        This will fill all the fields back from a data array. Is more or less the inverse of the getPacket.
+        The main difference is that arrays will throw an error if you have not defined a size.
+        """
+        reader = BufferReader(data)
+
+        for name, value in self.__dict__.items():
+            t = value.__class__.__name__
+            if t == "Uint8":
+                value.val = reader.getUInt8()
+            elif t == "Int8":
+                value.val = reader.getInt8()
+            elif t == "Uint16":
+                value.val = reader.getUInt16()
+            elif t == "Uint32":
+                value.val = reader.getUInt32()
+            elif t == "CsUint8Enum":
+                value.val = reader.getUInt8()
+            elif t == "CsUint16Enum":
+                value.val = reader.getUInt16()
+            elif t == "Uint8Array":
+                if value.size is None:
+                    raise Exception("CANT_AUTOMATICALLY_PARSE_UINT8_ARRAY")
+                value.val = reader.getBytes(value.size)
+            elif t == "Uint16Array":
+                if value.size is None:
+                    raise Exception("CANT_AUTOMATICALLY_PARSE_UINT16_ARRAY")
+                data = reader.getBytes(value.size)
+                reader = BufferReader(data)
+
+                while reader.getRemainingByteCount() > 1:
+                    data.append(reader.getUInt16())
+                value.val = data
+
 
 # ----- common int packet details -----
 
@@ -83,6 +121,8 @@ class IntPacket(PacketBase):
 # ----- literal types -------
 class Uint8(IntPacket):
     def __init__(self, val=0):
+        if val is None:
+            val = 0
         self.val = int(val)
 
     def getPacket(self):
@@ -100,6 +140,8 @@ class Uint8(IntPacket):
 
 class Uint16(IntPacket):
     def __init__(self, val=0):
+        if val is None:
+            val = 0
         self.val = int(val)
 
     def getPacket(self):
@@ -112,6 +154,18 @@ class Uint16(IntPacket):
         return bytelist[2:]
 
     def __repr__(self):
+        return f"{str(self.val)}"
+
+class Uint32(PacketBase):
+    def __init__(self, val=0):
+        if val is None:
+            val = 0
+        self.val = int(val)
+
+    def getPacket(self):
+        return Conversion.uint32_to_uint8_array(self.val)
+
+    def __str__(self):
         return f"{str(self.val)}"
 
 
@@ -127,6 +181,7 @@ class Uint8Array(PacketBase):
 
     def __repr__(self):
         return f"{str(self.val)}"
+
 
 
 class Uint16Array(PacketBase):

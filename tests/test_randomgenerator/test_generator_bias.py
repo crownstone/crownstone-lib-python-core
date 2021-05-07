@@ -1,4 +1,10 @@
-from crownstone_core.util.randomgenerator import RandomGenerator
+from crownstone_core.util.Randomgenerator import RandomGenerator
+
+def test_random_generator():
+    rand = RandomGenerator()
+    assert rand() == 3048033998, "generating seeded random number failed expected value"
+    rand2 = RandomGenerator(62777)
+    assert rand2() == 70160621, "generating seeded random number failed expected value"
 
 def test_generator_bias():
     """

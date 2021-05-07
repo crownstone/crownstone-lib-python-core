@@ -1,5 +1,5 @@
-from crownstone_core.util.cuckoofilter import CuckooFilter
-from crownstone_core.util.randomgenerator import RandomGenerator
+from crownstone_core.util.Cuckoofilter import CuckooFilter
+from crownstone_core.util.Randomgenerator import RandomGenerator
 
 def CheckTolerance(fails, total, tolerance):
     fails_rel = fails / total
@@ -13,6 +13,15 @@ def random_string(length, rand = RandomGenerator()):
     len_chrs = len(chrs)
 
     return tuple(chrs[rand() % len_chrs] for i in range(length))
+
+def get_random_mac_address(rand):
+    """
+    Insert an instance of the MSWS rand generator
+    """
+    mac = []
+    for i in range(0,6):
+        mac.append(rand() % 256)
+    return mac
 
 
 def test_false_positive_rate():
@@ -28,20 +37,22 @@ def test_false_positive_rate():
     
     # setup test variables
     max_items = filter.fingerprintcount()
-    num_items_to_test = int(max_items * load_factor)
+    num_items_to_load = int(max_items * load_factor)
+    assert num_items_to_load == 486
     fails = 0
     
     # generate a bunch of random strings
     my_mac_passlist = []
     random_mac_addresses = []
-    for i in range(int(num_items_to_test)):
-        my_mac_passlist += [ random_string(6) ]
-        random_mac_addresses += [ random_string(6) ]
 
-    my_mac_passlist = set(my_mac_passlist)
-    random_mac_addresses = set(random_mac_addresses)
-    
-    # add the passlisted items to the filter
+    # this generator will ensure that the test is repeatable
+    rand = RandomGenerator()
+
+    for i in range(int(num_items_to_load)):
+        my_mac_passlist.append(get_random_mac_address(rand))
+        random_mac_addresses.append(get_random_mac_address(rand))
+
+    # add the pass listed items to the filter
     for mac in my_mac_passlist:
         if not filter.add(mac):
             fails+= 1
@@ -56,8 +67,8 @@ def test_false_positive_rate():
 
     assert fails == 0, "Contains incorrect after filling filter up to load_factor ({0:.1}%)".format(100 * load_factor)
     fails = 0
-    
-    # check if the random ones fail to pass the passlist    
+
+    # check if the random ones fail to pass the passlist
     # (unless they happen to be in there)
     false_positives = 0
     false_negatives = 0
@@ -74,3 +85,4 @@ def test_false_positive_rate():
 
     assert CheckTolerance(false_negatives, len(random_mac_addresses), 0.00), "False negatives should not occur"
     assert CheckTolerance(false_positives, len(random_mac_addresses), 0.05), "False positive rate too high"
+    assert false_positives == 4, "Not the amount of expected false positives."

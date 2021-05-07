@@ -1,10 +1,11 @@
 from itertools import chain
 
-from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
+from crownstone_core.packets.assetFilters.CuckooFilterPackets import CuckooFilterData
+
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion
 
-from crownstone_core.util.randomgenerator import RandomGenerator
+from crownstone_core.util.Randomgenerator import RandomGenerator
 
 class CuckooFilter:
     """
@@ -160,6 +161,8 @@ class CuckooFilter:
 
                     if self.bucket_array[last] != 0:
                         self.bucket_array[candidate] = self.bucket_array[last]
+                        self.bucket_array[last] = 0
+                        break
                 return True
         return False
 
@@ -248,7 +251,7 @@ class CuckooFilter:
         for ii in range(self.nests_per_bucket):
             if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketA, ii):
                 return True
-        # search bucketA
+        # search bucketB
         for ii in range(self.nests_per_bucket):
             if extended_finger.fingerprint == self.lookup_fingerprint(extended_finger.bucketB, ii):
                 return True
