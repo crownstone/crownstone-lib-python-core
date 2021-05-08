@@ -102,6 +102,12 @@ class IntPacket(PacketBase):
     enable explicit cast to int.
     Subclasses are required to contain a field with the name 'val'.
     """
+    def __init__(self, val=None):
+        if val is None:
+            val = 0
+        else:
+            self.val = int(val)
+
     def __eq__(self, other):
         return self.val == other.val
 
@@ -123,14 +129,13 @@ class IntPacket(PacketBase):
     def __int__(self):
         return self.val
 
+    def __str__(self):
+        return f"{str(self.val)}"
+
 
 # ----- literal types -------
-class Uint8(IntPacket):
-    def __init__(self, val=0):
-        if val is None:
-            val = 0
-        self.val = int(val)
 
+class Uint8(IntPacket):
     def getPacket(self):
         return Conversion.uint8_to_uint8_array(self.val)
 
@@ -145,11 +150,6 @@ class Uint8(IntPacket):
 
 
 class Uint16(IntPacket):
-    def __init__(self, val=0):
-        if val is None:
-            val = 0
-        self.val = int(val)
-
     def getPacket(self):
         return Conversion.uint16_to_uint8_array(self.val)
 
@@ -159,21 +159,25 @@ class Uint16(IntPacket):
         self.val = Conversion.uint8_array_to_uint16(bytelist[:2])
         return bytelist[2:]
 
-    def __repr__(self):
-        return f"{str(self.val)}"
 
-class Uint32(PacketBase):
-    def __init__(self, val=0):
-        if val is None:
-            val = 0
-        self.val = int(val)
-
+class Uint32(IntPacket):
     def getPacket(self):
         return Conversion.uint32_to_uint8_array(self.val)
 
-    def __str__(self):
-        return f"{str(self.val)}"
 
+class CsUint8Enum(IntEnum):
+    def getPacket(self):
+        return Conversion.uint8_to_uint8_array(int(self))
+
+    def setPacket(self, bytelist):
+        val = Conversion.uint8_array_to_uint8(bytelist[:1])
+        self.value = val
+        return bytelist[1:]
+
+
+class CsUint16Enum(IntPacket):
+    def getPacket(self):
+        return Conversion.uint16_to_uint8_array(self.val)
 
 class Uint8Array(PacketBase):
     """
@@ -187,7 +191,6 @@ class Uint8Array(PacketBase):
 
     def __repr__(self):
         return f"{str(self.val)}"
-
 
 
 class Uint16Array(PacketBase):
@@ -241,11 +244,42 @@ class PacketBaseList(PacketBase):
         return []
 
 
-class CsUint8Enum(IntEnum):
-    def getPacket(self):
-        return Conversion.uint8_to_uint8_array(int(self))
+class PacketVariant(PacketBase):
+    """
+    Defines a field whose type depends on the surrounding packet
+    """
+    def __init__(self, type_enum_to_type_dict, type_getter_lambda):
+        self.typedict = type_enum_to_type_dict
+        self.typegetter = type_getter_lambda
+        self.val = None
 
+    def currentType(self):
+        return self.typedict[self.typegetter()]
 
-class CsUint16Enum(IntEnum):
+    def loadType(self):
+        """
+        Default constructs self.val based on the current value of the surrounding object.
+        Can only be called once, afterwards the type of val is fixed by PacketBase.__setattr__.
+        """
+        self.val = self.currentType()()
+
     def getPacket(self):
-        return Conversion.uint16_to_uint8_array(int(self))
+        """
+        Will call self.loadType() if val is none.
+        """
+        if self.val is None:
+            # might not be loaded yet
+            self.loadType()
+        if type(self.val) is not self.currentType():
+            raise ValueError("Type mismatch: ", type(self.val),self.currentType())
+        if self.val is None:
+            return []
+        return self.val.getPacket()
+
+    def setPacket(self, bytelist):
+        if self.val is None:
+            # this is the tea: while deserializing the current type will already have been set
+            # so by the time this setPacket call is made we can load a default constructed object
+            # of correct type and continue as if nothing complicated is going on.
+            self.loadType()
+        return self.val.setPacket()

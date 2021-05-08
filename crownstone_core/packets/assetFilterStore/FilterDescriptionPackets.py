@@ -4,7 +4,7 @@ from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8E
 class FilterType(CsUint8Enum):
     CUCKOO = 0
 
-class AdvertisementSubdataDescription(CsUint8Enum):
+class AdvertisementSubdataType(CsUint8Enum):
     """
     Describes a selection of data from an advertisement.
 
