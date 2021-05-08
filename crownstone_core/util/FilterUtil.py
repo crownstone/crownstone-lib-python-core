@@ -4,7 +4,7 @@ from crownstone_core.util.CRC import crc16ccitt
 
 from crownstone_core.util.BufferWriter import BufferWriter
 from crownstone_core.packets.assetFilterStore.FilterMetaDataPackets import FilterMetaData
-from crownstone_core.packets.assetFilterStore.FilterPackets import FilterUploadChunk
+from crownstone_core.packets.assetFilterStore.FilterIOPackets import FilterUploadChunk
 
 
 def getMasterCRC(inputData : [[int, int]]) -> int:

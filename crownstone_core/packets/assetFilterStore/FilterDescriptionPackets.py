@@ -19,3 +19,13 @@ class FilterOutputDescription(IntEnum):
     """
     MAC_ADDRESS = 0
     SHORT_ASSET_ID = 1
+
+class FilterSummary(PacketBase):
+    """
+    ASSET_FILTER_STORE.md#filter-summary
+    """
+
+    def __init__(self):
+        self.filterId = Uint8()
+        self.filterType = Uint8()
+        self.filterCrc = Uint16()

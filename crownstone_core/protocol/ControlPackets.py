@@ -2,7 +2,7 @@ from crownstone_core.protocol.BlePackets import ControlPacket, FactoryResetPacke
 from crownstone_core.protocol.BluenetTypes import ControlType
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.BufferWriter import BufferWriter
-from crownstone_core.packets.assetFilterStore.FilterPackets import AssetFilterCommand
+from crownstone_core.packets.assetFilterStore.FilterIOPackets import AssetFilterCommand
 
 
 class ControlPacketsGenerator:

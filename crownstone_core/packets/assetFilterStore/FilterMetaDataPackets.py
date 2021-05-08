@@ -1,40 +1,5 @@
 from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8Enum, Uint32, Uint8Array
-from crownstone_core.packets.assetFilterStore.FilterTypes import FilterInputType
-
-
-class FilterFormatMacAddress(PacketBase):
-    """
-    FilterInputType.MAC_ADDRESS
-    """
-    def __init__(self):
-        pass
-
-
-class FilterFormatAdData(PacketBase):
-    """
-    FilterInputType.AD_DATA
-    """
-    def __init__(self, adType: int):
-        self.adType = Uint8(adType)
-
-
-class FilterFormatMaskedAdData(PacketBase):
-    """
-    FilterInputType.MASKED_AD_DATA
-    """
-    def __init__(self, adType: int, mask: int):
-        self.adType = Uint8(adType)
-        self.mask   = Uint32(mask)
-
-
-class FilterOutputDescription(PacketBase):
-    """
-    ASSET_FILTER_STORE.md#advertisement-subdata-type
-    """
-    def __init__(self, output_type: int, formatPacket : FilterFormatMacAddress or FilterFormatMacAddress or FilterFormatMaskedAdData = None):
-        self.type = Uint8(output_type)
-        if formatPacket is not None:
-            self.format = Uint8Array(formatPacket.getPacket())
+from crownstone_core.packets.assetFilterStore.FilterDescriptionPackets import FilterInputType
 
 
 class FilterMetaData(PacketBase):
@@ -46,3 +11,14 @@ class FilterMetaData(PacketBase):
         self.profileId         = Uint8(profileId)
         self.input             = Uint8Array(input.getPacket())
         self.outputDescription = Uint8Array(outputDescription.getPacket())
+
+class TrackingFilterData(PacketBase):
+    """
+    ASSET_FILTER_STORE.md#tracking-filter-data
+    This packet is part of the tracking filter command protocol, where it is chunked to fit in <= MTU sized messages
+    """
+    def __init__(self):
+        self.metadata = TrackingFilterMetaData()
+        self.filter = Uint8Array() # CuckooFilterData()
+
+
