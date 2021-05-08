@@ -15,11 +15,14 @@ class PacketBase:
     def getPacket(self):
         """
         Serializes the whole object by calling getPacket on each member variable and
-        appending the return values to a list of uint8s .
+        appending the return values to a list of uint8s.
+
+        Fields are None-checked to allow for easy optional fields at runtime.
         """
         packet = []
         for name, val in self.__dict__.items():
-            packet += val.getPacket()
+            if val is not None:
+                packet += val.getPacket()
         return packet
 
     def setPacket(self, bytelist):
@@ -28,9 +31,11 @@ class PacketBase:
         consisting of all bytes that weren't used by this setPacket call.
 
         Failure to setPacket invocations are required to throw an exception of type ValueError.
+        Fields that have the type None type are ignored.
         """
         for name, val in self.__dict__.items():
-            bytelist = self.__dict__[name].setPacket(bytelist)
+            if type(val) is not type(None):
+                bytelist = val.setPacket(bytelist)
         return bytelist
 
 

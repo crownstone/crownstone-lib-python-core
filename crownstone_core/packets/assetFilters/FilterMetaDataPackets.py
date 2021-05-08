@@ -3,28 +3,34 @@ from crownstone_core.packets.assetFilters.FilterTypes import FilterInputType
 
 
 class FilterFormatMacAddress(PacketBase):
-
+    """
+    FilterInputType.MAC_ADDRESS
+    """
     def __init__(self):
-        self.type = Uint8(FilterInputType.MAC_ADDRESS)
+        pass
 
 
 class FilterFormatAdData(PacketBase):
-
+    """
+    FilterInputType.AD_DATA
+    """
     def __init__(self, adType: int):
-        self.type   = Uint8(FilterInputType.AD_DATA)
         self.adType = Uint8(adType)
 
 
 class FilterFormatMaskedAdData(PacketBase):
-
+    """
+    FilterInputType.MASKED_AD_DATA
+    """
     def __init__(self, adType: int, mask: int):
-        self.type   = Uint8(FilterInputType.MASKED_AD_DATA)
         self.adType = Uint8(adType)
         self.mask   = Uint32(mask)
 
 
 class FilterOutputDescription(PacketBase):
-
+    """
+    TRACKABLE_PARSER.md#advertisement-subdata-type
+    """
     def __init__(self, output_type: int, formatPacket : FilterFormatMacAddress or FilterFormatMacAddress or FilterFormatMaskedAdData = None):
         self.type = Uint8(output_type)
         if formatPacket is not None:
@@ -32,7 +38,9 @@ class FilterOutputDescription(PacketBase):
 
 
 class FilterMetaData(PacketBase):
-
+    """
+    TRACKABLE_PARSER.md#tracking-filter-meta-data
+    """
     def __init__(self, type: int, profileId: int, input: FilterFormatMacAddress or FilterFormatMaskedAdData or FilterFormatMaskedAdData, outputDescription: FilterOutputDescription):
         self.type              = Uint8(type)
         self.profileId         = Uint8(profileId)

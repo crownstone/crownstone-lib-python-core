@@ -1,13 +1,21 @@
 from enum import IntEnum
 
 class FilterType(IntEnum):
-    CUCKOO_V1 = 0
+    CUCKOO = 0
 
-class FilterInputType(IntEnum):
+class AdvertisementSubdataDescription(IntEnum):
+    """
+    Describes a selection of data from an advertisement.
+
+    TRACKABLE_PARSER.md#advertisement-subdata-type
+    """
     MAC_ADDRESS    = 0
     AD_DATA        = 1
     MASKED_AD_DATA = 2
 
-class FilterOutputDescriptionType(IntEnum):
-    MAC_ADDRESS_REPORT   = 0
-    SHORT_ASSET_ID_TRACK = 1
+class FilterOutputDescription(IntEnum):
+    """
+    TRACKABLE_PARSER.md#filter-output-format
+    """
+    MAC_ADDRESS = 0
+    SHORT_ASSET_ID = 1
