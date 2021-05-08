@@ -6,7 +6,7 @@ from crownstone_core.util.BasePackets import *
 
 class TrackingFilterData(PacketBase):
     """
-    TRACKABLE_PARSER.md#tracking-filter-data
+    ASSET_FILTER_STORE.md#tracking-filter-data
     This packet is part of the tracking filter command protocol, where it is chunked to fit in <= MTU sized messages
     """
     def __init__(self):
@@ -17,7 +17,7 @@ class TrackingFilterData(PacketBase):
 
 class FilterSummary(PacketBase):
     """
-    TRACKABLE_PARSER.md#filter-summary
+    ASSET_FILTER_STORE.md#filter-summary
     """
     def __init__(self):
         self.filterId   = Uint8()

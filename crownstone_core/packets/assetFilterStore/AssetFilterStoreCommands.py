@@ -2,11 +2,11 @@ from crownstone_core.util.BasePackets import *
 # from crownstone_core.packets.TrackableParser.TrackableParserPackets import TrackingFilterSummary
 
 
-# ------------------ TRACKABLE_PARSER.md#trackable-parser-protocol-version ------------------
+# ------------------ ASSET_FILTER_STORE.md#trackable-parser-protocol-version ------------------
 
 ASSET_FILTER_PROTOCOL = Uint8(0)
 
-# ------------------ TRACKABLE_PARSER.md#upload-filter ------------------
+# ------------------ ASSET_FILTER_STORE.md#upload-filter ------------------
 
 class UploadFilterCommandPacket(PacketBase):
     """
@@ -21,7 +21,7 @@ class UploadFilterCommandPacket(PacketBase):
         self.chunkSize = Uint16()
         self.chunk = Uint8Array()
 
-# ------------------ TRACKABLE_PARSER.md#remove-filter  ------------------
+# ------------------ ASSET_FILTER_STORE.md#remove-filter  ------------------
 
 class RemoveFilterCommandPacket(PacketBase):
     """
@@ -32,7 +32,7 @@ class RemoveFilterCommandPacket(PacketBase):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.filterId = Uint8(filterId if filterId is not None else 0)
 
-# ------------------ TRACKABLE_PARSER.md#commit-filter-changes  ------------------
+# ------------------ ASSET_FILTER_STORE.md#commit-filter-changes  ------------------
 
 class CommitFilterChangesCommandPacket(PacketBase):
     """
@@ -44,7 +44,7 @@ class CommitFilterChangesCommandPacket(PacketBase):
         self.masterVersion = Uint16()
         self.masterCrc = Uint16()
 
-# ------------------ TRACKABLE_PARSER.md#get-filter-summaries ------------------
+# ------------------ ASSET_FILTER_STORE.md#get-filter-summaries ------------------
 
 class GetFilterSummariesReturnPacket(PacketBase):
     """

@@ -7,7 +7,7 @@ class AdvertisementSubdataDescription(IntEnum):
     """
     Describes a selection of data from an advertisement.
 
-    TRACKABLE_PARSER.md#advertisement-subdata-type
+    ASSET_FILTER_STORE.md#advertisement-subdata-type
     """
     MAC_ADDRESS    = 0
     AD_DATA        = 1
@@ -15,7 +15,7 @@ class AdvertisementSubdataDescription(IntEnum):
 
 class FilterOutputDescription(IntEnum):
     """
-    TRACKABLE_PARSER.md#filter-output-format
+    ASSET_FILTER_STORE.md#filter-output-format
     """
     MAC_ADDRESS = 0
     SHORT_ASSET_ID = 1

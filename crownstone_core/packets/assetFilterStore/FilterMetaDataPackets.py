@@ -1,5 +1,5 @@
 from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8Enum, Uint32, Uint8Array
-from crownstone_core.packets.assetFilters.FilterTypes import FilterInputType
+from crownstone_core.packets.assetFilterStore.FilterTypes import FilterInputType
 
 
 class FilterFormatMacAddress(PacketBase):
@@ -29,7 +29,7 @@ class FilterFormatMaskedAdData(PacketBase):
 
 class FilterOutputDescription(PacketBase):
     """
-    TRACKABLE_PARSER.md#advertisement-subdata-type
+    ASSET_FILTER_STORE.md#advertisement-subdata-type
     """
     def __init__(self, output_type: int, formatPacket : FilterFormatMacAddress or FilterFormatMacAddress or FilterFormatMaskedAdData = None):
         self.type = Uint8(output_type)
@@ -39,7 +39,7 @@ class FilterOutputDescription(PacketBase):
 
 class FilterMetaData(PacketBase):
     """
-    TRACKABLE_PARSER.md#tracking-filter-meta-data
+    ASSET_FILTER_STORE.md#tracking-filter-meta-data
     """
     def __init__(self, type: int, profileId: int, input: FilterFormatMacAddress or FilterFormatMaskedAdData or FilterFormatMaskedAdData, outputDescription: FilterOutputDescription):
         self.type              = Uint8(type)
