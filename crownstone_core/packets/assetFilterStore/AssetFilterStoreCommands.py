@@ -1,5 +1,5 @@
 from crownstone_core.util.BasePackets import *
-# from crownstone_core.packets.TrackableParser.TrackableParserPackets import TrackingFilterSummary
+from crownstone_core.packets.assetFilterStore.FilterDescriptionPackets import FilterSummary
 
 
 # ------------------ ASSET_FILTER_STORE.md#trackable-parser-protocol-version ------------------
@@ -12,7 +12,6 @@ class UploadFilterCommandPacket(PacketBase):
     """
     Packet definition for ControlType.TRACKABLE_PARSER_REMOVE_FILTER
     """
-
     def __init__(self):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.filterId = Uint8()
@@ -27,7 +26,6 @@ class RemoveFilterCommandPacket(PacketBase):
     """
      Packet definition for ControlType.TRACKABLE_PARSER_REMOVE_FILTER
     """
-
     def __init__(self, filterId=None):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.filterId = Uint8(filterId if filterId is not None else 0)
@@ -38,7 +36,6 @@ class CommitFilterChangesCommandPacket(PacketBase):
     """
      Packet definition for ControlType.TRACKABLE_PARSER_COMMIT_CHANGES
     """
-
     def __init__(self):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.masterVersion = Uint16()
@@ -55,4 +52,4 @@ class GetFilterSummariesReturnPacket(PacketBase):
         self.masterVersion = Uint16()
         self.masterCrc = Uint16()
         self.freeSpace = Uint16()
-        self.summaries = PacketBaseList(cls=TrackingFilterSummary)
+        self.summaries = PacketBaseList(cls=FilterSummary)

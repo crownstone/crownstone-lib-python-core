@@ -1,9 +1,10 @@
 from enum import IntEnum
+from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8Enum
 
-class FilterType(IntEnum):
+class FilterType(CsUint8Enum):
     CUCKOO = 0
 
-class AdvertisementSubdataDescription(IntEnum):
+class AdvertisementSubdataDescription(CsUint8Enum):
     """
     Describes a selection of data from an advertisement.
 
@@ -13,7 +14,7 @@ class AdvertisementSubdataDescription(IntEnum):
     AD_DATA        = 1
     MASKED_AD_DATA = 2
 
-class FilterOutputDescription(IntEnum):
+class FilterOutputDescription(CsUint8Enum):
     """
     ASSET_FILTER_STORE.md#filter-output-format
     """
@@ -24,7 +25,6 @@ class FilterSummary(PacketBase):
     """
     ASSET_FILTER_STORE.md#filter-summary
     """
-
     def __init__(self):
         self.filterId = Uint8()
         self.filterType = Uint8()

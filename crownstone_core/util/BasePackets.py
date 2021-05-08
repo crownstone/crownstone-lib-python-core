@@ -42,11 +42,12 @@ class PacketBase:
     def __setattr__(self, name, value):
         """
         Enforces type equality after assignment.
+        Allows fields of type None to be set to a different type
         """
         if name in self.__dict__:
             t = type(self.__dict__[name])
-            if t is not type(value):
-                # try to cast value to the correct type.
+            if t is not type(value) and t is not type(None):
+                # try to cast 'value' to the type that self.name already has, unless self.name is None.
                 value = t(value)
         self.__dict__[name] = value
 
