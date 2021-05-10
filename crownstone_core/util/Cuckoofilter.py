@@ -1,6 +1,4 @@
-from itertools import chain
-
-from crownstone_core.packets.assetFilters.CuckooFilterPackets import CuckooFilterData
+from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
 
 from crownstone_core.util.CRC import crc16ccitt
 from crownstone_core.util.Conversion import Conversion

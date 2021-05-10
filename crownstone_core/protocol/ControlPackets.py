@@ -2,7 +2,7 @@ from crownstone_core.protocol.BlePackets import ControlPacket, FactoryResetPacke
 from crownstone_core.protocol.BluenetTypes import ControlType
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.BufferWriter import BufferWriter
-from crownstone_core.packets.assetFilters.FilterPackets import AssetFilterCommand
+from crownstone_core.packets.assetFilterStore.FilterIOPackets import *
 
 
 class ControlPacketsGenerator:
@@ -173,9 +173,9 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getRemoveFilterPacket(filterId: int) -> [int]:
-        wrapper = AssetFilterCommand()
-        wrapper.payload = [filterId]
-        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(wrapper.getPacket()).getPacket()
+        removecommand = RemoveFilterCommandPacket()
+        removecommand.filterId = filterId
+        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.getPacket()).getPacket()
 
 
     @staticmethod
@@ -184,15 +184,18 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getCommitFilterChangesPacket(masterVersion: int, masterCrc: int) -> [int]:
-        buffer = BufferWriter()
-        buffer.putUInt16(masterVersion)
-        buffer.putUInt16(masterCrc)
-        wrapper = AssetFilterCommand()
-        wrapper.payload = buffer.getBuffer()
-        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(wrapper.getPacket()).getPacket()
+        commitcommand = CommitFilterChangesCommandPacket()
+        commitcommand.masterVersion = masterVersion
+        commitcommand.masterCrc = masterCrc
+        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.getPacket()).getPacket()
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:
-        wrapper = AssetFilterCommand()
-        wrapper.payload = chunk
-        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(wrapper.getPacket()).getPacket()
+        # TODO(Arend) this method is missing arguments
+        uploadcommand = UploadFilterCommandPacket()
+        uploadcommand.chunk = chunk
+        uploadcommand.chunkSize = len(chunk)
+        # uploadcommand.filterId = ?
+        # uploadcommand.totalSize = ?
+        #uploadcommand.chunkStartIndex = ?
+        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(uploadcommand.getPacket()).getPacket()

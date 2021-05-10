@@ -50,7 +50,7 @@ def crc16ccitt(data: bytearray or list, crc=None):
     else:
         crc = crc & 0xFFFF
 
-    for i in range(0, len(data)):
-        index = ((crc >> 8) ^ data[i]) & 0xFF
+    for i, data_i in enumerate(data):
+        index = ((crc >> 8) ^ data_i) & 0xFF
         crc = (_crc16ccitt_table[index] ^ (crc << 8)) & 0xFFFF
     return crc & 0xFFFF
