@@ -14,7 +14,10 @@ def MasterCrc(listOfTrackingFilters):
         lambda trackfilterdata: FilterCrc(trackfilterdata),
         listOfTrackingFilters
     )
-    return crc16ccitt(Conversion.uint16_array_to_uint8_array(filterCrcs))
+
+    listFilterCrcs16 = list(filterCrcs)
+    listFilterCrcs8 = Conversion.uint16_array_to_uint8_array(listFilters)
+    return crc16ccitt(listFilterCrcs8)
 
 def FilterCrc(trackingFilter):
     return crc16ccitt(trackingFilter.getPacket())
