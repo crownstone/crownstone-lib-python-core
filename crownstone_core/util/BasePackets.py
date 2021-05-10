@@ -104,7 +104,7 @@ class IntPacket(PacketBase):
     """
     def __init__(self, val=None):
         if val is None:
-            val = 0
+            self.val = 0
         else:
             self.val = int(val)
 
@@ -170,14 +170,17 @@ class CsUint8Enum(IntEnum):
         return Conversion.uint8_to_uint8_array(int(self))
 
     def setPacket(self, bytelist):
-        val = Conversion.uint8_array_to_uint8(bytelist[:1])
-        self.value = val
+        raise NotImplementedError("Can't deserialize enums yet. Python enums are peculiar, this still needs an implementation")
         return bytelist[1:]
 
 
 class CsUint16Enum(IntPacket):
     def getPacket(self):
         return Conversion.uint16_to_uint8_array(self.val)
+
+    def setPacket(self, bytelist):
+        raise NotImplementedError("Can't deserialize enums yet. Python enums are peculiar, this still needs an implementation")
+        return bytelist[2:]
 
 class Uint8Array(PacketBase):
     """

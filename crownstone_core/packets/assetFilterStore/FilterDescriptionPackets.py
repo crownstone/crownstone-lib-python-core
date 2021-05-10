@@ -14,7 +14,7 @@ class AdvertisementSubdataType(CsUint8Enum):
     AD_DATA        = 1
     MASKED_AD_DATA = 2
 
-class FilterOutputDescription(CsUint8Enum):
+class FilterOutputFormat(CsUint8Enum):
     """
     ASSET_FILTER_STORE.md#filter-output-format
     """
