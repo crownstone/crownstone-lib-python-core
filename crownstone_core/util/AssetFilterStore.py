@@ -16,7 +16,7 @@ def MasterCrc(listOfTrackingFilters):
     )
 
     listFilterCrcs16 = list(filterCrcs)
-    listFilterCrcs8 = Conversion.uint16_array_to_uint8_array(listFilters)
+    listFilterCrcs8 = Conversion.uint16_array_to_uint8_array(listFilterCrcs16)
     return crc16ccitt(listFilterCrcs8)
 
 def FilterCrc(trackingFilter):
