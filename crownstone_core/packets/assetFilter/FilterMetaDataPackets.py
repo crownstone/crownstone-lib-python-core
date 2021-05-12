@@ -1,13 +1,12 @@
 from crownstone_core.util.BasePackets import *
-
-from crownstone_core.packets.assetFilterStore.FilterIOPackets import *
-from crownstone_core.packets.assetFilterStore.FilterDescriptionPackets import *
+from crownstone_core.packets.assetFilter.FilterIOPackets import *
+from crownstone_core.packets.assetFilter.FilterDescriptionPackets import *
 from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import *
 from crownstone_core.util.BasePackets import *
 
 class FilterMetaData(PacketBase):
     """
-    ASSET_FILTER_STORE.md#tracking-filter-meta-data
+    Common metadata of an asset filter.
     """
     def __init__(self):
         self.type              = FilterType.CUCKOO
@@ -17,8 +16,7 @@ class FilterMetaData(PacketBase):
 
 class AssetFilter(PacketBase):
     """
-    ASSET_FILTER_STORE.md#tracking-filter-data
-    This packet is part of the tracking filter command protocol, where it is chunked to fit in <= MTU sized messages
+    This is the packet that is uploaded.
     """
     typeMap = {FilterType.CUCKOO : CuckooFilterData}
 
@@ -27,4 +25,10 @@ class AssetFilter(PacketBase):
         self.filterdata = PacketVariant(type_enum_to_type_dict=AssetFilter.typeMap,
                                     type_getter_lambda=lambda:self.metadata.type)
 
+class AssetFilterAndId:
+    filter: AssetFilter
+    id: int
 
+    def __init__(self, filterId: int, filter: AssetFilter):
+        self.id = filterId
+        self.filter = filter

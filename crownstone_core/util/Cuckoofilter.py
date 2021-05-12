@@ -77,7 +77,7 @@ class CuckooFilter:
     # ----- Private methods -----
     # -------------------------------------------------------------
 
-    def getData(self):
+    def getData(self) -> CuckooFilterData:
         data = CuckooFilterData()
         data.bucketCountLog2 = self.bucketCountLog2
         data.nestsPerBucket = self.nests_per_bucket

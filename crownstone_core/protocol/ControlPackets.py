@@ -1,8 +1,9 @@
+from crownstone_core.packets.assetFilter.AssetFilterCommands import *
+from crownstone_core.packets.assetFilter.FilterIOPackets import *
 from crownstone_core.protocol.BlePackets import ControlPacket, FactoryResetPacket
 from crownstone_core.protocol.BluenetTypes import ControlType
-from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.BufferWriter import BufferWriter
-from crownstone_core.packets.assetFilterStore.FilterIOPackets import *
+from crownstone_core.util.Conversion import Conversion
 
 
 class ControlPacketsGenerator:
@@ -191,11 +192,4 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:
-        # TODO(Arend) this method is missing arguments
-        uploadcommand = UploadFilterCommandPacket()
-        uploadcommand.chunk = chunk
-        uploadcommand.chunkSize = len(chunk)
-        # uploadcommand.filterId = ?
-        # uploadcommand.totalSize = ?
-        #uploadcommand.chunkStartIndex = ?
-        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(uploadcommand.getPacket()).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(chunk).getPacket()

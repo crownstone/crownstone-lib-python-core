@@ -1,5 +1,5 @@
 from crownstone_core.util.BasePackets import *
-from crownstone_core.packets.assetFilterStore.FilterDescriptionPackets import *
+from crownstone_core.packets.assetFilter.FilterDescriptionPackets import *
 
 
 class FilterFormatMacAddress(PacketBase):
