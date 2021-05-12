@@ -5,6 +5,9 @@ from crownstone_core.protocol.BluenetTypes import ControlType
 from crownstone_core.util.BufferWriter import BufferWriter
 from crownstone_core.util.Conversion import Conversion
 
+"""
+TODO: rename functions to getXxxArray or so, as they output a serialized array, not a typed packet.
+"""
 
 class ControlPacketsGenerator:
 
@@ -192,4 +195,7 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:
+        """
+        TODO: type chunk param
+        """
         return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(chunk).getPacket()

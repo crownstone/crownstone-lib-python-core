@@ -1,6 +1,11 @@
 from enum import IntEnum
 from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8Enum
 
+"""
+TODO: rename packets
+TODO: add constructors
+"""
+
 class FilterType(CsUint8Enum):
     CUCKOO = 0
 
