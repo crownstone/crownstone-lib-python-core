@@ -1,7 +1,7 @@
 from crownstone_core.packets.assetFilter.AssetFilterCommands import UploadFilterCommandPacket
 from crownstone_core.packets.assetFilter.FilterMetaDataPackets import AssetFilter, AssetFilterAndId
 from crownstone_core.util.BufferWriter import BufferWriter
-from crownstone_core.util.CRC import crc16ccitt
+from crownstone_core.util.CRC import crc32
 import math
 
 def get_master_crc_from_filters(filters: [AssetFilterAndId]) -> int:
@@ -25,16 +25,16 @@ def get_master_crc_from_filter_crcs(input_data : [[int, int]]) -> int:
 
     for id_and_filter_crc in input_data:
         writer.putUInt8(id_and_filter_crc[0])
-        writer.putUInt16(id_and_filter_crc[1])
+        writer.putUInt32(id_and_filter_crc[1]) # TODO: use packets to serialize.
 
-    return crc16ccitt(writer.getBuffer())
+    return crc32(writer.getBuffer())
 
 def get_filter_crc(filter: AssetFilter) -> int:
     """
         the input data is an array of [filterId, filterCRC] numbers
         This method is used to get the masterCRC
     """
-    return crc16ccitt(filter.getPacket())
+    return crc32(filter.getPacket())
 
 class FilterChunker:
 

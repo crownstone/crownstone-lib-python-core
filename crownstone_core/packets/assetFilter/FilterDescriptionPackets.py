@@ -1,5 +1,5 @@
 from enum import IntEnum
-from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint16, CsUint8Enum
+from crownstone_core.util.BasePackets import PacketBase, Uint8, Uint32, CsUint8Enum
 
 """
 TODO: rename packets
@@ -32,5 +32,4 @@ class FilterSummary(PacketBase):
     """
     def __init__(self):
         self.filterId = Uint8()
-        self.filterType = Uint8()
-        self.filterCrc = Uint16()
+        self.filterCrc = Uint32()

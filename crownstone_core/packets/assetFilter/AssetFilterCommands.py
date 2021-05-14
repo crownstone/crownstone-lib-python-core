@@ -31,7 +31,7 @@ class CommitFilterChangesCommandPacket(PacketBase):
     def __init__(self):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.masterVersion = Uint16()
-        self.masterCrc = Uint16()
+        self.masterCrc = Uint32()
 
 class GetFilterSummariesReturnPacket(PacketBase):
     """
@@ -40,6 +40,6 @@ class GetFilterSummariesReturnPacket(PacketBase):
     def __init__(self):
         self.commandProtocolVersion = Uint8()
         self.masterVersion = Uint16()
-        self.masterCrc = Uint16()
+        self.masterCrc = Uint32()
         self.freeSpace = Uint16()
         self.summaries = PacketBaseList(cls=FilterSummary)
