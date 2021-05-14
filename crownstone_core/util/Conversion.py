@@ -227,6 +227,10 @@ class Conversion:
     def uint8_array_to_uint8(arr8):
         return int(arr8[0] & Bitmasks.ff8)
 
+    @staticmethod
+    def uint8_array_to_int8(arr8):
+        return Conversion.uint8_to_int8(Conversion.uint8_array_to_uint8(arr8))
+
 
 
     ########################

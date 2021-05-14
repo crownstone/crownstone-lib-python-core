@@ -165,6 +165,21 @@ class Uint32(IntPacket):
         return Conversion.uint32_to_uint8_array(self.val)
 
 
+
+class Int8(IntPacket):
+    def getPacket(self):
+        return Conversion.uint8_to_int8_array(self.val)
+
+    def setPacket(self, bytelist):
+        if len(bytelist) < 1:
+            raise ValueError("Deserialization failed, not enough bytes left")
+        self.val = Conversion.uint8_array_to_int8(bytelist[:1])
+        return bytelist[1:]
+
+    def __repr__(self):
+        return f"{str(self.val)}"
+
+
 class CsUint8Enum(IntEnum):
     def getPacket(self):
         return Conversion.uint8_to_uint8_array(int(self))
@@ -216,7 +231,7 @@ class PacketBaseList(PacketBase):
 
     Todo: access to array elements should preserve type safety.
     """
-    def __init__(self, cls=None, val=[]):
+    def __init__(self, cls=None, val=[], len=None):
         if cls is None:
             raise ValueError("cls is required")
         if type(cls) is not type:
@@ -227,6 +242,7 @@ class PacketBaseList(PacketBase):
         # try to cast value to the correct type if that wasn't the case yet.
         self.val = [value if type(value) is cls else cls(value) for value in val]
         self.cls = cls
+        self.len = int(len) if len is not None else None
 
     def getPacket(self):
         packet = []
@@ -240,11 +256,17 @@ class PacketBaseList(PacketBase):
         can be used to fill an array of the type self.cls.
         """
         self.val = []
-        while len(bytelist) > 0:
-            newItem = self.cls()
-            bytelist = newItem.setPacket(bytelist)
-            self.val.append(newItem)
-        return []
+        if self.len is None:
+            while len(bytelist) > 0:
+                newItem = self.cls()
+                bytelist = newItem.setPacket(bytelist)
+                self.val.append(newItem)
+        else:
+            for i in range(self.len):
+                newItem = self.cls()
+                bytelist = newItem.setPacket(bytelist)
+                self.val.append(newItem)
+        return bytelist
 
 
 class PacketVariant(PacketBase):
