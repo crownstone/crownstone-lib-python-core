@@ -4,6 +4,11 @@ from crownstone_core.packets.assetFilter.FilterDescriptionPackets import *
 from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import *
 from crownstone_core.util.BasePackets import *
 
+"""
+TODO: rename packets
+TODO: add constructors
+"""
+
 class FilterMetaData(PacketBase):
     """
     Common metadata of an asset filter.

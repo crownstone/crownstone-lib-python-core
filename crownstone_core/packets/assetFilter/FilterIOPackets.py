@@ -1,6 +1,10 @@
 from crownstone_core.util.BasePackets import *
 from crownstone_core.packets.assetFilter.FilterDescriptionPackets import *
 
+"""
+TODO: rename packets
+TODO: add constructors
+"""
 
 class FilterFormatMacAddress(PacketBase):
     """
