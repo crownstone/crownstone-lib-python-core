@@ -1,6 +1,6 @@
 from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
 
-from crownstone_core.util.CRC import crc16ccitt
+from crownstone_core.util.CRC import crc16ccitt, djb2_hash
 from crownstone_core.util.Conversion import Conversion
 
 from crownstone_core.util.Randomgenerator import RandomGenerator
@@ -39,7 +39,8 @@ class CuckooFilter:
         returns ExtendedFingerprint
         """
         finger = self.hash(key)
-        hashed_finger = self.hash(Conversion.uint16_to_uint8_array(finger))
+
+        hashed_finger = djb2_hash(Conversion.uint16_to_uint8_array(finger))
 
         return CuckooFilter.ExtendedFingerprint(
             finger,

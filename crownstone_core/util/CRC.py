@@ -54,3 +54,16 @@ def crc16ccitt(data: bytearray or list, crc=None):
         index = ((crc >> 8) ^ data_i) & 0xFF
         crc = (_crc16ccitt_table[index] ^ (crc << 8)) & 0xFFFF
     return crc & 0xFFFF
+
+
+def djb2_hash(data: bytearray or list) -> int:
+    """
+        Cheap and simple hash function.
+        Used implementation from here: http://www.cse.yorku.ca/~oz/hash.html
+    """
+    hash_result = 5381
+
+    for uint8 in data:
+        hash_result = (hash_result * 33 + uint8) & 0xffff
+
+    return hash_result
