@@ -3,18 +3,15 @@ Generates a <filename>.py.cuck file for a given <filename>.csv.cuck file. Genera
 the pregenerated file <filename>.cuck.
 Generated .py.cuck files removed after script finishes.
 """
-import sys, os, filecmp
+import os, filecmp
 from crownstone_core.util.Cuckoofilter import CuckooFilter
 from crownstone_core.util.Conversion import Conversion
 
 
-def getPathFromFileName(fname):
-    if not os.path.isabs(fname):
-        return os.path.join(os.path.dirname(__file__), fname)
-    return fname
-
-
 def loadFilter(infile):
+    """
+    Takes a file object and creates a CuckooFilter constructed from its contents.
+    """
     filter = None
     fails = 0
     for line in infile:
@@ -31,8 +28,6 @@ def loadFilter(infile):
         columns = line.split(",")
         columns_len = len(columns)
         operation = columns[0]
-
-
 
         if operation == "cuckoofilter":
             # Constructing cuckoofilter from file
@@ -60,29 +55,55 @@ def write_uint16(outfile, val):
     for byt in Conversion.uint16_to_uint8_array(val):
         write_uint8(outfile, byt)
 
+# ------------------------------------------------------------
+
+def getPathFromFileName(fname):
+    if not os.path.isabs(fname):
+        return os.path.join(os.path.dirname(__file__), fname)
+    return fname
+
 def assertCsv(fname):
     assert fname[-9:] == ".csv.cuck", "file extension should be .csv.cuck"
 
-def process_test_file(in_fname):
-    assertCsv(in_fname)
+def get_input_file_path(csv_cuck_file):
+    return getPathFromFileName(csv_cuck_file)
 
-    result_fname = in_fname[:-9] + ".py.cuck"
-    expect_fname = in_fname[:-9] + ".cuck"
+def get_result_file_path(csv_cuck_file):
+    result_fname = csv_cuck_file[:-9] + ".py.cuck"
+    return getPathFromFileName(result_fname)
 
-    cuck_in_path = getPathFromFileName(in_fname)
-    cuck_result_path = getPathFromFileName(result_fname)
-    cuck_expect_path =  getPathFromFileName(expect_fname)
+def get_expect_file_path(csv_cuck_file):
+    expect_fname = csv_cuck_file[:-9] + ".cuck"
+    return getPathFromFileName(expect_fname)
 
+# ------------------------------------------------------------
+
+def read_filter(csv_cuck_file_path):
     filter = None
-    with open(cuck_in_path, "r") as F_in:
+    with open(csv_cuck_file_path, "r") as F_in:
         filter = loadFilter(F_in)
+    return filter
+
+def write_filter(filter, output_path):
+    # writing result file
+    with open(output_path, "w+") as F_out:
+        for byt in filter.getPacket():
+            write_uint8(F_out, byt)
+
+# ------------------------------------------------------------
+
+def process_test_file(csv_cuck_file):
+    assertCsv(csv_cuck_file)
+
+    cuck_input_path = getPathFromFileName(csv_cuck_file)
+    cuck_result_path = get_result_file_path(csv_cuck_file)
+    cuck_expect_path = get_expect_file_path(csv_cuck_file)
+
+    filter = read_filter(cuck_input_path)
 
     assert filter is not None,"filter couldn't be loaded"
 
-    # writing result file
-    with open(cuck_result_path, "w+") as F_out:
-        for byt in filter.getPacket():
-            write_uint8(F_out, byt)
+    write_filter(filter, cuck_result_path)
 
     # check file equality
     assert filecmp.cmp(cuck_expect_path, cuck_result_path, shallow=False), "Generated test file unequal precomputed file"
@@ -92,6 +113,33 @@ def process_test_file(in_fname):
     filecmp.clear_cache()
 
 
+# ------------------------------------------------------------
+# ------------------------------------------------------------
+
 def test_cross_platform_consistency_0():
     process_test_file("./cuckoo_size_128_4_len_6_20.csv.cuck")
+
+
+if __name__ == "__main__":
+    """
+    If this script is run as stand alone, it will regenerate the .cuck file(s) based on the current
+    implementation of the cuckoo filter. Only run this is you are 100% absolutely mega certain that
+    the implementation is correct. 
+    """
+    files_to_generate = []
+    files_to_generate += ["./cuckoo_size_128_4_len_6_20.csv.cuck"]
+
+    if not files_to_generate:
+        print("files might be commented out for safety")
+
+    for csv_cuck_file in files_to_generate:
+        print("Regenerating test file ", csv_cuck_file)
+        assertCsv(csv_cuck_file)
+        cuck_input_path = getPathFromFileName(csv_cuck_file)
+        filter = read_filter(cuck_input_path)
+        if filter is None:
+            print("Filter failed to construct. Be careful when generating expectation definition files!")
+            quit()
+        write_filter(filter,get_expect_file_path(csv_cuck_file))
+
 

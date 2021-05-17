@@ -38,7 +38,7 @@ def test_false_positive_rate():
     # setup test variables
     max_items = filter.fingerprintcount()
     num_items_to_load = int(max_items * load_factor)
-    assert num_items_to_load == 486
+    assert num_items_to_load == 486, "test configuration has been altered"
     fails = 0
     
     # generate a bunch of random strings
@@ -85,4 +85,3 @@ def test_false_positive_rate():
 
     assert CheckTolerance(false_negatives, len(random_mac_addresses), 0.00), "False negatives should not occur"
     assert CheckTolerance(false_positives, len(random_mac_addresses), 0.05), "False positive rate too high"
-    assert false_positives == 4, "Not the amount of expected false positives."
