@@ -164,6 +164,12 @@ class Uint32(IntPacket):
     def getPacket(self):
         return Conversion.uint32_to_uint8_array(self.val)
 
+    def setPacket(self, bytelist):
+        if len(bytelist) < 4:
+            raise ValueError("Deserialization failed, not enough bytes left")
+        self.val = Conversion.uint8_array_to_uint32(bytelist[:4])
+        return bytelist[4:]
+
 
 
 class Int8(IntPacket):
