@@ -12,6 +12,7 @@ def getPathFromFileName(fname):
 if __name__ == "__main__":
     ### arg parsing
     if len(sys.argv) < 5 + 1:
+        print("This script will generate a .csv.cuck file that describes a cuckoo filter with the given amount of added keys of random length between a minimum and a maximum")
         print("Usage: python3 generate_testfile.py cuckootestfile 50 4 100 6 20")
         print("arg 0: outputfilename (.csv.cuck will be appended")
         print("arg 1: cuckoo num buckets log 2")

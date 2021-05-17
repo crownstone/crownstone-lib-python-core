@@ -9,6 +9,11 @@ class CuckooFilter:
     """
     Cuckoo filter implementation, currently supporting only 16 bit fingerprints.
 
+    Byte arrays, 'keys', can be added to a cuckoo filter. They are stored as hashed, 'fingerprints',
+    in an array. The array is organized in 'buckets' of fixed size. The fingerprint for a key is
+    stored in one of two buckets, determined by a hash of the key. (The hash for fingerprints and
+    the hash for buckets must be 'independent'.)
+
     Expected types for arguments and return values:
     - ByteArrayType = List[uint8]
     - FingerprintType = uint16
@@ -35,17 +40,16 @@ class CuckooFilter:
 
     def getExtendedFingerprint(self, key):
         """
-        key: FingerprintType
+        key: ByteArrayType
         returns ExtendedFingerprint
         """
-        finger = self.hash(key)
-
-        hashed_finger = djb2_hash(Conversion.uint16_to_uint8_array(finger))
+        fingerprint = self.hash_to_fingerprint(key)
+        buckethash = self.hash_to_bucket(key)
 
         return CuckooFilter.ExtendedFingerprint(
-            finger,
-            hashed_finger % self.bucketCount(),
-            (hashed_finger ^ finger) % self.bucketCount())
+            fingerprint,
+            buckethash % self.bucketCount(),
+            (buckethash ^ fingerprint) % self.bucketCount())
 
     def getExtendedFingerprintFromFingerprintAndBucket(self, fingerprint, bucket_index):
         """
@@ -93,25 +97,28 @@ class CuckooFilter:
 
     def filterhash(self):
         """
-        Flatten the uint16 array of fingerprints to uint8 array in little endian. Must match firmware.
+        Flatten the filter settings and the uint16 array of fingerprints
+        to a uint8 array in little endian and return a crc16 of the result.
+
+        Must match firmware.
 
         returns: FingerprintType
         """
-        return self.hash(self.getPacket())
+        return crc16ccitt(self.getPacket())
 
-    def getFingerprint(self, key):
+    def hash_to_fingerprint(self, key):
         """
-        key: IndexType
+        key: ByteArrayType
         returns: FingerprintType
         """
-        return self.hash(key)
+        return crc16ccitt(key)
 
-    def hash(self, data):
+    def hash_to_bucket(self, key):
         """
-        data: ByteArraytype
+        key: ByteArrayType
         returns: FingerprintType
         """
-        return crc16ccitt(data)
+        return djb2_hash(key)
 
     def lookup_fingerprint(self, bucket_number, finger_index):
         """
