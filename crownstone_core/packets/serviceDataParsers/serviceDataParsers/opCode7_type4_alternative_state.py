@@ -15,7 +15,6 @@ def parseAlternativeState(reader: BufferReader):
     packet.behaviourMasterHash      = reader.getUInt16()
     packet.assetFilterMasterVersion = reader.getUInt16()
     packet.assetFilterMasterCRC     = reader.getUInt32()
-    reader.skip(6)
     partialTimestamp                = reader.getUInt16()
     reader.skip()
     packet.validation               = reader.getUInt8()
