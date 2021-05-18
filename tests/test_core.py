@@ -1,4 +1,5 @@
-from crownstone_core.util.CRC import crc16ccitt
+from crownstone_core import Conversion
+from crownstone_core.util.CRC import crc16ccitt, crc32
 
 from crownstone_core.util.EventBus import EventBus
 from crownstone_core.packets.Advertisement import Advertisement
@@ -56,3 +57,8 @@ def test_crc16_ccitt():
     assert(crc16ccitt([63,63]) == 53016)
     assert(crc16ccitt([99,51]) == 17734)
     assert(crc16ccitt([170,251]) == 45518)
+
+def test_crc32():
+    data = '00ff01ff00000200000000c04e0000'
+    bytes = Conversion.hex_string_to_uint8_array(data)
+    assert(crc32(bytes) == 560669980)

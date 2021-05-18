@@ -9,15 +9,17 @@ from crownstone_core.packets.serviceDataParsers.containers.elements.AdvFlags imp
 
 def parseAlternativeState(reader: BufferReader):
     packet = AdvAlternativeState()
-    packet.crownstoneId        = reader.getUInt8()
-    packet.switchState         = SwitchState(reader.getUInt8())
-    packet.flags               = AdvFlags(reader.getUInt8())
-    packet.behaviourMasterHash = reader.getUInt16()
+    packet.crownstoneId             = reader.getUInt8()
+    packet.switchState              = SwitchState(reader.getUInt8())
+    packet.flags                    = AdvFlags(reader.getUInt8())
+    packet.behaviourMasterHash      = reader.getUInt16()
+    packet.assetFilterMasterVersion = reader.getUInt16()
+    packet.assetFilterMasterCRC     = reader.getUInt32()
     reader.skip(6)
-    partialTimestamp           = reader.getUInt16()
+    partialTimestamp                = reader.getUInt16()
     reader.skip()
-    packet.validation          = reader.getUInt8()
-    packet.uniqueIdentifier    = partialTimestamp
+    packet.validation               = reader.getUInt8()
+    packet.uniqueIdentifier         = partialTimestamp
     
     if packet.flags.timeIsSet:
         packet.timestamp = reconstructTimestamp(time.time(), partialTimestamp)
