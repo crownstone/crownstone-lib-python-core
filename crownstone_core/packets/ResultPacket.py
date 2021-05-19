@@ -46,3 +46,7 @@ class ResultPacket:
                 self.valid = False
         else:
             self.valid = False
+
+    def __repr__(self):
+        return F"{self.__class__}({self.__dict__})"
+
