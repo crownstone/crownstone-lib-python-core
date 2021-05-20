@@ -31,8 +31,6 @@ def get_master_crc_from_filter_crcs(input_data : [[int, int]]) -> int:
 
 def get_filter_crc(filter: AssetFilter) -> int:
     """
-        the input data is an array of [filterId, filterCRC] numbers
-        This method is used to get the masterCRC
     """
     return crc32(filter.getPacket())
 
