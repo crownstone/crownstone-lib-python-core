@@ -5,6 +5,9 @@ from crownstone_core.util.Conversion import Conversion
 
 from crownstone_core.util.Randomgenerator import RandomGenerator
 
+# nice nonsensical value which will never be in uint16 range to mark an empty spot.
+EMPTY = -1e8
+
 class CuckooFilter:
     """
     Cuckoo filter implementation, currently supporting only 16 bit fingerprints.
@@ -89,7 +92,7 @@ class CuckooFilter:
         data.victim.fingerprint = self.victim.fingerprint
         data.victim.bucketA = self.victim.bucketA
         data.victim.bucketB = self.victim.bucketB
-        data.bucketArray = self.bucket_array
+        data.bucketArray = self._cleanBucketArray(0)
         return data
 
     def getPacket(self):
@@ -144,7 +147,7 @@ class CuckooFilter:
         """
         for ii in range(self.nests_per_bucket):
             fingerprint_index = self.lookup_fingerprint_index(bucket_number, ii)
-            if 0 == self.bucket_array[fingerprint_index]:
+            if self.bucket_array[fingerprint_index] == EMPTY:
                 self.bucket_array[fingerprint_index] = fingerprint
                 return True
         return False
@@ -159,15 +162,15 @@ class CuckooFilter:
             candidate = self.lookup_fingerprint_index(bucket_number, ii) # candidate_fingerprint_for_removal_in_array_index
 
             if self.bucket_array[candidate] == fingerprint:
-                self.bucket_array[candidate] = 0
+                self.bucket_array[candidate] = EMPTY
                 # to keep the bucket front loaded, move the last non-zero
                 # fingerprint behind ii into the slot.
                 for jj in reversed(range(ii + 1, self.nests_per_bucket)):
                     last = self.lookup_fingerprint_index(bucket_number, jj) # last_fingerprint_in_bucket
 
-                    if self.bucket_array[last] != 0:
+                    if self.bucket_array[last] != EMPTY:
                         self.bucket_array[candidate] = self.bucket_array[last]
-                        self.bucket_array[last] = 0
+                        self.bucket_array[last] = EMPTY
                         break
                 return True
         return False
@@ -327,7 +330,7 @@ class CuckooFilter:
         returns: None
         """
         self.victim = CuckooFilter.ExtendedFingerprint(0,0,0)
-        self.bucket_array = [0x00] * CuckooFilter.getfingerprintcount(self.bucketCount(), self.nests_per_bucket)
+        self.bucket_array = [EMPTY] * CuckooFilter.getfingerprintcount(self.bucketCount(), self.nests_per_bucket)
 
     # -------------------------------------------------------------
     # Size stuff.
@@ -397,3 +400,14 @@ class CuckooFilter:
         return CuckooFilter.getsize(self.bucketCount(), self.nests_per_bucket)
 
 
+    def saturate(self):
+        self.bucket_array = self._cleanBucketArray(self.bucket_array[0])
+
+    def _cleanBucketArray(self, replaceValue = 0):
+        actual_bucket_array = []
+        for item in self.bucket_array:
+            if item == EMPTY:
+                actual_bucket_array.append(replaceValue)
+            else:
+                actual_bucket_array.append(item)
+        return actual_bucket_array
