@@ -36,12 +36,12 @@ def get_filter_crc(filter: AssetFilter) -> int:
 
 class FilterChunker:
 
-    def __init__(self, filterId: int, filterPacket: [int]):
+    def __init__(self, filterId: int, filterPacket: [int], maxChunkSize=128):
         self.filterId = filterId
         self.filterPacket = filterPacket
 
         self.index = 0
-        self.maxChunkSize = 256
+        self.maxChunkSize = maxChunkSize
 
     def getAmountOfChunks(self) -> int:
         totalSize = len(self.filterPacket)
@@ -53,10 +53,10 @@ class FilterChunker:
     def getChunk(self) -> [int]:
         totalSize = len(self.filterPacket)
         if totalSize > self.maxChunkSize:
-            chunkSize = min(self.maxChunkSize, totalSize - self.maxChunkSize)
-            chunkData = self.filterPacket[self.index * self.maxChunkSize : (self.index + 1) * self.maxChunkSize]
+            chunkSize = min(self.maxChunkSize, totalSize - self.index)
+            chunkData = self.filterPacket[self.index : self.index + chunkSize]
             cmd = UploadFilterCommandPacket(self.filterId, self.index, totalSize, chunkSize, chunkData)
-            self.index += 1
+            self.index += self.maxChunkSize
             return cmd.getPacket()
         else:
             return UploadFilterCommandPacket(self.filterId, self.index, totalSize, totalSize, self.filterPacket).getPacket()
