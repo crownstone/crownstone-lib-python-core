@@ -1,7 +1,8 @@
-from crownstone_core.util.BasePackets import *
 from crownstone_core.packets.assetFilter.FilterIOPackets import *
 from crownstone_core.packets.assetFilter.FilterDescriptionPackets import *
 from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import *
+from crownstone_core.packets.exactMatchFilter.ExactMatchFilter import ExactMatchFilterData
+
 from crownstone_core.util.BasePackets import *
 
 """
@@ -23,7 +24,10 @@ class AssetFilter(PacketBase):
     """
     This is the packet that is uploaded.
     """
-    typeMap = {FilterType.CUCKOO : CuckooFilterData}
+    typeMap = {
+        FilterType.CUCKOO : CuckooFilterData,
+        FilterType.EXACT_MATCH : ExactMatchFilterData,
+    }
 
     def __init__(self):
         self.metadata = FilterMetaData()

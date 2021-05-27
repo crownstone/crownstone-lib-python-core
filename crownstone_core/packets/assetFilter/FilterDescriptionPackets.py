@@ -8,6 +8,7 @@ TODO: add constructors
 
 class FilterType(CsUint8Enum):
     CUCKOO = 0
+    EXACT_MATCH = 1
 
 class AdvertisementSubdataType(CsUint8Enum):
     """
