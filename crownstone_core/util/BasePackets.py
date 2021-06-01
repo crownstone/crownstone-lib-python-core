@@ -233,7 +233,8 @@ class Uint16Array(PacketBase):
 class PacketBaseList(PacketBase):
     """
     Wraps a generic list of descendants of PacketBase and packs them individually.
-    Providing a cls parameter gives a type hint.
+    cls: the type of elements in the array.
+    len: (optional) the number of elements in the array.
 
     Todo: access to array elements should preserve type safety.
     """
@@ -252,8 +253,10 @@ class PacketBaseList(PacketBase):
 
     def getPacket(self):
         packet = []
-        for name, val in self.val:
-            packet += val.getPacket()
+        for v in self.val:
+            if type (v) != self.cls:
+                v = self.cls(v)
+            packet += v.getPacket()
         return packet
 
     def setPacket(self, bytelist):
@@ -302,7 +305,7 @@ class PacketVariant(PacketBase):
             # might not be loaded yet
             self.loadType()
         if type(self.val) is not self.currentType():
-            raise ValueError("Type mismatch: ", type(self.val),self.currentType())
+            raise ValueError("Type mismatch while serializing PacketVariant. Should be {0} according to typegetter, but object was of type: {1}".format(self.currentType(), type(self.val)))
         if self.val is None:
             return []
         return self.val.getPacket()

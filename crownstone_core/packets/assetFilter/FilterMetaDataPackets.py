@@ -16,6 +16,7 @@ class FilterMetaData(PacketBase):
     """
     def __init__(self):
         self.type              = FilterType.CUCKOO
+        self.flags             = Uint8()
         self.profileId         = Uint8()
         self.inputDescription  = FilterInputDescription()
         self.outputDescription = FilterOutputDescription()
