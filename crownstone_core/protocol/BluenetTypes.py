@@ -26,6 +26,7 @@ class ControlType(IntEnum):
     RESET_ERRORS                     = 32
     MESH_COMMAND                     = 33
     SET_SUN_TIME                     = 34
+    RESET_RSSI_BETWEEN_STONES        = 36
     ALLOW_DIMMING                    = 40
     LOCK_SWITCH                      = 41
     UART_MESSAGE                     = 50
