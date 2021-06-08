@@ -9,10 +9,8 @@ class SunTimes(metaclass=CrownstonePacket):
     sunset=Uint32()
 
     def __init__(self, *args, **kwargs):
-        print("--- SunTimes init --- ")
-        self.sunrise = 0
-        self.sunset = 0
-        print (" ~~~")
+        self.sunrise = 13
+        self.sunset = 13
 
 # ----- wrapper types -------
 

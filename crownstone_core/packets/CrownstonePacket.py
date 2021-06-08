@@ -33,10 +33,8 @@ class CrownstonePacket(type):
 	- enforce types? E.g. fields serialed to `Uint8` must be `int` etc.?
 	"""
 	def __new__(mcs, subclassName, bases, attrs):
-		print(F"CrownstonePacket: {subclassName}")
-		print("   b:", bases)
-		print("   a:", attrs)
-		bases += Packet,
+		if Packet not in bases:
+			bases += Packet,
 
 		# split the attributes in packet field definitions (name -> Packet subclass) and other attributes
 		packetFieldTypes = {fieldName : fieldValue for fieldName,fieldValue in attrs.items() if mcs.isPacketField(fieldValue)}
@@ -44,8 +42,8 @@ class CrownstonePacket(type):
 
 		subclassAttributes = otherAttributes
 
-		superInit = otherAttributes.get("__init__")
-		subclassAttributes["__init__"] = mcs.makeInitMethod(packetFieldTypes, superInit)
+		instanceInit = otherAttributes.get("__init__")
+		subclassAttributes["__init__"] = mcs.makeInitMethod(packetFieldTypes, instanceInit)
 		subclassAttributes["_packetFieldTypes"] = packetFieldTypes
 
 		print("subclass attributes", subclassAttributes)
@@ -56,17 +54,17 @@ class CrownstonePacket(type):
 		return issubclass(type(fieldValue), Packet)
 
 	@staticmethod
-	def makeInitMethod(packetFields, superInit = None):
+	def makeInitMethod(packetFields, customInit = None):
 		def initmethod(self, *args, **kwargs):
-			print("--- pre call super init --- ")
-			if superInit:
-				superInit(self, args,kwargs)
-			print(" --- post call super init ---")
+			if customInit:
+				customInit(self, args, kwargs)
 
 			# add attributes to the dict for the packetFields and assign
-			# default values to them
+			# default values to them, at least if they weren't constructed in
+			# the customInit yet.
 			for fieldName, fieldType in packetFields.items():
-				self.__dict__[fieldName] = fieldType.getDefault()
+				if fieldName not in self.__dict__:
+					self.__dict__[fieldName] = fieldType.getDefault()
 
 			# if any positional arguments are set, assign them in order to
 			# the fields of this object.
@@ -91,17 +89,24 @@ class CrownstonePacket(type):
 
 
 class Bool(Packet):
-	pass
+	@classmethod
+	def getDefault(cls):
+		return False
 
 class Uint8(Packet):
-	pass
-
+	@classmethod
+	def getDefault(cls):
+		return 8
 
 class Uint16(Packet):
-    pass
+	@classmethod
+	def getDefault(cls):
+		return 16
 
 class Uint32(Packet):
-	pass
+	@classmethod
+	def getDefault(cls):
+		return 32
 
 class Int8(Packet):
 	pass
