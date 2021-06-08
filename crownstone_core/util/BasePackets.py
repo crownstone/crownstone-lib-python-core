@@ -19,6 +19,10 @@ class PacketBase:
 
         Fields are None-checked to allow for easy optional fields at runtime.
         """
+        # TODO: add BufferWriter as arugment with default value None.
+        # if the writer is not None it will be easier to optimize for
+        # repeated writes instead of the += operator, which will likely
+        # incur more copying.
         packet = []
         for name, val in self.__dict__.items():
             if val is not None:
@@ -33,6 +37,10 @@ class PacketBase:
         Failure to setPacket invocations are required to throw an exception of type ValueError.
         Fields that have the type None type are ignored.
         """
+        # TODO: add BufferReader as arugment with default value None.
+        # if the writer is not None it will be easier to optimize for
+        # repeated writes instead of the += operator, which will likely
+        # incur more copying.
         for name, val in self.__dict__.items():
             if type(val) is not type(None):
                 bytelist = val.setPacket(bytelist)
