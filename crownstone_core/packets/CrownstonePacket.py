@@ -3,23 +3,7 @@ An interface base to define packet formats in short and concise fashion.
 
 Example usage can (for now) be found in CrownstonePacketExample.py
 """
-
-
-class Packet:
-	"""
-	Defines the interface that packets implement. Subclasses need to actually
-	do something in these methods.
-	"""
-	def getPacket(self):
-		pass
-
-	def setPacket(self, bytelist):
-		pass
-
-	@classmethod
-	def getDefault(cls):
-		return None
-
+from crownstone_core.packets.PacketFormat import *
 
 class CrownstonePacket(type):
 	"""
@@ -33,8 +17,8 @@ class CrownstonePacket(type):
 	- enforce types? E.g. fields serialed to `Uint8` must be `int` etc.?
 	"""
 	def __new__(mcs, subclassName, bases, attrs):
-		if Packet not in bases:
-			bases += Packet,
+		if PacketFormatType not in bases:
+			bases += PacketFormatType,
 
 		# split the attributes in packet field definitions (name -> Packet subclass) and other attributes
 		packetFieldTypes = {fieldName : fieldValue for fieldName,fieldValue in attrs.items() if mcs.isPacketField(fieldValue)}
@@ -42,16 +26,17 @@ class CrownstonePacket(type):
 
 		subclassAttributes = otherAttributes
 
+		# add a wrapper to __init__ that initializes the objects serializable fields and
+		# add the dict defining which fields are to be serialized to the class variables.
 		instanceInit = otherAttributes.get("__init__")
 		subclassAttributes["__init__"] = mcs.makeInitMethod(packetFieldTypes, instanceInit)
-		subclassAttributes["_packetFieldTypes"] = packetFieldTypes
+		subclassAttributes["_serializedFields"] = packetFieldTypes
 
-		print("subclass attributes", subclassAttributes)
 		return super(CrownstonePacket, mcs).__new__(mcs, subclassName, bases, subclassAttributes)
 
 	@staticmethod
 	def isPacketField(fieldValue):
-		return issubclass(type(fieldValue), Packet)
+		return issubclass(type(fieldValue), PacketFormatType)
 
 	@staticmethod
 	def makeInitMethod(packetFields, customInit = None):
@@ -82,45 +67,4 @@ class CrownstonePacket(type):
 						raise AttributeError(F"{self.__class__} does not contain an attribute named {kwargKey}")
 
 		return initmethod
-
-
-# ----- literal types -------
-
-
-
-class Bool(Packet):
-	@classmethod
-	def getDefault(cls):
-		return False
-
-class Uint8(Packet):
-	@classmethod
-	def getDefault(cls):
-		return 8
-
-class Uint16(Packet):
-	@classmethod
-	def getDefault(cls):
-		return 16
-
-class Uint32(Packet):
-	@classmethod
-	def getDefault(cls):
-		return 32
-
-class Int8(Packet):
-	pass
-
-class Uint8Enum(Packet):
-	pass
-
-class Uint16Enum(Packet):
-    pass
-
-class PacketArray(Packet):
-	pass
-
-class Variant(Packet):
-	def __init__(self, **kwargs):
-		pass
 

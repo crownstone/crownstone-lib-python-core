@@ -9,8 +9,9 @@ class SunTimes(metaclass=CrownstonePacket):
     sunset=Uint32()
 
     def __init__(self, *args, **kwargs):
-        self.sunrise = 13
-        self.sunset = 13
+        pass
+        # self.sunrise = 13
+        # self.sunset = 13
 
 # ----- wrapper types -------
 
@@ -34,9 +35,10 @@ class ControlPacket(metaclass=CrownstonePacket):
 
 if __name__ == "__main__":
     s = SunTimes()
+    s.sunrise = 9 * 60 * 60
+    s.sunset = 21 * 60 * 60
     print("--------------")
-    print(s.__dict__)
-    print(s._packetFieldTypes)
+    print("suntimes packet: ", s.getPacket())
 
 
 if False and __name__ == "__main__":
