@@ -10,12 +10,14 @@ class SerializableField:
 	def __init__(self, *args, **kwargs):
 		pass
 
-	def getPacket(self):
+	def serialize(self):
 		writer = BufferWriter()
-		self.writeBytes(self, writer)
+		self.writeToBuffer(self, writer)
 		return writer.getBuffer()
 
-	def loadPacket(self, data):
+	def deserialize(self, data):
+		reader = BufferReader()
+		self.readFromBuffer(self, reader)
 		pass
 
 	def getDefault(self, parent):
@@ -26,17 +28,27 @@ class SerializableField:
 		"""
 		return None
 
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
+		"""
+		Generic implementation: loop over all fields in the instance that are to be deserialized
+		and call readFromBuffer on the respective type.
+
+		instance: the object to deserialize the data into
+		writer: the writer to extract the data to deserialize out of
+		"""
 		pass
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer: BufferWriter):
 		"""
-		Generic implementation: loop over all fields in the instance that are supposed to be serialized
-		and call writebytes on the respective type.
+		Generic implementation: loop over all fields in the instance that are to be serialized
+		and call writeToBuffer on the respective type.
+
+		instance: the object to serialize
+		writer: the writer to serialize the object into
 		"""
 		fields = self.__getattribute__("_serializedFields") or dict()
 		for fieldName, fieldType in fields.items():
-			fieldType.writeBytes(instance.__dict__[fieldName], writer)
+			fieldType.writeToBuffer(instance.__dict__[fieldName], writer)
 
 
 # ----- generic integral type -----
@@ -57,56 +69,56 @@ class Bool(SerializableIntegralField):
 		""" if default is set use that value and transform None into False """
 		return self.default or False
 
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer: BufferWriter):
+	def writeToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt8(instance)
 
 # unsigned ints
 
 class Uint8(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer: BufferWriter):
+	def writeToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt8(instance)
 
 class Uint16(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer: BufferWriter):
+	def writeToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt16(instance)
 
 class Uint32(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer: BufferWriter):
+	def writeToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt32(instance)
 
 # signed ints
 
 class Int8(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		writer.putInt8(instance)
 
 class Int16(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		writer.putInt16(instance)
 
 class Int32(SerializableIntegralField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		writer.putInt32(instance)
 
 # enums
@@ -129,17 +141,17 @@ class SerializableEnumField(SerializableIntegralField):
 		return int(instance)
 
 class Uint8Enum(SerializableEnumField):
-	def readBytes(self, instance, reader):
+	def readFromBuffer(self, instance, reader):
 		pass
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		# and then cast back to integer and put it into the writer
 		writer.putUInt8(self.getInt(instance))
 
 
 
 class Uint16Enum(SerializableEnumField):
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		# and then cast back to integer and put it into the writer
 		writer.putUInt16(self.getInt(instance))
 
@@ -166,11 +178,11 @@ class Variant(SerializableField):
 		else:
 			return None
 
-	def writeBytes(self, instance, writer):
+	def writeToBuffer(self, instance, writer):
 		if self.currentSerializableField is not None:
-			self.currentSerializableField.writeBytes(instance, writer)
+			self.currentSerializableField.writeToBuffer(instance, writer)
 		else:
-			print("Warning: Variant cannot writeBytes because c is unknown")
+			print("Warning: Variant cannot writeToBuffer because current type of Variant is unknown")
 
 
 

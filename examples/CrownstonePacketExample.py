@@ -49,31 +49,12 @@ if __name__ == "__main__":
     s.sunrise = 9 * 60 * 60
     s.sunset = 21 * 60 * 60
     print("--------------")
-    print("suntimes packet: ", s.getPacket())
+    print("suntimes packet: ", s.serialize())
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SWITCH)
     # packet.payload = 99
     packet.payload
-    print("ControlPacket, commandtype=switch:", packet.getPacket())
+    print("ControlPacket, commandtype=switch:", packet.serialize())
     print("--------------")
     defaultpacket = ControlPacket()
-    print("default packet", defaultpacket.getPacket())
-
-
-
-if False and __name__ == "__main__":
-    # construct with named arguments (or unnamed if you know all fields immediately)
-    packet = ControlPacket(commandtype=ControlType.LOCK_SWITCH)
-    packet.payload = True
-    print(packet.getPacket())
-
-    # accessing a variant will check the typeGetter and load the correct
-    # subobject so that the sunrise/sunset attributes are available
-    packet.command = ControlType.SET_SUN_TIME
-    packet.payload.sunrise = 9 * 60 * 60
-    packet.payload.sunset = 21 * 60 * 60
-    print(packet.getPacket())
-
-    # load back the LOCK_SWITCH payload (or load default values)
-    packet.command = ControlType.LOCK_SWITCH
-    print(packet.getPacket())
+    print("default packet", defaultpacket.serialize())
