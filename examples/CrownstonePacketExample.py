@@ -23,6 +23,9 @@ class SunTimes(metaclass=CrownstonePacket):
         # self.sunrise = 13
         # self.sunset = 13
 
+class WrappedSunTimes(metaclass=CrownstonePacket):
+    suntimes=SunTimes()
+
 # ----- wrapper types -------
 
 
@@ -48,13 +51,29 @@ if __name__ == "__main__":
     s = SunTimes()
     s.sunrise = 9 * 60 * 60
     s.sunset = 21 * 60 * 60
+    s.some = SomeEnum.C
     print("--------------")
-    print("suntimes packet: ", s.serialize())
+    sSerialized = s.serialize()
+    print("suntimes packet: ", sSerialized)
+    s1 = SunTimes()
+    s1.deserialize(sSerialized)
+    print(s1.__dict__)
+    print(s1.serialize())
+
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SWITCH)
     # packet.payload = 99
-    packet.payload
-    print("ControlPacket, commandtype=switch:", packet.serialize())
+    serializedPacket = packet.serialize()
+    print("ControlPacket, commandtype=switch:", serializedPacket)
+    packet1 = ControlPacket()
+    packet1.deserialize(serializedPacket)
+    print(packet1.__dict__)
+    print(packet1.serialize())
+
     print("--------------")
     defaultpacket = ControlPacket()
     print("default packet", defaultpacket.serialize())
+
+    print("--------------")
+    wrap = WrappedSunTimes()
+    print("wrapped suntimes: ", wrap.serialize())
