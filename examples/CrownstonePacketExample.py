@@ -27,7 +27,7 @@ class SunTimes(metaclass=CrownstonePacket):
 
 
 class ControlPacket(metaclass=CrownstonePacket):
-    getPayloadTypeDict = {
+    payloadTypeDict = {
         ControlType.SWITCH : Uint8(default=100),
         ControlType.SET_SUN_TIME : SunTimes(),
         ControlType.LOCK_SWITCH : Bool(default=True)
@@ -37,7 +37,7 @@ class ControlPacket(metaclass=CrownstonePacket):
     protocol=Uint8()
     commandtype=Uint16Enum(cls=ControlType, default=ControlType.SWITCH)
     size=Uint16()
-    payload=Variant(typeDict=getPayloadTypeDict, typeGetter=lambda x: x.commandtype)
+    payload=Variant(typeDict=payloadTypeDict, typeGetter=lambda x: x.commandtype)
 
 
 

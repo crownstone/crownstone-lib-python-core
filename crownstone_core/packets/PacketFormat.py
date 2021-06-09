@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 from crownstone_core.util.BufferWriter import BufferWriter
+from crownstone_core.util.BufferReader import BufferReader
 
 class SerializableField:
 	"""
@@ -18,6 +19,11 @@ class SerializableField:
 		pass
 
 	def getDefault(self, parent):
+		"""
+		Default value of a field is allowed to depend on the siblings of the field
+		e.g. in order to automatically get the length of a variable size array.
+		These can be obtains through a reference of the parent.
+		"""
 		return None
 
 	def readBytes(self, instance, reader):
