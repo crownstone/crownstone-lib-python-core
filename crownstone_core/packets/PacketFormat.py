@@ -2,7 +2,7 @@ from enum import IntEnum
 
 from crownstone_core.util.BufferWriter import BufferWriter
 
-class PacketFormatType:
+class SerializableField:
 	"""
 	Defines the interface that packets implement.
 	"""
@@ -17,7 +17,7 @@ class PacketFormatType:
 	def loadPacket(self, data):
 		pass
 
-	def getDefault(self):
+	def getDefault(self, parent):
 		return None
 
 	def readBytes(self, instance, reader):
@@ -35,18 +35,20 @@ class PacketFormatType:
 
 # ----- generic integral type -----
 
-class IntegralPacketFormatType(PacketFormatType):
+class SerializableIntegralField(SerializableField):
 	def __init__(self, default=None,  *args, **kwargs):
 		super().__init__(*args,**kwargs)
 		self.default = kwargs.get("default", default)
 
-	def getDefault(self):
+	def getDefault(self, parent):
+		""" if default is set use that value and transform None into 0 """
 		return self.default or 0
 
 # ----- literal types -------
 
-class Bool(IntegralPacketFormatType):
-	def getDefault(self):
+class Bool(SerializableIntegralField):
+	def getDefault(self, parent):
+		""" if default is set use that value and transform None into False """
 		return self.default or False
 
 	def readBytes(self, instance, reader):
@@ -57,30 +59,21 @@ class Bool(IntegralPacketFormatType):
 
 # unsigned ints
 
-class Uint8(IntegralPacketFormatType):
-	def getDefault(self):
-		return 8
-
+class Uint8(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
 	def writeBytes(self, instance, writer: BufferWriter):
 		writer.putUInt8(instance)
 
-class Uint16(IntegralPacketFormatType):
-	def getDefault(self):
-		return 16
-
+class Uint16(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
 	def writeBytes(self, instance, writer: BufferWriter):
 		writer.putUInt16(instance)
 
-class Uint32(IntegralPacketFormatType):
-	def getDefault(self):
-		return 32
-
+class Uint32(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
@@ -89,30 +82,21 @@ class Uint32(IntegralPacketFormatType):
 
 # signed ints
 
-class Int8(IntegralPacketFormatType):
-	def getDefault(self):
-		return 8
-
+class Int8(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
 	def writeBytes(self, instance, writer):
 		writer.putInt8(instance)
 
-class Int16(IntegralPacketFormatType):
-	def getDefault(self):
-		return 16
-
+class Int16(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
 	def writeBytes(self, instance, writer):
 		writer.putInt16(instance)
 
-class Int32(IntegralPacketFormatType):
-	def getDefault(self):
-		return 32
-
+class Int32(SerializableIntegralField):
 	def readBytes(self, instance, reader):
 		pass
 
@@ -121,7 +105,7 @@ class Int32(IntegralPacketFormatType):
 
 # enums
 
-class EnumPacketFormatType(IntegralPacketFormatType):
+class SerializableEnumField(SerializableIntegralField):
 	def __init__(self, cls, *args, **kwargs):
 		super().__init__(*args,**kwargs)
 		if not issubclass(cls, IntEnum):
@@ -138,7 +122,7 @@ class EnumPacketFormatType(IntegralPacketFormatType):
 			instance = self.cls(instance)
 		return int(instance)
 
-class Uint8Enum(EnumPacketFormatType):
+class Uint8Enum(SerializableEnumField):
 	def readBytes(self, instance, reader):
 		pass
 
@@ -148,15 +132,39 @@ class Uint8Enum(EnumPacketFormatType):
 
 
 
-class Uint16Enum(PacketFormatType):
-    pass
+class Uint16Enum(SerializableEnumField):
+	def writeBytes(self, instance, writer):
+		# and then cast back to integer and put it into the writer
+		writer.putUInt16(self.getInt(instance))
 
 # containers
 
-class GenericPacketArray(PacketFormatType):
+class GenericPacketArray(SerializableField):
 	pass
 
-class Variant(PacketFormatType):
-	def __init__(self, **kwargs):
-		pass
+class Variant(SerializableField):
+	def __init__(self, typeDict, typeGetter,  *args, **kwargs):
+		self.typeDict = typeDict
+		self.typeGetter = typeGetter
+		self.currentSerializableField = None
+
+	def getCurrentSerializableField(self, parent):
+		currentType = self.typeGetter(parent)
+		self.currentSerializableField = self.typeDict[currentType]
+
+	def getDefault(self, parent):
+		""" obtain current value from the typeGetter and use dict to obtain a default value """
+		self.getCurrentSerializableField(parent)
+		if self.currentSerializableField is not None:
+			return self.currentSerializableField.getDefault(parent)
+		else:
+			return None
+
+	def writeBytes(self, instance, writer):
+		if self.currentSerializableField is not None:
+			self.currentSerializableField.writeBytes(instance, writer)
+		else:
+			print("Warning: Variant cannot writeBytes because c is unknown")
+
+
 

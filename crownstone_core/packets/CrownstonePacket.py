@@ -17,8 +17,8 @@ class CrownstonePacket(type):
 	- enforce types? E.g. fields serialed to `Uint8` must be `int` etc.?
 	"""
 	def __new__(mcs, subclassName, bases, attrs):
-		if PacketFormatType not in bases:
-			bases += PacketFormatType,
+		if SerializableField not in bases:
+			bases += SerializableField,
 
 		# split the attributes in packet field definitions (name -> Packet subclass) and other attributes
 		packetFieldTypes = {fieldName : fieldValue for fieldName,fieldValue in attrs.items() if mcs.isPacketField(fieldValue)}
@@ -36,7 +36,7 @@ class CrownstonePacket(type):
 
 	@staticmethod
 	def isPacketField(fieldValue):
-		return issubclass(type(fieldValue), PacketFormatType)
+		return issubclass(type(fieldValue), SerializableField)
 
 	@staticmethod
 	def makeInitMethod(packetFields, customInit = None):
@@ -49,7 +49,7 @@ class CrownstonePacket(type):
 			# the customInit yet.
 			for fieldName, fieldType in packetFields.items():
 				if fieldName not in self.__dict__:
-					self.__dict__[fieldName] = fieldType.getDefault()
+					self.__dict__[fieldName] = fieldType.getDefault(parent=self)
 
 			# if any positional arguments are set, assign them in order to
 			# the fields of this object.

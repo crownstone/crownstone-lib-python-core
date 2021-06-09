@@ -28,16 +28,16 @@ class SunTimes(metaclass=CrownstonePacket):
 
 class ControlPacket(metaclass=CrownstonePacket):
     getPayloadTypeDict = {
-        ControlType.SWITCH : Uint8,
-        ControlType.SET_SUN_TIME : SunTimes,
-        ControlType.LOCK_SWITCH : Bool
+        ControlType.SWITCH : Uint8(default=100),
+        ControlType.SET_SUN_TIME : SunTimes(),
+        ControlType.LOCK_SWITCH : Bool(default=True)
     }
 
     # PacketFormat
     protocol=Uint8()
-    packet=Uint16()
+    commandtype=Uint16Enum(cls=ControlType, default=ControlType.SWITCH)
     size=Uint16()
-    payload=Variant(typeDict=getPayloadTypeDict, typeGetter=lambda x: x.command)
+    payload=Variant(typeDict=getPayloadTypeDict, typeGetter=lambda x: x.commandtype)
 
 
 
@@ -50,11 +50,20 @@ if __name__ == "__main__":
     s.sunset = 21 * 60 * 60
     print("--------------")
     print("suntimes packet: ", s.getPacket())
+    print("--------------")
+    packet = ControlPacket(commandtype=ControlType.SWITCH)
+    # packet.payload = 99
+    packet.payload
+    print("ControlPacket, commandtype=switch:", packet.getPacket())
+    print("--------------")
+    defaultpacket = ControlPacket()
+    print("default packet", defaultpacket.getPacket())
+
 
 
 if False and __name__ == "__main__":
     # construct with named arguments (or unnamed if you know all fields immediately)
-    packet = ControlPacket(command=ControlType.LOCK_SWITCH)
+    packet = ControlPacket(commandtype=ControlType.LOCK_SWITCH)
     packet.payload = True
     print(packet.getPacket())
 
