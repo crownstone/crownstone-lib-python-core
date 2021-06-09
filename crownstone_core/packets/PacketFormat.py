@@ -18,12 +18,13 @@ class SerializableField:
 	def deserialize(self, data):
 		reader = BufferReader()
 		self.readFromBuffer(self, reader)
-		pass
 
 	def getDefault(self, parent):
 		"""
-		Default value of a field is allowed to depend on the siblings of the field
-		e.g. in order to automatically get the length of a variable size array.
+		Return the default value of this SerializableField.
+
+		Default value of a field is allowed to depend on the siblings of the field.
+		E.g. in order to automatically get the length of a variable size array.
 		These can be obtains through a reference of the parent.
 		"""
 		return None
@@ -36,7 +37,8 @@ class SerializableField:
 		instance: the object to deserialize the data into
 		writer: the writer to extract the data to deserialize out of
 		"""
-		pass
+		for fieldName, fieldType in self.getSerializableFieldDict().items():
+			fieldType.readFromBuffer(instance.__dict__[fieldName], reader)
 
 	def writeToBuffer(self, instance, writer: BufferWriter):
 		"""
@@ -46,9 +48,11 @@ class SerializableField:
 		instance: the object to serialize
 		writer: the writer to serialize the object into
 		"""
-		fields = self.__getattribute__("_serializedFields") or dict()
-		for fieldName, fieldType in fields.items():
+		for fieldName, fieldType in self.getSerializableFieldDict().items():
 			fieldType.writeToBuffer(instance.__dict__[fieldName], writer)
+
+	def getSerializableFieldDict(self):
+		return self.__getattribute__("_serializedFields") or dict()
 
 
 # ----- generic integral type -----
@@ -149,16 +153,12 @@ class Uint8Enum(SerializableEnumField):
 		writer.putUInt8(self.getInt(instance))
 
 
-
 class Uint16Enum(SerializableEnumField):
 	def writeToBuffer(self, instance, writer):
 		# and then cast back to integer and put it into the writer
 		writer.putUInt16(self.getInt(instance))
 
 # containers
-
-class GenericPacketArray(SerializableField):
-	pass
 
 class Variant(SerializableField):
 	def __init__(self, typeDict, typeGetter,  *args, **kwargs):
@@ -186,3 +186,8 @@ class Variant(SerializableField):
 
 
 
+
+# class GenericPacketArray(SerializableField):
+# 	pass
+
+# TODO: class Uint16AutoSize, Uint16AutoEnum
