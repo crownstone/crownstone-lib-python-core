@@ -14,8 +14,8 @@ class SomeEnum(IntEnum):
 # ----- core data types -------
 
 class SunTimes(metaclass=CrownstonePacket):
-    sunrise=Uint32()
-    sunset=Uint32()
+    sunrise=Uint32(9*60*60)
+    sunset=Uint32(default=18*60*60)
     some=Uint8Enum(cls=SomeEnum,default=SomeEnum.UNKNOWN)
 
     def __init__(self, *args, **kwargs):
@@ -60,12 +60,26 @@ def sun():
     print(s1.__dict__)
     print(s1.serialize())
 
-def switch():
+def controlswitch():
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SWITCH)
     # packet.payload = 99
     serializedPacket = packet.serialize()
     print("ControlPacket, commandtype=switch:", serializedPacket)
+
+    packet1 = ControlPacket()
+    packet1.deserialize(serializedPacket)
+    print(packet1.__dict__)
+    print(packet1.serialize())
+
+def controlsuntimes():
+    print("--------------")
+    packet = ControlPacket(commandtype=ControlType.SET_SUN_TIME)
+    print(packet.__dict__)
+    # packet.payload = 99
+    serializedPacket = packet.serialize()
+    print("ControlPacket, commandtype=suntimes:", serializedPacket)
+
     packet1 = ControlPacket()
     packet1.deserialize(serializedPacket)
     print(packet1.__dict__)
@@ -84,7 +98,8 @@ def wrap():
 
 if __name__ == "__main__":
     # sun()
-    switch()
+    # controlswitch()
+    controlsuntimes()
     # default()
     # wrap()
 

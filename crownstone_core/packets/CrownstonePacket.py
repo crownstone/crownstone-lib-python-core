@@ -41,8 +41,11 @@ class CrownstonePacket(type):
 	@staticmethod
 	def makeInitMethod(packetFields, customInit = None):
 		def initmethod(self, *args, **kwargs):
+			print("<<<")
+			print(args, kwargs)
+			print(">>>")
 			if customInit:
-				customInit(self, args, kwargs)
+				customInit(self, *args, **kwargs)
 
 			# add attributes to the dict for the packetFields and assign
 			# default values to them, at least if they weren't constructed in
