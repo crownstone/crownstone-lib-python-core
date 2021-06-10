@@ -63,26 +63,28 @@ def sun():
 def controlswitch():
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SWITCH)
-    # packet.payload = 99
     serializedPacket = packet.serialize()
     print("ControlPacket, commandtype=switch:", serializedPacket)
 
     packet1 = ControlPacket()
     packet1.deserialize(serializedPacket)
-    print(packet1.__dict__)
+    print("deserialized: ", packet1.__dict__)
     print(packet1.serialize())
 
 def controlsuntimes():
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SET_SUN_TIME)
     print(packet.__dict__)
-    # packet.payload = 99
+    packet.payload.sunrise = 9 * 60 * 60
+    packet.payload.sunset = 21 * 60 * 60
+    packet.payload.some = SomeEnum.C
+
     serializedPacket = packet.serialize()
     print("ControlPacket, commandtype=suntimes:", serializedPacket)
 
     packet1 = ControlPacket()
     packet1.deserialize(serializedPacket)
-    print(packet1.__dict__)
+    print("deserialized", packet1.__dict__)
     print(packet1.serialize())
 
 def default():
@@ -97,9 +99,14 @@ def wrap():
     print("wrapped suntimes: ", wrapped.serialize())
 
 if __name__ == "__main__":
-    # sun()
-    # controlswitch()
+    sun()
+    controlswitch()
     controlsuntimes()
-    # default()
-    # wrap()
+    default()
+    wrap()
+
+    print("~~~~~")
+    s = SunTimes(9*60*60, 18*60*60)
+    print(s.serialize())
+    print(s.__dict__)
 

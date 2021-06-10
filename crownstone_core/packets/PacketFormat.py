@@ -219,5 +219,4 @@ class Variant(SerializableField):
 # class GenericPacketArray(SerializableField):
 # 	pass
 
-# TODO: finish Variant deserialization
 # TODO: class Uint16AutoSize, Uint16AutoEnum

@@ -41,33 +41,33 @@ class CrownstonePacket(type):
 	@staticmethod
 	def makeInitMethod(packetFields, customInit = None):
 		def initmethod(self, *args, **kwargs):
-			print("<<<")
-			print(args, kwargs)
-			print(">>>")
 			if customInit:
 				customInit(self, *args, **kwargs)
 
-			# add attributes to the dict for the packetFields and assign
-			# default values to them, at least if they weren't constructed in
-			# the customInit yet.
+			# For fields that haven't been constructed by customInit:
+			# - check if there's a keyword argument to assign
+			# - check if there is a positiional argument to assign
+			# - construct a new object from fieldType.getDefault
+
+			args_generator = (x for x in args)
 			for fieldName, fieldType in packetFields.items():
-				if fieldName not in self.__dict__:
-					self.__dict__[fieldName] = fieldType.getDefault(parent=self)
+				if getattr(self, fieldName, None) is None:
+					field = None
+					if field is None and kwargs:
+						field = kwargs.pop(fieldName, None)
+					if field is None and args:
+						field = next(args_generator, None)
+					if field is None:
+						field = fieldType.getDefault(parent=self)
+					setattr(self, fieldName, field)
 
-			# if any positional arguments are set, assign them in order to
-			# the fields of this object.
-			if args:
-				for t in zip(self.__dict__,args):
-					self.__dict__[t[0]] = t[1]
-
-			# any keyword arguments that are contained in the dict are assigned
-			# otherwise an AttributeError is thrown
+			# anything unused keyword arguments indicates wrongly constructed object.
 			if kwargs:
-				for kwargKey, kwargValue in kwargs.items():
-					if kwargKey in self.__dict__:
-						self.__dict__[kwargKey] = kwargValue
-					else:
-						raise AttributeError(F"{self.__class__} does not contain an attribute named {kwargKey}")
+				raise AttributeError(F"{self.__class__} does not contain an attributes for {kwargs}")
+
+			# same for positional arguments.
+			if next(args_generator, None) is not None:
+				raise AttributeError(F"{self.__class__} too many positional arguments provided")
 
 		return initmethod
 
