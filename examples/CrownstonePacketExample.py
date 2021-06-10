@@ -55,7 +55,7 @@ def sun():
 
 def controlswitch():
     print("\n------ controlswitch --------")
-    packet = ControlPacket(commandtype=ControlType.SWITCH)
+    packet = ControlPacket(commandtype=ControlType.SWITCH) # TODO: setting payload raised exception?
     serializedPacket = packet.serialize()
     print("serialized:", serializedPacket)
 
