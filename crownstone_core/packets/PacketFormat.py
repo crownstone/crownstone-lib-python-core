@@ -40,19 +40,28 @@ class SerializableField:
 		"""
 		# load all serializable fields from the reader
 		for fieldName, fieldType in self.getSerializableFieldDict().items():
-			field = fieldType.getDefault(parent=self)
-			if issubclass(type(field), SerializableField):
-				# E.g.: type(fieldType) == SunTimes and type(field) == Sun
-				# the field can handle the deserialization itself.
-				# the ancestor hierarchy is: parent > self > field
-				field.readFieldsFromBuffer(reader, parent=self)
-			else:
-				# E.g.: type(fieldType) == Uint8 and type(field) == int
-				# the fieldType needs to assign the field in this scope.
-				# as `field` can't be passed by reference.
-				field = fieldType.readFieldsFromBuffer(reader, parent=parent)
+			field = self.readFieldFromBuffer(reader, parent, fieldType)
 			setattr(self, fieldName, field)
 		return self
+
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+		"""
+		Return an object constructed from the information in the buffer
+
+		fieldType is None for 'leaf fieldTypes'
+		"""
+		field = fieldType.getDefault(parent=self)
+		if issubclass(type(field), SerializableField):
+			# E.g.: type(fieldType) == SunTimes and type(field) == Sun
+			# the field can handle the deserialization itself.
+			# the ancestor hierarchy is: parent > self > field
+			field.readFieldsFromBuffer(reader, parent=self)
+		else:
+			# E.g.: type(fieldType) == Uint8 and type(field) == int
+			# the fieldType needs to assign the field in this scope.
+			# as `field` can't be passed by reference.
+			field = fieldType.readFieldFromBuffer(reader, parent=self, fieldType=None)
+		return field
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
 		"""
@@ -87,7 +96,7 @@ class Bool(SerializableIntegralField):
 		""" if default is set use that value and transform None into False """
 		return self.default or False
 
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return True if reader.getUInt8() else False
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
@@ -96,21 +105,21 @@ class Bool(SerializableIntegralField):
 # unsigned ints
 
 class Uint8(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getUInt8()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt8(instance)
 
 class Uint16(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getUInt16()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt16(instance)
 
 class Uint32(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getUInt32()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
@@ -119,21 +128,21 @@ class Uint32(SerializableIntegralField):
 # signed ints
 
 class Int8(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getInt8()
 
 	def writeFieldsToBuffer(self, instance, writer):
 		writer.putInt8(instance)
 
 class Int16(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getInt16()
 
 	def writeFieldsToBuffer(self, instance, writer):
 		writer.putInt16(instance)
 
 class Int32(SerializableIntegralField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return reader.getInt32()
 
 	def writeFieldsToBuffer(self, instance, writer):
@@ -159,7 +168,7 @@ class SerializableEnumField(SerializableIntegralField):
 		return int(instance)
 
 class Uint8Enum(SerializableEnumField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return self.cls(reader.getUInt8())
 
 	def writeFieldsToBuffer(self, instance, writer):
@@ -168,7 +177,7 @@ class Uint8Enum(SerializableEnumField):
 
 
 class Uint16Enum(SerializableEnumField):
-	def readFieldsFromBuffer(self, reader: BufferReader, parent:SerializableField):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
 		return self.cls(reader.getUInt16())
 
 	def writeFieldsToBuffer(self, instance, writer):
@@ -201,7 +210,10 @@ class Variant(SerializableField):
 		else:
 			print("Warning: Variant cannot writeFieldsToBuffer because current type of Variant is unknown")
 
-
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+		""" forwards reading the field to the currentSerializableField """
+		self.getCurrentSerializableField(parent)
+		return self.currentSerializableField.readFieldFromBuffer(reader,parent=parent, fieldType=fieldType)
 
 
 # class GenericPacketArray(SerializableField):

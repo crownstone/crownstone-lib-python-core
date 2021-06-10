@@ -47,12 +47,12 @@ class ControlPacket(metaclass=CrownstonePacket):
 
 # ----- usage -------
 
-if __name__ == "__main__":
+def sun():
+    print("--------------")
     s = SunTimes()
     s.sunrise = 9 * 60 * 60
     s.sunset = 21 * 60 * 60
     s.some = SomeEnum.C
-    print("--------------")
     sSerialized = s.serialize()
     print("suntimes packet: ", sSerialized)
     s1 = SunTimes()
@@ -60,6 +60,7 @@ if __name__ == "__main__":
     print(s1.__dict__)
     print(s1.serialize())
 
+def switch():
     print("--------------")
     packet = ControlPacket(commandtype=ControlType.SWITCH)
     # packet.payload = 99
@@ -70,10 +71,20 @@ if __name__ == "__main__":
     print(packet1.__dict__)
     print(packet1.serialize())
 
+def default():
     print("--------------")
     defaultpacket = ControlPacket()
     print("default packet", defaultpacket.serialize())
 
+
+def wrap():
     print("--------------")
-    wrap = WrappedSunTimes()
-    print("wrapped suntimes: ", wrap.serialize())
+    wrapped = WrappedSunTimes()
+    print("wrapped suntimes: ", wrapped.serialize())
+
+if __name__ == "__main__":
+    # sun()
+    switch()
+    # default()
+    # wrap()
+
