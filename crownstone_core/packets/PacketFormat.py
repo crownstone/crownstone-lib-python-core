@@ -186,6 +186,7 @@ class Uint16Enum(SerializableEnumField):
 
 # containers
 
+# TODO: rename
 class Variant(SerializableField):
 	def __init__(self, typeDict, typeGetter,  *args, **kwargs):
 		self.typeDict = typeDict

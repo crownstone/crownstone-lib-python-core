@@ -35,7 +35,8 @@ class ControlPacket(metaclass=CrownstonePacket):
     commandtype = Uint16Enum(cls=ControlType, default=ControlType.SWITCH)
     size        = Uint16()
     payload     = Variant(typeDict=payloadTypeDict, typeGetter=lambda x: x.commandtype)
-
+    # TODO: how can we check if size field <= remaining bytes
+    # TODO: can we change the remaining bytes based on size field?
 
 
 
@@ -66,15 +67,15 @@ def controlswitch():
 def controlsuntimes():
     print("\n------- controlsuntimes -------")
     packet = ControlPacket(commandtype=ControlType.SET_SUN_TIME)
-    packet.payload.sunrise = 9 * 60 * 60
+    packet.payload.sunrise = 9 * 60 * 60 # TODO: this doesn't show up as option when typing.
     packet.payload.sunset = 21 * 60 * 60
     packet.payload.some = SomeEnum.C
 
-    serializedPacket = packet.serialize()
+    serializedPacket = packet.serialize() # TODO: this doesn't show up as option when typing.
     print("serialized: ", serializedPacket)
 
     packet1 = ControlPacket()
-    packet1.deserialize(serializedPacket)
+    packet1.deserialize(serializedPacket) # TODO: this doesn't show up as option when typing.
     print("deserialized and then serialized", packet1.serialize())
 
 def default():
@@ -90,7 +91,7 @@ def nested():
 
 def positional():
     print("\n------- positional -------")
-    s = SunTimes(9*60*60, 18*60*60)
+    s = SunTimes(9*60*60, 18*60*60) # TODO: this doesn't show up as option when typing.
     print("constructed from positional arguments: ", s.serialize())
 
 if __name__ == "__main__":

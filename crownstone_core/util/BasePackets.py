@@ -11,6 +11,8 @@ from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.Bitmasks import Bitmasks
 
+# TODO: there's already a BasePacket class, will this class replace it?
+# TODO: does CrownstonePacket replace this class?
 class PacketBase:
     def getPacket(self):
         """

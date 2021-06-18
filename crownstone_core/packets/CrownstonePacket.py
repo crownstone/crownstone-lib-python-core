@@ -5,6 +5,7 @@ Example usage can (for now) be found in CrownstonePacketExample.py
 """
 from crownstone_core.packets.PacketFormat import *
 
+# TODO: rename
 class CrownstonePacket(type):
 	"""
 	A CrownstonePacket defines a dataformat that complies with the over-the-line protocol,
