@@ -12,6 +12,8 @@ from typing import List
 #
 # 1:1 message to N crownstones with acks (only N = 1 supported for now)
 # value: 2
+from crownstone_core.util.BufferWriter import BufferWriter
+
 
 class MeshModes(IntEnum):
     BROADCAST           = 1
@@ -29,15 +31,15 @@ class _MeshCommandPacket:
         self.timeout_or_transmissions = timeout_or_transmissions
 
     def getPacket(self):
-        packet = []
-        packet.append(self.type)
-        packet.append(self.flags)
-        packet.append(self.timeout_or_transmissions)
-        packet.append(len(self.crownstoneIds))
-        packet += self.crownstoneIds
-        packet += self.payload
-
-        return packet
+        writer = BufferWriter()
+        writer.putUInt8(self.type)
+        writer.putUInt8(self.flags)
+        writer.putUInt8(self.timeout_or_transmissions)
+        writer.putUInt8(len(self.crownstoneIds))
+        for stoneId in self.crownstoneIds:
+            writer.putUInt8(stoneId)
+        writer.putBytes(self.payload)
+        return writer.getBuffer()
 
 class MeshBroadcastPacket(_MeshCommandPacket):
 
@@ -79,11 +81,10 @@ class StoneMultiSwitchPacket:
 
 
     def getPacket(self):
-        packet = []
-        packet.append(self.crownstoneId)
-        packet.append(self.state)
-
-        return packet
+        writer = BufferWriter()
+        writer.putUInt8(self.crownstoneId)
+        writer.putUInt8(self.state)
+        return writer.getBuffer()
 
 
 class MeshMultiSwitchPacket:
@@ -94,9 +95,8 @@ class MeshMultiSwitchPacket:
         self.packets = packets
 
     def getPacket(self):
-        packet = []
-        packet.append(len(self.packets))
+        writer = BufferWriter()
+        writer.putUInt8(len(self.packets))
         for stonePacket in self.packets:
-            packet += stonePacket.getPacket()
-
-        return packet
+            writer.putBytes(stonePacket.getPacket())
+        return writer.getBuffer()
