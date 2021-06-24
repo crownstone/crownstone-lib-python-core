@@ -3,8 +3,6 @@ An interface base to define packet formats in short and concise fashion.
 
 Example usage can (for now) be found in CrownstonePacketExample.py
 """
-from crownstone_core.packets.PacketFormat import *
-
 
 import inspect
 

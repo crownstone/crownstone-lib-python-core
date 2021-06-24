@@ -1,4 +1,4 @@
-from crownstone_core.packets.BasePacket import BasePacket
+from crownstone_core.packets.util.BasePacket import BasePacket
 from crownstone_core.packets.microapp.MicroappHeaderPacket import MicroappHeaderPacket
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.util.BufferWriter import BufferWriter

@@ -1,5 +1,5 @@
-from crownstone_core.packets.CrownstonePacket import CrownstonePacket
-from crownstone_core.packets.PacketFormat import Uint8
+from crownstone_core.packets.util.CrownstonePacket import CrownstonePacket
+from crownstone_core.packets.util.PacketFormat import Uint8
 from examples.CrownstonePacketExample import ControlPacket
 
 

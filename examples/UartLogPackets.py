@@ -1,5 +1,5 @@
-from crownstone_core.packets.CrownstonePacket import CrownstonePacket
-from crownstone_core.packets.PacketFormat import Uint32, Uint16, Uint8
+from crownstone_core.packets.util.CrownstonePacket import CrownstonePacket
+from crownstone_core.packets.util.PacketFormat import Uint32, Uint16, Uint8
 
 
 class UartLogHeaderPacket(metaclass=CrownstonePacket):

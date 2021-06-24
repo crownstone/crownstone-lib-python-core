@@ -1,11 +1,10 @@
 import logging
 from typing import List
 
-from crownstone_core.packets.BasePacket import BasePacket
+from crownstone_core.packets.util.BasePacket import BasePacket
 from crownstone_core.packets.microapp.MicroappSdkVersionPacket import MicroappSdkVersionPacket
 from crownstone_core.packets.microapp.MicroappStatusPacket import MicroappStatusPacket
 from crownstone_core.util.BufferReader import BufferReader
-from crownstone_core.util.BufferWriter import BufferWriter
 
 _LOGGER = logging.getLogger(__name__)
 
