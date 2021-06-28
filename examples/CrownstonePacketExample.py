@@ -1,4 +1,4 @@
-from crownstone_core.packets.util.GeneratePacketDefinition import *
+from crownstone_core.packets.util.GenerateSerializableObject import *
 from crownstone_core.protocol.BluenetTypes import ControlType
 
 from enum import IntEnum

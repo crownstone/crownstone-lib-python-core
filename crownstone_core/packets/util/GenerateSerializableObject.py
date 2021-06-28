@@ -5,7 +5,7 @@ Example usage can (for now) be found in CrownstonePacketExample.py
 """
 from crownstone_core.packets.util.SerializableObject import *
 
-def GeneratePacketDefinition(cls):
+def GenerateSerializableObject(cls):
     """
     This class decorator creates or adjusts a class's __init__ method so that when initializing:
      - if a custom __init__ is defined, first call this

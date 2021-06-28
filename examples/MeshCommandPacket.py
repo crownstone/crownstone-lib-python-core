@@ -1,4 +1,4 @@
-from crownstone_core.packets.util.GeneratePacketDefinition import CrownstonePacket
+from crownstone_core.packets.util.GenerateSerializableObject import CrownstonePacket
 from crownstone_core.packets.util.SerializableObject import Uint8
 from examples.CrownstonePacketExample import ControlPacket
 
