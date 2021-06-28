@@ -3,7 +3,7 @@ from crownstone_core.packets.util.PacketField import *
 # containers
 
 # TODO: rename
-class Variant(SerializableField):
+class SerializableUnion(SerializableField):
 	def __init__(self, typeDict, typeGetter,  *args, **kwargs):
 		self.typeDict = typeDict
 		self.typeGetter = typeGetter
