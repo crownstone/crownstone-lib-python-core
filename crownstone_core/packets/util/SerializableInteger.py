@@ -1,7 +1,7 @@
 """
 Concrete base types for SerializableFields.
 """
-from crownstone_core.packets.util.PacketField import *
+from crownstone_core.packets.util.SerializableObject import *
 
 # ----- generic (abstract) integral type -----
 

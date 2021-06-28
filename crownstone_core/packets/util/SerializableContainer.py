@@ -1,4 +1,4 @@
-from crownstone_core.packets.util.PacketField import *
+from crownstone_core.packets.util.SerializableObject import *
 
 # containers
 

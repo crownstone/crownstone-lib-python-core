@@ -3,7 +3,7 @@ An class decorator that helps to define packet formats in short and concise fash
 
 Example usage can (for now) be found in CrownstonePacketExample.py
 """
-from crownstone_core.packets.util.PacketField import *
+from crownstone_core.packets.util.SerializableObject import *
 
 def GeneratePacketDefinition(cls):
     """

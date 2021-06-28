@@ -3,7 +3,7 @@ from enum import IntEnum
 from crownstone_core.protocol.BluenetTypes import ResultValue
 
 from crownstone_core.packets.util.GeneratePacketDefinition import CrownstonePacket
-from crownstone_core.packets.util.PacketField import Uint16Enum, Variant
+from crownstone_core.packets.util.SerializableObject import Uint16Enum, Variant
 from examples.CrownstonePacketExample import ControlPacket
 from examples.UartLogPackets import UartLogPacket
 
