@@ -36,7 +36,6 @@ def _makeInitMethod(customInit = None):
 
         args_generator = (x for x in args)
         for fieldName, fieldType in self.getSerializableFields():
-            print("construct fieldname: ", fieldName)
             if fieldName not in self.__dict__:
                 field = None
                 if field is None and kwargs:

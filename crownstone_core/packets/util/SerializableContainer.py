@@ -2,9 +2,13 @@ from crownstone_core.packets.util.SerializableObject import *
 
 # containers
 
-# TODO: rename
-class SerializableUnion(SerializableField):
+class SerializableUnion(SerializableObject):
 	def __init__(self, typeDict, typeGetter,  *args, **kwargs):
+		"""
+		typeDict: a dict mapping values to SerializableObject instances.
+		typeGetter: a delegate that receives the parent of this object and should return
+			a key in the typeDict or None.
+		"""
 		self.typeDict = typeDict
 		self.typeGetter = typeGetter
 		self.currentSerializableField = None
@@ -14,26 +18,28 @@ class SerializableUnion(SerializableField):
 		self.currentSerializableField = self.typeDict[currentType]
 
 	def getDefault(self, parent):
-		""" obtain current value from the typeGetter and use dict to obtain a default value """
+		""" obtain current value from the typeGetter and use typeDict to obtain a default value """
+		if parent is None:
+			raise ValueError("SerializableUnion needs a parent to construct a default object")
+
 		self.getCurrentSerializableField(parent)
 		if self.currentSerializableField is not None:
 			return self.currentSerializableField.getDefault(parent)
 		else:
 			return None
 
-	def writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer):
 		if self.currentSerializableField is not None:
-			self.currentSerializableField.writeFieldsToBuffer(instance, writer)
+			self.currentSerializableField._writeFieldsToBuffer(instance, writer)
 		else:
 			print("Warning: Variant cannot writeFieldsToBuffer because current type of Variant is unknown")
 
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		""" forwards reading the field to the currentSerializableField """
 		self.getCurrentSerializableField(parent)
-		return self.currentSerializableField.readFieldFromBuffer(reader,parent=parent, fieldType=fieldType)
+		return self.currentSerializableField._readFieldFromBuffer(reader, parent=parent, fieldType=fieldType)
 
-
-# class GenericPacketArray(SerializableField):
+# class GenericPacketArray(SerializableObject):
 # 	pass
 
 # TODO: class Uint16AutoSize, Uint16AutoEnum, Variant with some fieldType=None enum values.

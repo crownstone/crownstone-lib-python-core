@@ -16,14 +16,14 @@ class SerializableObject:
         Constructs a bufferwriter and then loops through all the serialisable fields of this object.
         """
         writer = BufferWriter()
-        self.writeFieldsToBuffer(self, writer)
+        self._writeFieldsToBuffer(self, writer)
         return writer.getBuffer()
 
     def deserialize(self, data):
         reader = BufferReader(data)
-        self.readFieldsFromBuffer(reader, parent=None)
+        self._readFieldsFromBuffer(reader, parent=None)
 
-    def getDefault(self, parent):
+    def getDefault(self, parent=None):
         """
         Return the default value of this SerializableField.
 
@@ -33,18 +33,24 @@ class SerializableObject:
         """
         return self
 
-    def writeFieldsToBuffer(self, instance, writer: BufferWriter):
+    def getSerializableFields(self):
+        return [(n, v) for n,v in type(self).__dict__.items() if isSerializable(v)]
+
+    def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
         """
         Generic implementation: loop over all fields in the instance that are to be serialized
         and call writeFieldsToBuffer on the respective type.
+
+        Subclasses of SerializableObject may overwrite this method to serialize non-serializable objects.
+        E.g.: see SerializableInteger.Uint8.
 
         instance: the object to serialize
         writer: the writer to serialize the object into
         """
         for fieldName, fieldType in self.getSerializableFields():
-            fieldType.writeFieldsToBuffer(instance.__dict__[fieldName], writer)
+            fieldType._writeFieldsToBuffer(getattr(instance, fieldName), writer)
 
-    def readFieldsFromBuffer(self, reader: BufferReader, parent: 'SerializableField'):
+    def _readFieldsFromBuffer(self, reader: BufferReader, parent: 'SerializableField'):
         """
         Generic implementation:
         for each field of `self` that is to be deserialized:
@@ -55,11 +61,11 @@ class SerializableObject:
         """
         # load all serializable fields from the reader
         for fieldName, fieldType in self.getSerializableFields():
-            field = self.readFieldFromBuffer(reader, parent, fieldType)
+            field = self._readFieldFromBuffer(reader, parent, fieldType)
             setattr(self, fieldName, field)
         return self
 
-    def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+    def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
         """
         Return an object constructed from the information in the buffer
 
@@ -70,17 +76,13 @@ class SerializableObject:
             # E.g.: type(fieldType) == SunTimes and type(field) == Sun
             # the field can handle the deserialization itself.
             # the ancestor hierarchy is: parent > self > field
-            field.readFieldsFromBuffer(reader, parent=self)
+            field._readFieldsFromBuffer(reader, parent=self)
         else:
             # E.g.: type(fieldType) == Uint8 and type(field) == int
             # the fieldType needs to assign the field in this scope.
             # as `field` can't be passed by reference.
-            field = fieldType.readFieldFromBuffer(reader, parent=self, fieldType=None)
+            field = fieldType._readFieldFromBuffer(reader, parent=self, fieldType=None)
         return field
-
-
-    def getSerializableFields(self):
-        return [(n, v) for n,v in type(self).__dict__.items() if isSerializable(v)]
 
 def isSerializable(obj):
     return issubclass(type(obj), SerializableObject)

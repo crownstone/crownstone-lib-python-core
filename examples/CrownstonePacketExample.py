@@ -1,4 +1,7 @@
 from crownstone_core.packets.util.GenerateSerializableObject import *
+from crownstone_core.packets.util.SerializableContainer import *
+from crownstone_core.packets.util.SerializableInteger import *
+
 from crownstone_core.protocol.BluenetTypes import ControlType
 
 from enum import IntEnum
@@ -11,19 +14,21 @@ class SomeEnum(IntEnum):
 
 # ----- core data types -------
 
-class SunTimes(metaclass=CrownstonePacket):
+@GenerateSerializableObject
+class SunTimes(SerializableObject):
     sunrise  = Uint32(9*60*60)
     sunset   = Uint32(default=18*60*60)
     some     = Uint8Enum(cls=SomeEnum,default=SomeEnum.UNKNOWN)
 
 
-class NestedSunTimes(metaclass=CrownstonePacket):
+@GenerateSerializableObject
+class NestedSunTimes(SerializableObject):
     suntimes = SunTimes()
 
 # ----- wrapper types -------
 
-
-class ControlPacket(metaclass=CrownstonePacket):
+@GenerateSerializableObject
+class ControlPacket(SerializableObject):
     payloadTypeDict = {
         ControlType.SWITCH : Uint8(default=100),
         ControlType.SET_SUN_TIME : SunTimes(),
@@ -34,7 +39,7 @@ class ControlPacket(metaclass=CrownstonePacket):
     protocol    = Uint8()
     commandtype = Uint16Enum(cls=ControlType, default=ControlType.SWITCH)
     size        = Uint16()
-    payload     = Variant(typeDict=payloadTypeDict, typeGetter=lambda x: x.commandtype)
+    payload     = SerializableUnion(typeDict=payloadTypeDict, typeGetter=lambda x: x.commandtype)
     # TODO: how can we check if size field <= remaining bytes
     # TODO: can we change the remaining bytes based on size field?
 
@@ -71,11 +76,11 @@ def controlsuntimes():
     packet.payload.sunset = 21 * 60 * 60
     packet.payload.some = SomeEnum.C
 
-    serializedPacket = packet.serialize() # TODO: this doesn't show up as option when typing.
+    serializedPacket = packet.serialize()
     print("serialized: ", serializedPacket)
 
     packet1 = ControlPacket()
-    packet1.deserialize(serializedPacket) # TODO: this doesn't show up as option when typing.
+    packet1.deserialize(serializedPacket)
     print("deserialized and then serialized", packet1.serialize())
 
 def default():
