@@ -24,11 +24,11 @@ class BufferReader :
 
     def getUInt8(self):
         """ Get a uint8 from the current position, and advance the position. """
-        return self._request(1)[0]
+        return Conversion.uint8_array_to_uint8(self._request(1))
 
     def getInt8(self):
         """ Get an int8 from the current position, and advance the position. """
-        return Conversion.uint8_to_int8(self.getUInt8())
+        return Conversion.uint8_array_to_int8(self._request(1))
 
     def getUInt16(self):
         """ Get a uint16 from the current position, and advance the position. """
