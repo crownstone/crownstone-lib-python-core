@@ -5,7 +5,7 @@ from crownstone_core.packets.util.SerializableObject import *
 
 # ----- generic (abstract) integral type -----
 
-class SerializableInteger(SerializableField):
+class SerializableInteger(SerializableObject):
 	"""
 	Common features for all integral fields.
 	"""
@@ -24,7 +24,7 @@ class Bool(SerializableInteger):
 		""" if default is set use that value and transform None into False """
 		return self.default or False
 
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return True if reader.getUInt8() else False
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
@@ -33,21 +33,21 @@ class Bool(SerializableInteger):
 # unsigned ints
 
 class Uint8(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getUInt8()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt8(instance)
 
 class Uint16(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getUInt16()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
 		writer.putUInt16(instance)
 
 class Uint32(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getUInt32()
 
 	def writeFieldsToBuffer(self, instance, writer: BufferWriter):
@@ -56,21 +56,21 @@ class Uint32(SerializableInteger):
 # signed ints
 
 class Int8(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getInt8()
 
 	def writeFieldsToBuffer(self, instance, writer):
 		writer.putInt8(instance)
 
 class Int16(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getInt16()
 
 	def writeFieldsToBuffer(self, instance, writer):
 		writer.putInt16(instance)
 
 class Int32(SerializableInteger):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return reader.getInt32()
 
 	def writeFieldsToBuffer(self, instance, writer):
@@ -96,7 +96,7 @@ class SerializableEnum(SerializableInteger):
 		return int(instance)
 
 class Uint8Enum(SerializableEnum):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		"""
 		Converts the next uint8 read from buffer into an instance of type self.cls.
 		"""
@@ -111,7 +111,7 @@ class Uint8Enum(SerializableEnum):
 
 
 class Uint16Enum(SerializableEnum):
-	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
+	def readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
 		return self.cls(reader.getUInt16())
 
 	def writeFieldsToBuffer(self, instance, writer):

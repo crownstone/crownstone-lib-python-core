@@ -24,7 +24,6 @@ def GenerateSerializableObject(cls):
 
     return cls
 
-
 def _makeInitMethod(customInit = None):
     def initmethod(self, *args, **kwargs):
         if customInit:
@@ -37,8 +36,7 @@ def _makeInitMethod(customInit = None):
 
         args_generator = (x for x in args)
         for fieldName, fieldType in self.getSerializableFields():
-            print("serializable field:", fieldName)
-            # if getattr(self, fieldName, None) is None:
+            print("construct fieldname: ", fieldName)
             if fieldName not in self.__dict__:
                 field = None
                 if field is None and kwargs:
@@ -47,7 +45,6 @@ def _makeInitMethod(customInit = None):
                     field = next(args_generator, None)
                 if field is None:
                     field = fieldType.getDefault(parent=self)
-                print("boo")
                 setattr(self, fieldName, field)
 
         # anything unused keyword arguments indicates wrongly constructed object.
