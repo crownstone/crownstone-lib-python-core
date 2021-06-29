@@ -71,6 +71,21 @@ class Conversion:
         """ Convert a float to an array of 4 bytes """
         return bytearray(struct.pack('<f', val))
 
+    #########################################################
+    # Conversions between (u)int8(array) and (u)int8(array) #
+    #########################################################
+
+    @staticmethod
+    def uint8_to_uint8_array(value):
+        """ Convert a number into an array of 1 bytes. """
+        return [ value & 0xFF ]
+
+    @staticmethod
+    def int8_to_uint8_array(value):
+        """ Convert a number into an array of 1 bytes. """
+        return Conversion.uint8_to_uint8_array(
+                Conversion.int8_to_uint8(value))
+
     ########################################
     # Conversions between uint8 and uint16 #
     ########################################
@@ -101,10 +116,7 @@ class Conversion:
     def int16_to_uint8_array(value):
         return Conversion.uint16_to_uint8_array(Conversion.int16_to_uint16(value))
 
-    @staticmethod
-    def uint8_to_uint8_array(value):
-        """ Convert a number into an array of 1 bytes. """
-        return [ value & 0xFF ]
+
 
     @staticmethod
     def uint8_array_to_uint16_array(arr8):

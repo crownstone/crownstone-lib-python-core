@@ -28,11 +28,11 @@ class BufferWriter :
 
     def putUInt8(self, value):
         """ Append a uint8 to the buffer. """
-        self.data.append(value)
+        self.data.extend(Conversion.uint8_to_uint8_array(value))
 
     def putInt8(self, value):
         """ Append an int8 to the buffer. """
-        self.putUInt8(Conversion.int8_to_uint8(value))
+        self.data.extend(Conversion.int8_to_uint8_array(value))
 
     def putUInt16(self, value):
         """ Append a uint16 to the buffer. """
