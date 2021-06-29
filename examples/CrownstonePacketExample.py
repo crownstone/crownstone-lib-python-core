@@ -101,8 +101,8 @@ def positional():
 
 if __name__ == "__main__":
     sun()
-    controlswitch()
-    controlsuntimes()
+    # controlswitch()
+    # controlsuntimes()
     default()
     positional()
     nested()

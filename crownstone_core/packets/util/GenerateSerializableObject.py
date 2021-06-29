@@ -28,6 +28,8 @@ def _makeInitMethod(customInit = None):
     def initmethod(self, *args, **kwargs):
         if customInit:
             customInit(self, *args, **kwargs)
+        else:
+            super().__init__(*args,**kwargs)
 
         # For fields that haven't been constructed by customInit:
         # - check if there's a keyword argument to assign
@@ -47,8 +49,12 @@ def _makeInitMethod(customInit = None):
                 setattr(self, fieldName, field)
 
         # anything unused keyword arguments indicates wrongly constructed object.
-        if kwargs:
-            raise AttributeError(F"{self.__class__} does not contain an attributes for {kwargs}")
+        for k in kwargs.keys():
+            try:
+                getattr(self,k)
+            except AttributeError as attr_err:
+                attr_err.message += F"Encountered unknown attributes during initialization of {self.__class__}: {kwargs}"
+                raise
 
         # same for positional arguments.
         if next(args_generator, None) is not None:

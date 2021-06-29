@@ -17,6 +17,9 @@ class SerializableInteger(SerializableObject):
 		""" if default is set use that value and transform None into 0 """
 		return self.default or 0
 
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableField'):
+		return self._deserializeFromBuffer(reader, parent)
+
 # ----- literal (explicit) types -------
 
 class Bool(SerializableInteger):
@@ -24,56 +27,56 @@ class Bool(SerializableInteger):
 		""" if default is set use that value and transform None into False """
 		return self.default or False
 
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return True if reader.getUInt8() else False
 
-	def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
+	def _writeFieldsToBuffer(self, instance, writer: BufferWriter, parent: 'SerializableObject'):
 		writer.putUInt8(instance)
 
 # unsigned ints
 
 class Uint8(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getUInt8()
 
-	def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
+	def _writeFieldsToBuffer(self, instance, writer: BufferWriter, parent: 'SerializableObject'):
 		writer.putUInt8(instance)
 
 class Uint16(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getUInt16()
 
-	def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
+	def _writeFieldsToBuffer(self, instance, writer: BufferWriter, parent: 'SerializableObject'):
 		writer.putUInt16(instance)
 
 class Uint32(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getUInt32()
 
-	def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
+	def _writeFieldsToBuffer(self, instance, writer: BufferWriter, parent: 'SerializableObject'):
 		writer.putUInt32(instance)
 
 # signed ints
 
 class Int8(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getInt8()
 
-	def _writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer, parent: 'SerializableObject'):
 		writer.putInt8(instance)
 
 class Int16(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getInt16()
 
-	def _writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer, parent: 'SerializableObject'):
 		writer.putInt16(instance)
 
 class Int32(SerializableInteger):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return reader.getInt32()
 
-	def _writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer, parent: 'SerializableObject'):
 		writer.putInt32(instance)
 
 # enums
@@ -96,13 +99,13 @@ class SerializableEnum(SerializableInteger):
 		return int(instance)
 
 class Uint8Enum(SerializableEnum):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		"""
 		Converts the next uint8 read from buffer into an instance of type self.cls.
 		"""
 		return self.cls(reader.getUInt8())
 
-	def _writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer, parent: 'SerializableObject'):
 		"""
 		Casts the instance to an object of type self.cls,
 		converts that to integer and puts it into the writer
@@ -111,9 +114,9 @@ class Uint8Enum(SerializableEnum):
 
 
 class Uint16Enum(SerializableEnum):
-	def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableObject', fieldType: 'SerializableObject'):
+	def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'):
 		return self.cls(reader.getUInt16())
 
-	def _writeFieldsToBuffer(self, instance, writer):
+	def _writeFieldsToBuffer(self, instance, writer, parent: 'SerializableObject'):
 		# and then cast back to integer and put it into the writer
 		writer.putUInt16(self.getInt(instance))

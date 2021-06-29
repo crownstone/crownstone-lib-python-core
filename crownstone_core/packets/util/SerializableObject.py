@@ -7,21 +7,23 @@ from crownstone_core.util.BufferReader import BufferReader
 class SerializableObject:
     """
     Defines the interface that packets implement.
+
+    descriptor: an optional argument that can be used to differentiate/identify fields.
     """
-    def __init__(self, *args, **kwargs):
-        pass
+    def __init__(self, descriptor=None, *args, **kwargs):
+        self.descriptor = descriptor
 
     def serialize(self):
         """
         Constructs a bufferwriter and then loops through all the serialisable fields of this object.
         """
         writer = BufferWriter()
-        self._writeFieldsToBuffer(self, writer)
+        self._writeFieldsToBuffer(self, writer, None)
         return writer.getBuffer()
 
     def deserialize(self, data):
         reader = BufferReader(data)
-        self._readFieldsFromBuffer(reader, parent=None)
+        self._deserializeFromBuffer(reader, parent=self)
 
     def getDefault(self, parent=None):
         """
@@ -36,7 +38,7 @@ class SerializableObject:
     def getSerializableFields(self):
         return [(n, v) for n,v in type(self).__dict__.items() if isSerializable(v)]
 
-    def _writeFieldsToBuffer(self, instance, writer: BufferWriter):
+    def _writeFieldsToBuffer(self, instance, writer: BufferWriter, parent: 'SerializableObject'):
         """
         Generic implementation: loop over all fields in the instance that are to be serialized
         and call writeFieldsToBuffer on the respective type.
@@ -47,42 +49,19 @@ class SerializableObject:
         instance: the object to serialize
         writer: the writer to serialize the object into
         """
-        for fieldName, fieldType in self.getSerializableFields():
-            fieldType._writeFieldsToBuffer(getattr(instance, fieldName), writer)
+        for fieldName, serializer in self.getSerializableFields():
+            print("serializing: ", fieldName)
+            serializer._writeFieldsToBuffer(
+                getattr(instance, fieldName),
+                writer,
+                self)
 
-    def _readFieldsFromBuffer(self, reader: BufferReader, parent: 'SerializableField'):
-        """
-        Generic implementation:
-        for each field of `self` that is to be deserialized:
-         - construct a the default object of that type and
-         - call readFieldsFromBuffer on the newly constructed object.
-
-        reader: the reader to extract the data to deserialize out of
-        """
-        # load all serializable fields from the reader
-        for fieldName, fieldType in self.getSerializableFields():
-            field = self._readFieldFromBuffer(reader, parent, fieldType)
-            setattr(self, fieldName, field)
+    def _deserializeFromBuffer(self, reader: BufferReader, parent: 'SerializableObject'=None):
+        """ deserializeFromReader """
+        for name, serializer in self.getSerializableFields():
+            field = serializer._deserializeFromBuffer(reader, parent=self)
+            setattr(self, name, field)
         return self
-
-    def _readFieldFromBuffer(self, reader: BufferReader, parent: 'SerializableField', fieldType: 'SerializableField'):
-        """
-        Return an object constructed from the information in the buffer
-
-        fieldType is None for 'leaf fieldTypes'
-        """
-        field = fieldType.getDefault(parent=self)
-        if isSerializable(field):
-            # E.g.: type(fieldType) == SunTimes and type(field) == Sun
-            # the field can handle the deserialization itself.
-            # the ancestor hierarchy is: parent > self > field
-            field._readFieldsFromBuffer(reader, parent=self)
-        else:
-            # E.g.: type(fieldType) == Uint8 and type(field) == int
-            # the fieldType needs to assign the field in this scope.
-            # as `field` can't be passed by reference.
-            field = fieldType._readFieldFromBuffer(reader, parent=self, fieldType=None)
-        return field
 
 def isSerializable(obj):
     return issubclass(type(obj), SerializableObject)
