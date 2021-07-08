@@ -64,4 +64,4 @@ class FilterOutputDescription(PacketBase):
     def __init__(self):
         self.out_format = FilterOutputFormat.MAC_ADDRESS
         self.in_format = PacketVariant(type_enum_to_type_dict = FilterOutputDescription.typeMap,
-                                       type_getter_lambda = lambda: self.out_format.type)
+                                       type_getter_lambda = lambda: self.out_format)
