@@ -23,7 +23,7 @@ def parseSetupState(reader: BufferReader):
 
     packet.powerUsageReal     = float(realPower) / 8.0
     packet.powerUsageApparent = packet.powerUsageReal / packet.powerFactor
-    packet.errorBitmask       = reader.getInt32()
+    packet.errorsBitmask      = reader.getInt32()
     packet.uniqueIdentifier   = reader.getUInt8()
 
     return packet
