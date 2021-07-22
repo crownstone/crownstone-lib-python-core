@@ -1,3 +1,5 @@
+from crownstone_core.packets.serviceDataParsers.containers.elements.AdvCrownstoneErrorBitmask import AdvCrownstoneErrorBitmask
+
 from crownstone_core.protocol.SwitchState import SwitchState
 from crownstone_core.util.BufferReader import BufferReader
 from crownstone_core.packets.serviceDataParsers.containers.AdvCrownstoneSetupState import AdvCrownstoneSetupState
@@ -23,7 +25,7 @@ def parseSetupState(reader: BufferReader):
 
     packet.powerUsageReal     = float(realPower) / 8.0
     packet.powerUsageApparent = packet.powerUsageReal / packet.powerFactor
-    packet.errorsBitmask      = reader.getInt32()
+    packet.errorsBitmask      = AdvCrownstoneErrorBitmask(reader.getUInt32())
     packet.uniqueIdentifier   = reader.getUInt8()
 
     return packet
