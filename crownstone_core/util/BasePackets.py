@@ -67,6 +67,9 @@ class PacketBase:
             ", ".join([f"{k}: {str(v)}" for k, v in self.__dict__.items()])
         )
 
+    def __eq__(self, other):
+        return self.getPacket() == other.getPacket()
+
     def fromData(self, data: [int]):
         """
         This will fill all the fields back from a data array. Is more or less the inverse of the getPacket.
@@ -286,6 +289,10 @@ class PacketBaseList(PacketBase):
                 bytelist = newItem.setPacket(bytelist)
                 self.val.append(newItem)
         return bytelist
+    #
+    # def __eq__(self, other):
+    #     print("PacketBaseList __eq__")
+    #     return self.getPacket() == other.getPacket()
 
 
 class PacketVariant(PacketBase):
