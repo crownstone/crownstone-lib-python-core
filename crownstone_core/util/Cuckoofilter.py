@@ -1,5 +1,4 @@
-from crownstone_core.packets.cuckoofilter.CuckooFilterPackets import CuckooFilterData
-
+from crownstone_core.packets.assetFilter.CuckooFilterPackets import CuckooFilterData
 from crownstone_core.util.CRC import crc16ccitt, djb2_hash
 from crownstone_core.util.Conversion import Conversion
 
@@ -96,7 +95,7 @@ class CuckooFilter:
         return data
 
     def getPacket(self):
-        return self.getData().getPacket()
+        return self.getData().toBuffer()
 
     def filterhash(self):
         """

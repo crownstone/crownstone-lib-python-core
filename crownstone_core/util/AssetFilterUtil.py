@@ -1,5 +1,5 @@
 from crownstone_core.packets.assetFilter.AssetFilterCommands import UploadFilterCommandPacket
-from crownstone_core.packets.assetFilter.FilterMetaDataPackets import AssetFilter, AssetFilterAndId
+from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilter, AssetFilterAndId
 from crownstone_core.util.BufferWriter import BufferWriter
 from crownstone_core.util.CRC import crc32
 import math

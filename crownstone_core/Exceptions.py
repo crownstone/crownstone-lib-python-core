@@ -147,6 +147,7 @@ class CrownstoneError(Enum):
     NO_END_CONDITION_DURATION                           = "NO_END_CONDITION_DURATION"
     PROTOCOL_NOT_SUPPORTED                              = "PROTOCOL_NOT_SUPPORTED"
     RESULT_NOT_SUCCESS                                  = "RESULT_NOT_SUCCESS"
+    INVALID_SIZE                                        = "INVALID_SIZE"
 
     INVALID_SERVICE_DATA                                = "INVALID_SERVICE_DATA"
     UNKNOWN_SERVICE_DATA                                = "UNKNOWN_SERVICE_DATA"
@@ -174,7 +175,7 @@ class CrownstoneException(Exception):
     type    = None
     message = None
     
-    def __init__(self, type, message, code=0):
+    def __init__(self, type: CrownstoneError, message: str, code=0):
         # TODO: what is type, and code?
         self.type = type
         self.message = message
