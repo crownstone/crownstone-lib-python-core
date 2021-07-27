@@ -187,7 +187,7 @@ class Uint32(IntPacket):
 
 class Int8(IntPacket):
     def getPacket(self):
-        return Conversion.uint8_to_int8_array(self.val)
+        return Conversion.int8_to_uint8_array(self.val)
 
     def setPacket(self, bytelist):
         if len(bytelist) < 1:
