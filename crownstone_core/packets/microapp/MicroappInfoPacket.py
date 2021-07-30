@@ -37,7 +37,7 @@ class MicroappInfoPacket(BasePacket):
 			self.appsStatus.append(statusPacket)
 
 	def __str__(self):
-		appsStatusString = "appsStatus=["
+		appsStatusString = "["
 		for status in self.appsStatus:
 			appsStatusString += f"{status}, "
 		appsStatusString = appsStatusString[:-2] + "]"
