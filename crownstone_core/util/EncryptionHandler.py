@@ -46,7 +46,7 @@ class EncryptedPackage:
             payload[i] = dataArray[i + prefixLength]
             
         if len(payload) % 16 != 0:
-            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_PACKAGE, "Invalid size for encrypted payload")
+            raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_PACKAGE, f"Invalid size for encrypted payload: len={len(payload)} payload={payload}")
         
         self.payload = payload
 
