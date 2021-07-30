@@ -2,7 +2,7 @@ from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
 
 from crownstone_core.util.BufferWriter import BufferWriter
 
-from crownstone_core.packets.assetFilter.AssetFilterPackets import FilterData
+from crownstone_core.packets.assetFilter.FilterDataPackets import FilterData
 
 
 class ExactMatchFilter(FilterData):

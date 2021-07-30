@@ -14,8 +14,8 @@ class FilterOutputDescriptionType(IntEnum):
 
 class FilterOutputDescription(BasePacket):
     def __init__(self,
-                 outFormat: FilterOutputDescriptionType,
-                 inFormat: InputDescriptionMacAddress or InputDescriptionFullAdData or InputDescriptionMaskedAdData):
+                 outFormat: FilterOutputDescriptionType = FilterOutputDescriptionType.MAC_ADDRESS,
+                 inFormat: InputDescriptionMacAddress or InputDescriptionFullAdData or InputDescriptionMaskedAdData = InputDescriptionMacAddress()):
         self.outFormat = outFormat
         self.inFormat  = inFormat
 

@@ -1,7 +1,7 @@
 from crownstone_core.util import BufferWriter
 
 from crownstone_core.packets.BasePacket import BasePacket
-from crownstone_core.packets.assetFilter.AssetFilterPackets import FilterData
+from crownstone_core.packets.assetFilter.FilterDataPackets import FilterData
 
 
 class CuckooExtendedFingerprint(BasePacket):
