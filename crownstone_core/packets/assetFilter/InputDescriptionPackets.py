@@ -60,4 +60,4 @@ class InputDescriptionMaskedAdData(InputDescriptionPacket):
 		return f"InputDescriptionMaskedAdData(" \
 		       f"type={self.type} " \
 		       f"adType={self.adType} " \
-		       f"mask={self.mask})"
+		       f"mask={self.mask:32b})"
