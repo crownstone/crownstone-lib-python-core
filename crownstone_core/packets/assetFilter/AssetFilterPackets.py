@@ -23,9 +23,3 @@ class AssetFilter(BasePacket):
         return f"AssetFilter(" \
                f"metaData={self.metaData} " \
                f"filterData={self.filterData})"
-
-
-class AssetFilterAndId:
-    def __init__(self, filterId: int, filter: AssetFilter):
-        self.id = filterId
-        self.filter = filter

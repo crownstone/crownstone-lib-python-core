@@ -10,8 +10,10 @@ ASSET_FILTER_PROTOCOL = 0
 class UploadFilterChunkPacket(BasePacket):
     """
     Packet to upload a chunk of a filter.
+
+    You can use the AssetFilterChunker to get chunks.
     """
-    def __init__(self, filterId: int, chunkStartIndex: int, totalSize: int, chunkSize: int, chunk: bytearray):
+    def __init__(self, filterId: int, chunkStartIndex: int, totalSize: int, chunkSize: int, chunk: list):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.filterId = filterId
         self.chunkStartIndex = chunkStartIndex
