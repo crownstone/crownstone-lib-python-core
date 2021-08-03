@@ -1,9 +1,9 @@
-from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilter
+from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilterPacket
 from crownstone_core.util.BufferWriter import BufferWriter
 from crownstone_core.util.CRC import crc32
 
 class AssetFilterAndId:
-    def __init__(self, filterId: int, filter: AssetFilter):
+    def __init__(self, filterId: int, filter: AssetFilterPacket):
         self.id = filterId
         self.filter = filter
 
@@ -40,7 +40,7 @@ def get_master_crc_from_filter_crcs(input_data : [[int, int]]) -> int:
 
     return crc32(writer.getBuffer())
 
-def get_filter_crc(filter: AssetFilter) -> int:
+def get_filter_crc(filter: AssetFilterPacket) -> int:
     """
     Get the filter CRC.
 

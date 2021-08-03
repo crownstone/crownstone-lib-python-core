@@ -1,6 +1,6 @@
 import math
 
-from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilter
+from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilterPacket
 from crownstone_core.packets.assetFilter.FilterCommandPackets import UploadFilterChunkPacket
 
 

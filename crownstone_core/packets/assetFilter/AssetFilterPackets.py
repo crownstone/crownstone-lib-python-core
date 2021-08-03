@@ -5,9 +5,9 @@ from crownstone_core.packets.assetFilter.ExactMatchFilter import ExactMatchFilte
 from crownstone_core.packets.assetFilter.InputDescriptionPackets import *
 from crownstone_core.util.BufferWriter import BufferWriter
 
-class AssetFilter(BasePacket):
+class AssetFilterPacket(BasePacket):
     """
-    A complete asset filter.
+    A complete asset filter packet.
     It is recommended to use the AssetFilterBuilder to construct this class.
     """
     def __init__(self,

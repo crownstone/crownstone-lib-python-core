@@ -4,11 +4,12 @@ from typing import List
 
 from crownstone_core import Conversion
 from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
+from crownstone_core.packets.assetFilter.util.AssetFilterUtil import get_filter_crc
 from crownstone_core.util.Bitmasks import set_bit, get_bitmask
 
 from crownstone_core.util.Cuckoofilter import CuckooFilter
 
-from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilter
+from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilterPacket
 from crownstone_core.packets.assetFilter.ExactMatchFilter import ExactMatchFilter
 from crownstone_core.packets.assetFilter.FilterOutputPackets import FilterOutputDescriptionType, FilterOutputDescription
 from crownstone_core.packets.assetFilter.InputDescriptionPackets import *
@@ -17,77 +18,92 @@ from crownstone_core.packets.assetFilter.builders.AssetIdBuilder import AssetIdB
 
 _LOGGER = logging.getLogger(__name__)
 
-class AssetFilterBuilder:
-    """
-    Class that helps to build an asset filter.
-    1. Choose what to filter by:       filterByX()
-    2. Optionally, set configurations: setX()
-    3. Choose the output:              outputX()
-    4. Build to get an asset filter:   build()
-    """
-    def __init__(self):
-        self.filterType: FilterType = None
-        self.input: InputDescriptionPacket = None
-        # self.output: FilterOutputDescription = None
-        self.outputType: FilterOutputDescriptionType = None
-        self.assetIdBuilder: AssetIdBuilder = None
-        self.assets = []
-        self.profileId = 255
-        self.exclude = False
+class AssetFilter(BasePacket):
+    def __init__(self, filterId: int):
+        """
+        Class that helps to build an asset filter.
+        1. Choose what to filter by:       filterByX()
+        2. Optionally, set configurations: setX()
+        3. Choose the output:              outputX()
 
-    def build(self) -> AssetFilter:
+        :param: filterId     The ID of this filter: index at which it is placed on the Crownstones.
+        """
+        self._filterId = filterId
+        self._filterType: FilterType = None
+        self._input: InputDescriptionPacket = None
+        self._outputType: FilterOutputDescriptionType = None
+        self._assetIdBuilder: AssetIdBuilder = None
+        self._assets = []
+        self._profileId = 255
+        self._exclude = False
+
+        # Cache
+        self._packet: AssetFilterPacket = None
+        self._crc = None
+
+    def getCrc(self):
+        return self._crc
+
+    def _toBuffer(self, writer: BufferWriter):
+        self._packet.toBuffer(writer)
+
+    def build(self, maxFilterSize = 512) -> AssetFilterPacket:
         # Build output
-        if self.exclude:
+        if self._exclude:
             output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
         else:
             output = None
-            if self.outputType == FilterOutputDescriptionType.MAC_ADDRESS:
+            if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
                 output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
-            elif self.outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
-                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self.assetIdBuilder.build())
+            elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
+                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdBuilder.build())
             else:
-                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self.outputType}")
+                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
 
         # Determine filter type to use.
-        if self.filterType is None:
+        if self._filterType is None:
             equalSize = True
-            assetSize = len(self.assets[0])
+            assetSize = len(self._assets[0])
             totalSize = 0
-            for asset in self.assets:
+            for asset in self._assets:
                 if len(asset) != assetSize:
                     equalSize = False
                 totalSize += len(asset)
             _LOGGER.debug(f"equalSize={equalSize} totalSize={totalSize}")
 
-            # TODO: 400 as max size is an estimate.
-            if totalSize < 400 and equalSize:
-                self.filterType = FilterType.EXACT_MATCH
+            filterOverhead = 100 # TODO: this is a very rough estimate.
+            if totalSize + filterOverhead < maxFilterSize and equalSize:
+                self._filterType = FilterType.EXACT_MATCH
             else:
-                self.filterType = FilterType.CUCKOO
+                self._filterType = FilterType.CUCKOO
 
         # Build the meta data.
-        metaData = FilterMetaData(self.filterType, self.input, output, self.profileId, FilterFlags(exclude=self.exclude))
+        metaData = FilterMetaData(self._filterType, self._input, output, self._profileId, FilterFlags(exclude=self._exclude))
 
         # Construct and fill the filter.
-        if self.filterType == FilterType.EXACT_MATCH:
+        if self._filterType == FilterType.EXACT_MATCH:
             filterData = ExactMatchFilter()
-            for asset in self.assets:
+            for asset in self._assets:
                 filterData.add(asset)
-        elif self.filterType == FilterType.CUCKOO:
+        elif self._filterType == FilterType.CUCKOO:
             # TODO: move this to cuckoo filter implementation.
             initialNestsPerBucket = 4
-            requiredBucketCount = len(self.assets) / 0.95 / initialNestsPerBucket
+            requiredBucketCount = len(self._assets) / 0.95 / initialNestsPerBucket
             bucketCountLog2 = max(0, math.ceil(math.log2(requiredBucketCount)))
             bucketCount = math.pow(2, bucketCountLog2)
-            nestsPerBucket = math.ceil(len(self.assets) / bucketCount)
+            nestsPerBucket = math.ceil(len(self._assets) / bucketCount)
 
             cuckooFilter = CuckooFilter(bucketCountLog2, nestsPerBucket)
-            for asset in self.assets:
+            for asset in self._assets:
                 if not cuckooFilter.add(asset):
                     raise CrownstoneException(CrownstoneError.INVALID_SIZE, "Failed to add asset to cuckoo filter.")
             filterData = cuckooFilter.getData()
+        else:
+            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unknown filter type: {self._filterType}")
 
-        return AssetFilter(metaData, filterData)
+        self._packet = AssetFilterPacket(metaData, filterData)
+        self._crc = get_filter_crc(self._packet)
+        return self._packet
 
 
     def filterByMacAddress(self, macAddresses: List[str]):
@@ -95,12 +111,11 @@ class AssetFilterBuilder:
         Assets are filtered by their MAC address.
         :param macAddresses: List of mac addresses to be added to the filter, in the form of "12:34:56:78:AB:CD".
         """
-        self._checkInputExists()
-
-        self.input = InputDescriptionMacAddress()
-        self.assets = []
+        self._resetCache()
+        self._input = InputDescriptionMacAddress()
+        self._assets = []
         for mac in macAddresses:
-            self.assets.append(Conversion.address_to_uint8_array(mac))
+            self._assets.append(Conversion.address_to_uint8_array(mac))
         return self
 
     def filterByName(self, names: List[str], complete: bool = True):
@@ -109,14 +124,13 @@ class AssetFilterBuilder:
         :param names:     List of names to be added filter.
         :param complete:  Whether to look for the complete or shortened name.
         """
-        self._checkInputExists()
-
+        self._resetCache()
         adType = 0x09 if complete else 0x08
-        self.input = InputDescriptionFullAdData(adType)
+        self._input = InputDescriptionFullAdData(adType)
 
-        self.assets = []
+        self._assets = []
         for name in names:
-            self.assets.append(Conversion.string_to_uint8_array(name))
+            self._assets.append(Conversion.string_to_uint8_array(name))
         return self
 
     def filterByNameWithWildcards(self, name: str, complete: bool = True):
@@ -129,8 +143,7 @@ class AssetFilterBuilder:
                                              won't match: "your_device", or "_dev"
         :param complete:  Whether to look for the complete or shortened name.
         """
-        self._checkInputExists()
-
+        self._resetCache()
         if len(name) > 31:
             raise CrownstoneException(CrownstoneError.INVALID_SIZE, f"Name is too long: {name}")
         bitmask = 0
@@ -149,8 +162,8 @@ class AssetFilterBuilder:
         _LOGGER.info(f"name={name} bitmask={bitmask:032b} asset_name={asset_name}")
 
         adType = 0x09 if complete else 0x08
-        self.input = InputDescriptionMaskedAdData(adType, bitmask)
-        self.assets = [Conversion.string_to_uint8_array(asset_name)]
+        self._input = InputDescriptionMaskedAdData(adType, bitmask)
+        self._assets = [Conversion.string_to_uint8_array(asset_name)]
         return self
 
     def filterByCompanyId(self, companyIds: List[int]):
@@ -159,12 +172,11 @@ class AssetFilterBuilder:
         :param companyIds: A list of 16 bit company IDs. As can be found on
                            https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
         """
-        self._checkInputExists()
-
-        self.input = InputDescriptionMaskedAdData(0xFF, get_bitmask([0,1]))
-        self.assets = []
+        self._resetCache()
+        self._input = InputDescriptionMaskedAdData(0xFF, get_bitmask([0, 1]))
+        self._assets = []
         for companyId in companyIds:
-            self.assets.append(Conversion.uint16_to_uint8_array(companyId))
+            self._assets.append(Conversion.uint16_to_uint8_array(companyId))
         return self
 
     def filterByAdData(self, adType: int, assets: List[list], bitmask: int = None):
@@ -179,13 +191,12 @@ class AssetFilterBuilder:
                         Example: if the AD data is: [10, 11, 12, 13, 14] and the bitmask is 22 (0000...00010110), then
                         the data that the filter uses is [11, 12, 14], and matched against each given asset.
         """
-        self._checkInputExists()
-
+        self._resetCache()
         if bitmask is None:
-            self.input = InputDescriptionFullAdData(adType)
+            self._input = InputDescriptionFullAdData(adType)
         else:
-            self.input = InputDescriptionMaskedAdData(adType, bitmask)
-        self.assets = assets
+            self._input = InputDescriptionMaskedAdData(adType, bitmask)
+        self._assets = assets
         return self
 
 
@@ -210,7 +221,8 @@ class AssetFilterBuilder:
                 - A list of company IDs.
                 - A name.
         """
-        self.filterType = filterType
+        self._resetCache()
+        self._filterType = filterType
         return self
 
     def setExclude(self, exclude=True):
@@ -222,7 +234,8 @@ class AssetFilterBuilder:
 
         :param exclude: True to make this an exclude filter.
         """
-        self.exclude = exclude
+        self._resetCache()
+        self._exclude = exclude
         return self
 
     def setProfileId(self, profileId: int):
@@ -233,7 +246,8 @@ class AssetFilterBuilder:
 
         :param profileId:    The profile ID for behaviour. 255 for no profile ID.
         """
-        self.profileId = profileId
+        self._resetCache()
+        self._profileId = profileId
         return self
 
 
@@ -242,7 +256,8 @@ class AssetFilterBuilder:
         If an asset advertisement passes the filter, the Crownstone will send a report to the hub
         with the assets' MAC address and the RSSI.
         """
-        self.outputType = FilterOutputDescriptionType.MAC_ADDRESS
+        self._resetCache()
+        self._outputType = FilterOutputDescriptionType.MAC_ADDRESS
         return self
 
     def outputAssetId(self, basedOn: AssetIdBuilder = None) -> AssetIdBuilder:
@@ -253,14 +268,17 @@ class AssetFilterBuilder:
 
         :param basedOn: Determines what data to base the short asset ID on.
         """
-        self.outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
+        self._resetCache()
+        self._outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
         if basedOn is None:
-            self.assetIdBuilder = AssetIdBuilder()
+            self._assetIdBuilder = AssetIdBuilder()
         else:
-            self.assetIdBuilder = basedOn
-        return self.assetIdBuilder
+            self._assetIdBuilder = basedOn
+        return self._assetIdBuilder
 
 
-    def _checkInputExists(self):
-        if self.input is not None:
-            _LOGGER.info("Removing existing input and assets")
+    def _resetCache(self):
+        if self._packet is not None:
+            _LOGGER.debug("Removing cache")
+            self._packet = None
+            self._crc = None
