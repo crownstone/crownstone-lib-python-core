@@ -20,9 +20,10 @@ _LOGGER = logging.getLogger(__name__)
 class AssetFilterBuilder:
     """
     Class that helps to build an asset filter.
-    1. Choose what to filter by.
-    2. Choose the output.
-    3. Build to get an asset filter.
+    1. Choose what to filter by:       filterByX()
+    2. Optionally, set configurations: setX()
+    3. Choose the output:              outputX()
+    4. Build to get an asset filter:   build()
     """
     def __init__(self):
         self.filterType: FilterType = None
@@ -36,13 +37,16 @@ class AssetFilterBuilder:
 
     def build(self) -> AssetFilter:
         # Build output
-        output = None
-        if self.outputType == FilterOutputDescriptionType.MAC_ADDRESS:
+        if self.exclude:
             output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
-        elif self.outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
-            output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self.assetIdBuilder.build())
         else:
-            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self.outputType}")
+            output = None
+            if self.outputType == FilterOutputDescriptionType.MAC_ADDRESS:
+                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
+            elif self.outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
+                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self.assetIdBuilder.build())
+            else:
+                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self.outputType}")
 
         # Determine filter type to use.
         if self.filterType is None:
@@ -64,7 +68,7 @@ class AssetFilterBuilder:
         # Build the meta data.
         metaData = FilterMetaData(self.filterType, self.input, output, self.profileId, FilterFlags(exclude=self.exclude))
 
-        # Fill the filter.
+        # Construct and fill the filter.
         if self.filterType == FilterType.EXACT_MATCH:
             filterData = ExactMatchFilter()
             for asset in self.assets:
@@ -84,6 +88,7 @@ class AssetFilterBuilder:
             filterData = cuckooFilter.getData()
 
         return AssetFilter(metaData, filterData)
+
 
     def filterByMacAddress(self, macAddresses: List[str]) -> AssetFilterBuilder:
         """
@@ -113,7 +118,6 @@ class AssetFilterBuilder:
         for name in names:
             self.assets.append(Conversion.string_to_uint8_array(name))
         return self
-
 
     def filterByNameWithWildcards(self, name: str, complete: bool = True) -> AssetFilterBuilder:
         """
@@ -149,7 +153,6 @@ class AssetFilterBuilder:
         self.assets = [Conversion.string_to_uint8_array(asset_name)]
         return self
 
-
     def filterByCompanyId(self, companyIds: List[int]) -> AssetFilterBuilder:
         """
         Assets are filtered by their 16 bit company ID.
@@ -163,7 +166,6 @@ class AssetFilterBuilder:
         for companyId in companyIds:
             self.assets.append(Conversion.uint16_to_uint8_array(companyId))
         return self
-
 
     def filterByAdData(self, adType: int, assets: List[list], bitmask: int = None) -> AssetFilterBuilder:
         """
@@ -186,6 +188,55 @@ class AssetFilterBuilder:
         self.assets = assets
         return self
 
+
+    def setFilterType(self, filterType: FilterType) -> AssetFilterBuilder:
+        """
+        Set the filter type.
+
+        Each filter type has its pros and cons:
+        - Cuckoo: stores a list of 2 bytes hashes of the asset data. This means there can be false positives.
+            Use this type when:
+                - You have many asset entries, each more than 2B of data.
+                - You have asset entries of varying length.
+            Examples:
+                - 50 MAC addresses.
+                - 10 names of different length.
+        - Exact match: stores a list of the whole asset data. It only accepts same length entries, and does not compress the data.
+            Use this type when:
+                - You have a few assets to add.
+                - You do not want any false positives.
+            Examples:
+                - 10 MAC addresses.
+                - A list of company IDs.
+                - A name.
+        """
+        self.filterType = filterType
+        return self
+
+    def setExclude(self, exclude=True) -> AssetFilterBuilder:
+        """
+        Make this an exclude filter.
+
+        Any asset that passes an exclude filter, will be prevented from passing any other filter.
+        An exclude filter has no output, so you don't have to choose one.
+
+        @param exclude: True to make this an exclude filter.
+        """
+        self.exclude = exclude
+        return self
+
+    def setProfileId(self, profileId: int) -> AssetFilterBuilder:
+        """
+        By setting a profile ID, any asset advertisement that passes this filter will be treated as this profile ID
+        for behaviours. If the localization cannot determine which room the asset is in, it will be still be treated as
+        being in the sphere.
+
+        @param profileId:    The profile ID for behaviour. 255 for no profile ID.
+        """
+        self.profileId = profileId
+        return self
+
+
     def outputMacRssiReport(self) -> AssetFilterBuilder:
         """
         If an asset advertisement passes the filter, the Crownstone will send a report to the hub
@@ -194,10 +245,21 @@ class AssetFilterBuilder:
         self.outputType = FilterOutputDescriptionType.MAC_ADDRESS
         return self
 
-    def outputAssetId(self) -> AssetIdBuilder:
+    def outputAssetId(self, basedOn: AssetIdBuilder = None) -> AssetIdBuilder:
+        """
+        If an asset advertisement passes the filter, the Crownstones will attempt to localize it, and will identify it
+        by a 3 byte asset ID. The asset ID is a hash over data from the advertisement, which can be different data than
+        what it's filtered by. Select this data with the AssetIdBuilder.
+
+        @param basedOn: Determines what data to base the short asset ID on.
+        """
         self.outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
-        self.assetIdBuilder = AssetIdBuilder()
+        if basedOn is None:
+            self.assetIdBuilder = AssetIdBuilder()
+        else:
+            self.assetIdBuilder = basedOn
         return self.assetIdBuilder
+
 
     def _checkInputExists(self):
         if self.input is not None:
