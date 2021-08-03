@@ -4,8 +4,8 @@ from typing import List
 
 from crownstone_core import Conversion
 from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
-from crownstone_core.packets.assetFilter.util.AssetFilterUtil import get_filter_crc
 from crownstone_core.util.Bitmasks import set_bit, get_bitmask
+from crownstone_core.util.CRC import crc32
 
 from crownstone_core.util.Cuckoofilter import CuckooFilter
 
@@ -19,16 +19,14 @@ from crownstone_core.packets.assetFilter.builders.AssetIdBuilder import AssetIdB
 _LOGGER = logging.getLogger(__name__)
 
 class AssetFilter(BasePacket):
-    def __init__(self, filterId: int):
+    def __init__(self):
         """
-        Class that helps to build an asset filter.
+        Class that helps to build an asset filter packet.
         1. Choose what to filter by:       filterByX()
         2. Optionally, set configurations: setX()
         3. Choose the output:              outputX()
-
-        :param: filterId     The ID of this filter: index at which it is placed on the Crownstones.
         """
-        self._filterId = filterId
+        self._filterId = 0
         self._filterType: FilterType = None
         self._input: InputDescriptionPacket = None
         self._outputType: FilterOutputDescriptionType = None
@@ -36,74 +34,17 @@ class AssetFilter(BasePacket):
         self._assets = []
         self._profileId = 255
         self._exclude = False
+        self._maxFilterSize = 512
 
         # Cache
         self._packet: AssetFilterPacket = None
         self._crc = None
 
-    def getCrc(self):
+    def getCrc(self) -> int:
         return self._crc
 
-    def _toBuffer(self, writer: BufferWriter):
-        self._packet.toBuffer(writer)
-
-    def build(self, maxFilterSize = 512) -> AssetFilterPacket:
-        # Build output
-        if self._exclude:
-            output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
-        else:
-            output = None
-            if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
-                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
-            elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
-                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdBuilder.build())
-            else:
-                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
-
-        # Determine filter type to use.
-        if self._filterType is None:
-            equalSize = True
-            assetSize = len(self._assets[0])
-            totalSize = 0
-            for asset in self._assets:
-                if len(asset) != assetSize:
-                    equalSize = False
-                totalSize += len(asset)
-            _LOGGER.debug(f"equalSize={equalSize} totalSize={totalSize}")
-
-            filterOverhead = 100 # TODO: this is a very rough estimate.
-            if totalSize + filterOverhead < maxFilterSize and equalSize:
-                self._filterType = FilterType.EXACT_MATCH
-            else:
-                self._filterType = FilterType.CUCKOO
-
-        # Build the meta data.
-        metaData = FilterMetaData(self._filterType, self._input, output, self._profileId, FilterFlags(exclude=self._exclude))
-
-        # Construct and fill the filter.
-        if self._filterType == FilterType.EXACT_MATCH:
-            filterData = ExactMatchFilter()
-            for asset in self._assets:
-                filterData.add(asset)
-        elif self._filterType == FilterType.CUCKOO:
-            # TODO: move this to cuckoo filter implementation.
-            initialNestsPerBucket = 4
-            requiredBucketCount = len(self._assets) / 0.95 / initialNestsPerBucket
-            bucketCountLog2 = max(0, math.ceil(math.log2(requiredBucketCount)))
-            bucketCount = math.pow(2, bucketCountLog2)
-            nestsPerBucket = math.ceil(len(self._assets) / bucketCount)
-
-            cuckooFilter = CuckooFilter(bucketCountLog2, nestsPerBucket)
-            for asset in self._assets:
-                if not cuckooFilter.add(asset):
-                    raise CrownstoneException(CrownstoneError.INVALID_SIZE, "Failed to add asset to cuckoo filter.")
-            filterData = cuckooFilter.getData()
-        else:
-            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unknown filter type: {self._filterType}")
-
-        self._packet = AssetFilterPacket(metaData, filterData)
-        self._crc = get_filter_crc(self._packet)
-        return self._packet
+    def getFilterId(self) -> int:
+        return self._filterId
 
 
     def filterByMacAddress(self, macAddresses: List[str]):
@@ -200,6 +141,16 @@ class AssetFilter(BasePacket):
         return self
 
 
+    def setFilterId(self, filterId: int):
+        """
+        Set the ID of this filter, the index at which it is placed on the Crownstones.
+
+        :param: filterId     The ID of this filter.
+        """
+        self._resetCache()
+        self._filterId = filterId
+        return self
+
     def setFilterType(self, filterType: FilterType):
         """
         Set the filter type.
@@ -250,6 +201,16 @@ class AssetFilter(BasePacket):
         self._profileId = profileId
         return self
 
+    def setMaxFilterSize(self, maxFilterSize):
+        """
+        Set the max size (in bytes) of this filter.
+
+        This will be taken into account when choosing the filter type.
+        """
+        self._resetCache()
+        self._maxFilterSize = maxFilterSize
+        return self
+
 
     def outputMacRssiReport(self):
         """
@@ -277,8 +238,79 @@ class AssetFilter(BasePacket):
         return self._assetIdBuilder
 
 
+
+    def build(self) -> AssetFilterPacket:
+        # Build output
+        if self._exclude:
+            output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
+        else:
+            output = None
+            if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
+                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
+            elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
+                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdBuilder.build())
+            else:
+                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
+
+        # Determine filter type to use.
+        if self._filterType is None:
+            equalSize = True
+            assetSize = len(self._assets[0])
+            totalSize = 0
+            for asset in self._assets:
+                if len(asset) != assetSize:
+                    equalSize = False
+                totalSize += len(asset)
+            _LOGGER.debug(f"equalSize={equalSize} totalSize={totalSize}")
+
+            filterOverhead = 100 # TODO: this is a very rough estimate.
+            if totalSize + filterOverhead < self._maxFilterSize and equalSize:
+                self._filterType = FilterType.EXACT_MATCH
+            else:
+                self._filterType = FilterType.CUCKOO
+
+        # Build the meta data.
+        metaData = FilterMetaData(self._filterType, self._input, output, self._profileId, FilterFlags(exclude=self._exclude))
+
+        # Construct and fill the filter.
+        if self._filterType == FilterType.EXACT_MATCH:
+            filterData = ExactMatchFilter()
+            for asset in self._assets:
+                filterData.add(asset)
+        elif self._filterType == FilterType.CUCKOO:
+            # TODO: move this to cuckoo filter implementation.
+            initialNestsPerBucket = 4
+            requiredBucketCount = len(self._assets) / 0.95 / initialNestsPerBucket
+            bucketCountLog2 = max(0, math.ceil(math.log2(requiredBucketCount)))
+            bucketCount = math.pow(2, bucketCountLog2)
+            nestsPerBucket = math.ceil(len(self._assets) / bucketCount)
+
+            cuckooFilter = CuckooFilter(bucketCountLog2, nestsPerBucket)
+            for asset in self._assets:
+                if not cuckooFilter.add(asset):
+                    raise CrownstoneException(CrownstoneError.INVALID_SIZE, "Failed to add asset to cuckoo filter.")
+            filterData = cuckooFilter.getData()
+        else:
+            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unknown filter type: {self._filterType}")
+
+        self._packet = AssetFilterPacket(metaData, filterData)
+        self._crc = crc32(self.toBuffer())
+        return self._packet
+
     def _resetCache(self):
         if self._packet is not None:
             _LOGGER.debug("Removing cache")
             self._packet = None
             self._crc = None
+
+    def _buildIfNeeded(self):
+        if self._packet is None:
+            self.build()
+
+    def _toBuffer(self, writer: BufferWriter):
+        self._buildIfNeeded()
+        self._packet.toBuffer(writer)
+
+    def __str__(self):
+        self._buildIfNeeded()
+        return self._packet.__str__()

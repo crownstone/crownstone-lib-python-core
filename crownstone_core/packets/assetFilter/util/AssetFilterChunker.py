@@ -1,13 +1,13 @@
 import math
 
-from crownstone_core.packets.assetFilter.AssetFilterPackets import AssetFilterPacket
 from crownstone_core.packets.assetFilter.FilterCommandPackets import UploadFilterChunkPacket
+from crownstone_core.packets.assetFilter.builders.AssetFilter import AssetFilter
 
 
 class FilterChunker:
 
-    def __init__(self, filterId: int, assetFilter: AssetFilter, maxChunkSize=128):
-        self.filterId = filterId
+    def __init__(self, assetFilter: AssetFilter, maxChunkSize=128):
+        self.filterId = assetFilter.getFilterId()
         self.filterBuffer = assetFilter.toBuffer()
 
         self.index = 0
