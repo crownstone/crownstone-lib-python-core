@@ -246,7 +246,7 @@ class AssetFilter(BasePacket):
         else:
             output = None
             if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
-                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
+                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, None)
             elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
                 output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdBuilder.build())
             else:

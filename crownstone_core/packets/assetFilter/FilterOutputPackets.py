@@ -14,14 +14,15 @@ class FilterOutputDescriptionType(IntEnum):
 
 class FilterOutputDescription(BasePacket):
     def __init__(self,
-                 outFormat: FilterOutputDescriptionType = FilterOutputDescriptionType.MAC_ADDRESS,
-                 inFormat: InputDescriptionMacAddress or InputDescriptionFullAdData or InputDescriptionMaskedAdData = InputDescriptionMacAddress()):
+                 outFormat: FilterOutputDescriptionType,
+                 inFormat: None or InputDescriptionMacAddress or InputDescriptionFullAdData or InputDescriptionMaskedAdData):
         self.outFormat = outFormat
         self.inFormat  = inFormat
 
     def _toBuffer(self, writer: BufferWriter):
         writer.putUInt8(self.outFormat)
-        self.inFormat.toBuffer(writer)
+        if self.inFormat is not None:
+            self.inFormat.toBuffer(writer)
 
     def __str__(self):
         return f"FilterOutputDescription(" \
