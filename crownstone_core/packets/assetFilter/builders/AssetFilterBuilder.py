@@ -90,10 +90,10 @@ class AssetFilterBuilder:
         return AssetFilter(metaData, filterData)
 
 
-    def filterByMacAddress(self, macAddresses: List[str]) -> AssetFilterBuilder:
+    def filterByMacAddress(self, macAddresses: List[str]):
         """
         Assets are filtered by their MAC address.
-        @param macAddresses: List of mac addresses to be added to the filter, in the form of "12:34:56:78:AB:CD".
+        :param macAddresses: List of mac addresses to be added to the filter, in the form of "12:34:56:78:AB:CD".
         """
         self._checkInputExists()
 
@@ -103,11 +103,11 @@ class AssetFilterBuilder:
             self.assets.append(Conversion.address_to_uint8_array(mac))
         return self
 
-    def filterByName(self, names: List[str], complete: bool = True) -> AssetFilterBuilder:
+    def filterByName(self, names: List[str], complete: bool = True):
         """
         Assets are filtered by their name.
-        @param names:     List of names to be added filter.
-        @param complete:  Whether to look for the complete or shortened name.
+        :param names:     List of names to be added filter.
+        :param complete:  Whether to look for the complete or shortened name.
         """
         self._checkInputExists()
 
@@ -119,15 +119,15 @@ class AssetFilterBuilder:
             self.assets.append(Conversion.string_to_uint8_array(name))
         return self
 
-    def filterByNameWithWildcards(self, name: str, complete: bool = True) -> AssetFilterBuilder:
+    def filterByNameWithWildcards(self, name: str, complete: bool = True):
         """
         Assets are filtered by their name.
-        @param name:      Name, with wildcards, to be added filter.
+        :param name:      Name, with wildcards, to be added filter.
                           '?' matches any single character
                           '*' matches zero or more characters, only at the end of a name.
                           Example: "??_dev*" will match:  "my_dev", and "01_device"
                                              won't match: "your_device", or "_dev"
-        @param complete:  Whether to look for the complete or shortened name.
+        :param complete:  Whether to look for the complete or shortened name.
         """
         self._checkInputExists()
 
@@ -137,26 +137,26 @@ class AssetFilterBuilder:
         asset_name = ""
         for i in range(0, len(name)):
             if name[i] != '?':
-                set_bit(bitmask, i)
+                bitmask = set_bit(bitmask, i)
                 asset_name += name[i]
         if name[-1] == '*':
-            set_bit(bitmask, len(name), False)
+            bitmask = set_bit(bitmask, len(name) - 1, False)
         else:
             # TODO: does this work?
-            for i in range(len(name), 31):
-                set_bit(bitmask, i)
+            for i in range(len(name), 32):
+                bitmask = set_bit(bitmask, i)
 
-        _LOGGER.info(f"name={name} bitmask={bitmask:32b} asset_name={asset_name}")
+        _LOGGER.info(f"name={name} bitmask={bitmask:032b} asset_name={asset_name}")
 
         adType = 0x09 if complete else 0x08
         self.input = InputDescriptionMaskedAdData(adType, bitmask)
         self.assets = [Conversion.string_to_uint8_array(asset_name)]
         return self
 
-    def filterByCompanyId(self, companyIds: List[int]) -> AssetFilterBuilder:
+    def filterByCompanyId(self, companyIds: List[int]):
         """
         Assets are filtered by their 16 bit company ID.
-        @param companyIds: A list of 16 bit company IDs. As can be found on
+        :param companyIds: A list of 16 bit company IDs. As can be found on
                            https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers/
         """
         self._checkInputExists()
@@ -167,13 +167,13 @@ class AssetFilterBuilder:
             self.assets.append(Conversion.uint16_to_uint8_array(companyId))
         return self
 
-    def filterByAdData(self, adType: int, assets: List[list], bitmask: int = None) -> AssetFilterBuilder:
+    def filterByAdData(self, adType: int, assets: List[list], bitmask: int = None):
         """
         Assets are recognized by the data of a single AD structure in a BLE advertisement.
-        @param adType:  The 8 bit GAP number.
+        :param adType:  The 8 bit GAP number.
                         See "Generic Access Profile" on https://www.bluetooth.com/specifications/assigned-numbers/
-        @param assets:  A list of assets, where each asset is represented by a list of bytes.
-        @param bitmask: A 32 bits mask where the Nth bit represents the Nth byte in the AD data.
+        :param assets:  A list of assets, where each asset is represented by a list of bytes.
+        :param bitmask: A 32 bits mask where the Nth bit represents the Nth byte in the AD data.
                         The data that is used as input for the filter, is a concatenation of all bytes that have their
                         associated bit set.
                         Example: if the AD data is: [10, 11, 12, 13, 14] and the bitmask is 22 (0000...00010110), then
@@ -189,7 +189,7 @@ class AssetFilterBuilder:
         return self
 
 
-    def setFilterType(self, filterType: FilterType) -> AssetFilterBuilder:
+    def setFilterType(self, filterType: FilterType):
         """
         Set the filter type.
 
@@ -213,31 +213,31 @@ class AssetFilterBuilder:
         self.filterType = filterType
         return self
 
-    def setExclude(self, exclude=True) -> AssetFilterBuilder:
+    def setExclude(self, exclude=True):
         """
         Make this an exclude filter.
 
         Any asset that passes an exclude filter, will be prevented from passing any other filter.
         An exclude filter has no output, so you don't have to choose one.
 
-        @param exclude: True to make this an exclude filter.
+        :param exclude: True to make this an exclude filter.
         """
         self.exclude = exclude
         return self
 
-    def setProfileId(self, profileId: int) -> AssetFilterBuilder:
+    def setProfileId(self, profileId: int):
         """
         By setting a profile ID, any asset advertisement that passes this filter will be treated as this profile ID
         for behaviours. If the localization cannot determine which room the asset is in, it will be still be treated as
         being in the sphere.
 
-        @param profileId:    The profile ID for behaviour. 255 for no profile ID.
+        :param profileId:    The profile ID for behaviour. 255 for no profile ID.
         """
         self.profileId = profileId
         return self
 
 
-    def outputMacRssiReport(self) -> AssetFilterBuilder:
+    def outputMacRssiReport(self):
         """
         If an asset advertisement passes the filter, the Crownstone will send a report to the hub
         with the assets' MAC address and the RSSI.
@@ -251,7 +251,7 @@ class AssetFilterBuilder:
         by a 3 byte asset ID. The asset ID is a hash over data from the advertisement, which can be different data than
         what it's filtered by. Select this data with the AssetIdBuilder.
 
-        @param basedOn: Determines what data to base the short asset ID on.
+        :param basedOn: Determines what data to base the short asset ID on.
         """
         self.outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
         if basedOn is None:

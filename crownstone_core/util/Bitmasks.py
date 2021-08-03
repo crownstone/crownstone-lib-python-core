@@ -1,9 +1,10 @@
 def set_bit(bitmask: int, bit: int, flag: bool = True) -> int:
     """
     Set a bit in a bitmask.
-    @param bitmask: The initial bitmask.
-    @param bit:     The bit to be set.
-    @param flag:    True to set the bit high, False to set the bit low.
+    :param bitmask:     The initial bitmask.
+    :param bit:         The bit to be set.
+    :param flag:        True to set the bit high, False to set the bit low.
+    :returns:           The updated bitmask.
     """
     if flag:
         bitmask |= (1 << bit)
@@ -14,11 +15,12 @@ def set_bit(bitmask: int, bit: int, flag: bool = True) -> int:
 def get_bitmask(bits: list) -> int:
     """
     Returns a bitmask with given bits set.
-    @param bits: List of bits to be set.
+    :param bits:        List of bits to be set.
+    :returns:           The bitmask.
     """
     bitmask = 0
     for bit in bits:
-        set_bit(bitmask, bit)
+        bitmask = set_bit(bitmask, bit)
     return bitmask
 
 class Bitmasks:

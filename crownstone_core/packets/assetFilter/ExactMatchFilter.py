@@ -15,7 +15,7 @@ class ExactMatchFilter(FilterData):
         """
         Add an item to the filter.
 
-        @param item: Byte array representation of the item.
+        :param item: Byte array representation of the item.
         """
         if self.itemCount:
             if self.itemSize != len(item):

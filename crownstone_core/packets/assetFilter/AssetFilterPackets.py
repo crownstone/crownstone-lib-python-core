@@ -7,7 +7,8 @@ from crownstone_core.util.BufferWriter import BufferWriter
 
 class AssetFilter(BasePacket):
     """
-    This is the packet that is uploaded.
+    A complete asset filter.
+    It is recommended to use the AssetFilterBuilder to construct this class.
     """
     def __init__(self,
                  metaData: FilterMetaData = None,

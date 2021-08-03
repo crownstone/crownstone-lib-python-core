@@ -111,8 +111,8 @@ def crc32(data:bytearray or list, crc=None):
 
 def djb2_hash(data: bytearray or list) -> int:
     """
-        Cheap and simple hash function.
-        Used implementation from here: http://www.cse.yorku.ca/~oz/hash.html
+    Cheap and simple hash function.
+    Used implementation from here: http://www.cse.yorku.ca/~oz/hash.html
     """
     hash_result = 5381
 

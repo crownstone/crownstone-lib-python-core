@@ -19,7 +19,7 @@ class AssetIdBuilder:
         Base an asset ID on its name.
         Use this if all assets (that pass the filter) have a static, and unique name.
 
-        @param complete:  Whether to look for the complete or shortened name.
+        :param complete:  Whether to look for the complete or shortened name.
         """
         adType = 0x09 if complete else 0x08
         self.inFormat = InputDescriptionFullAdData(adType)
@@ -34,9 +34,9 @@ class AssetIdBuilder:
     def basedOnAdData(self, adType: int, bitmask: int = None):
         """
         Base an asset ID on AD data.
-        @param adType:  The 8 bit GAP number.
+        :param adType:  The 8 bit GAP number.
                         See "Generic Access Profile" on https://www.bluetooth.com/specifications/assigned-numbers/
-        @param bitmask: A 32 bits mask where the Nth bit represents the Nth byte in the AD data.
+        :param bitmask: A 32 bits mask where the Nth bit represents the Nth byte in the AD data.
                         The data that is used as input for the filter, is a concatenation of all bytes that have their
                         associated bit set.
                         Example: if the AD data is: [10, 11, 12, 13, 14] and the bitmask is 22 (0000...00010110), then

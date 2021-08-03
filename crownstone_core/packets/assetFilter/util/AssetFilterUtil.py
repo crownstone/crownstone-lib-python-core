@@ -11,8 +11,8 @@ def get_master_crc_from_filters(filters: [AssetFilterAndId]) -> int:
     """
     Get the master CRC from filter CRCs.
 
-    @param filters:     A list of asset filters and their ID.
-    @return:            The master CRC.
+    :param filters:     A list of asset filters and their ID.
+    :returns:           The master CRC.
     """
     input_data = []
     for filter in filters:
@@ -25,8 +25,8 @@ def get_master_crc_from_filter_crcs(input_data : [[int, int]]) -> int:
     """
     Get the master CRC from filter CRCs.
 
-    @param input_data:  A list of [filterId, filterCRC].
-    @return:            The master CRC.
+    :param input_data:  A list of [filterId, filterCRC].
+    :returns:           The master CRC.
     """
     def sort_method(val):
         return val[0]
@@ -44,7 +44,7 @@ def get_filter_crc(filter: AssetFilter) -> int:
     """
     Get the filter CRC.
 
-    @param filter:      The asset filter.
-    @return:            The asset filter CRC.
+    :param filter:      The asset filter.
+    :returns:           The asset filter CRC.
     """
     return crc32(filter.toBuffer())

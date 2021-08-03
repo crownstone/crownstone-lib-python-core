@@ -36,7 +36,7 @@ class InputDescriptionFullAdData(InputDescriptionPacket):
 		self.adType = adType
 
 	def _toBuffer(self, writer: BufferWriter):
-		super().toBuffer(writer)
+		super()._toBuffer(writer)
 		writer.putUInt8(self.adType)
 
 	def __str__(self):
@@ -52,7 +52,7 @@ class InputDescriptionMaskedAdData(InputDescriptionPacket):
 		self.mask = mask
 
 	def _toBuffer(self, writer: BufferWriter):
-		super().toBuffer(writer)
+		super()._toBuffer(writer)
 		writer.putUInt8(self.adType)
 		writer.putUInt32(self.mask)
 
@@ -60,4 +60,4 @@ class InputDescriptionMaskedAdData(InputDescriptionPacket):
 		return f"InputDescriptionMaskedAdData(" \
 		       f"type={self.type} " \
 		       f"adType={self.adType} " \
-		       f"mask={self.mask:32b})"
+		       f"mask={self.mask:032b})"
