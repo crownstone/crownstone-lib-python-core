@@ -1,4 +1,4 @@
-from crownstone_core.Exceptions import CrownstoneError
+from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 from crownstone_core.util.Conversion import Conversion
 
 class BufferReader :
@@ -92,7 +92,11 @@ class BufferReader :
             self.position += size
             return self.data[start:self.position]
         else:
-            raise CrownstoneError.INVALID_DATA_LENGTH
+            raise CrownstoneException(CrownstoneError.INVALID_SIZE,
+                                      f"bufferSize={self.length} "
+                                      f"position={self.position} "
+                                      f"requestedSize={size} "
+                                      f"buffer={self.data}")
 
 
 
