@@ -67,7 +67,7 @@ class FilterSummariesPacket(BasePacket):
         self.freeSpace = reader.getUInt16()
         self.summaries.clear()
         while reader.getRemainingByteCount():
-            self.summaries.append(FilterSummariesPacket().parse(reader))
+            self.summaries.append(FilterSummaryPacket(reader))
 
     def __str__(self):
         summariesString = "["
