@@ -313,4 +313,4 @@ class AssetFilter(BasePacket):
 
     def __str__(self):
         self._buildIfNeeded()
-        return self._packet.__str__()
+        return f"AssetFilter(filterId={self._filterId} packet={self._packet})"
