@@ -1,5 +1,6 @@
 from typing import List
 
+from crownstone_core.Exceptions import CrownstoneException, CrownstoneError
 from crownstone_core.packets.assetFilter.FilterCommandPackets import FilterSummaryPacket
 from crownstone_core.packets.assetFilter.builders.AssetFilter import AssetFilter
 from crownstone_core.util.BufferWriter import BufferWriter
@@ -40,8 +41,13 @@ def get_master_crc_from_filter_crcs(input_data : [[int, int]]) -> int:
         return val[0]
 
     input_data.sort(key=sort_method)
-    writer = BufferWriter()
 
+    # Check for duplicate filter IDs.
+    for i in range(0, len(input_data) - 1):
+        if input_data[i][0] == input_data[i+1][0]:
+            raise CrownstoneException(CrownstoneError.INVALID_INPUT, "Cannot have 2 filters with the same ID.")
+
+    writer = BufferWriter()
     for id_and_filter_crc in input_data:
         writer.putUInt8(id_and_filter_crc[0])
         writer.putUInt32(id_and_filter_crc[1])
