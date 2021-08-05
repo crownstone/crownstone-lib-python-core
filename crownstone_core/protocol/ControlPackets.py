@@ -1,5 +1,4 @@
-from crownstone_core.packets.assetFilter.AssetFilterCommands import *
-from crownstone_core.packets.assetFilter.FilterIOPackets import *
+from crownstone_core.packets.assetFilter.FilterCommandPackets import *
 from crownstone_core.protocol.BlePackets import ControlPacket, FactoryResetPacket
 from crownstone_core.protocol.BluenetTypes import ControlType
 from crownstone_core.util.BufferWriter import BufferWriter
@@ -177,9 +176,8 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getRemoveFilterPacket(filterId: int) -> [int]:
-        removecommand = RemoveFilterCommandPacket()
-        removecommand.filterId = filterId
-        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.getPacket()).getPacket()
+        removecommand = RemoveFilterPacket(filterId)
+        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.toBuffer()).getPacket()
 
 
     @staticmethod
@@ -188,10 +186,8 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getCommitFilterChangesPacket(masterVersion: int, masterCrc: int) -> [int]:
-        commitcommand = CommitFilterChangesCommandPacket()
-        commitcommand.masterVersion = masterVersion
-        commitcommand.masterCrc = masterCrc
-        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.getPacket()).getPacket()
+        commitcommand = CommitFilterChangesPacket(masterVersion, masterCrc)
+        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.toBuffer()).getPacket()
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:
