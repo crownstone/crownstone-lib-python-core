@@ -97,6 +97,7 @@ class AssetFilter(BasePacket):
                 asset_name += name[i]
         if name[-1] == '*':
             bitmask = set_bit(bitmask, len(name) - 1, False)
+            asset_name = asset_name[:-1]
         else:
             # TODO: does this work?
             for i in range(len(name), 32):
