@@ -19,14 +19,16 @@ from crownstone_core.packets.assetFilter.builders.AssetIdBuilder import AssetIdB
 _LOGGER = logging.getLogger(__name__)
 
 class AssetFilter(BasePacket):
-    def __init__(self):
+    def __init__(self, filterId: int = None):
         """
         Class that helps to build an asset filter packet.
-        1. Choose what to filter by:       filterByX()
+        1. Choose the filter input:        filterByX()
         2. Optionally, set configurations: setX()
         3. Choose the output:              outputX()
+
+        :param filterId:     The ID of this filter, the index at which it is placed on the Crownstones.
         """
-        self._filterId = 0
+        self._filterId = filterId
         self._filterType: FilterType = None
         self._input: InputDescriptionPacket = None
         self._outputType: FilterOutputDescriptionType = None
@@ -240,6 +242,12 @@ class AssetFilter(BasePacket):
 
 
     def build(self) -> AssetFilterPacket:
+        # Check variables
+        if self._filterId is None:
+            raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter ID set.")
+        if self._input is None:
+            raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter input set.")
+
         # Build output
         if self._exclude:
             output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
