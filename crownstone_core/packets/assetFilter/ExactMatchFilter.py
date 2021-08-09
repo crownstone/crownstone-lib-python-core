@@ -25,7 +25,7 @@ class ExactMatchFilter(FilterData):
         self.items.append(item)
         self.itemCount = len(self.items)
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.itemCount)
         writer.putUInt8(self.itemSize)
         self.items.sort()

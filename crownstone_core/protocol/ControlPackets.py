@@ -177,7 +177,7 @@ class ControlPacketsGenerator:
     @staticmethod
     def getRemoveFilterPacket(filterId: int) -> [int]:
         removecommand = RemoveFilterPacket(filterId)
-        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.toBuffer()).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.serialize()).getPacket()
 
 
     @staticmethod
@@ -187,7 +187,7 @@ class ControlPacketsGenerator:
     @staticmethod
     def getCommitFilterChangesPacket(masterVersion: int, masterCrc: int) -> [int]:
         commitcommand = CommitFilterChangesPacket(masterVersion, masterCrc)
-        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.toBuffer()).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.serialize()).getPacket()
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:

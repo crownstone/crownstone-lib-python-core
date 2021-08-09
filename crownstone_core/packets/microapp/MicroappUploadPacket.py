@@ -10,13 +10,13 @@ class MicroappUploadPacket(BasePacket):
 		self.offset = offset
 		self.binaryChunk = binaryChunk
 
-	def _parse(self, reader: BufferReader):
-		self.header.parse(reader)
+	def _deserialize(self, reader: BufferReader):
+		self.header.deserialize(reader)
 		self.offset = reader.getUInt16()
 		self.binaryChunk = reader.getRemainingBytes()
 
-	def _toBuffer(self, writer: BufferWriter):
-		self.header.toBuffer(writer)
+	def _serialize(self, writer: BufferWriter):
+		self.header.serialize(writer)
 		writer.putUInt16(self.offset)
 		writer.putBytes(self.binaryChunk)
 

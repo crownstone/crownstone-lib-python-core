@@ -87,7 +87,7 @@ def read_filter(csv_cuck_file_path):
 def write_filter(filter, output_path):
     # writing result file
     with open(output_path, "w+") as F_out:
-        for byt in filter.getPacket():
+        for byt in filter.serialize():
             write_uint8(F_out, byt)
 
 # ------------------------------------------------------------

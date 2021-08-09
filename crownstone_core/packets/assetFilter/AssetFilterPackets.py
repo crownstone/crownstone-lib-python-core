@@ -16,9 +16,9 @@ class AssetFilterPacket(BasePacket):
         self.metaData = metaData
         self.filterData = filterData
 
-    def _toBuffer(self, writer: BufferWriter):
-        self.metaData.toBuffer(writer)
-        self.filterData.toBuffer(writer)
+    def _serialize(self, writer: BufferWriter):
+        self.metaData.serialize(writer)
+        self.filterData.serialize(writer)
 
     def __str__(self):
         return f"AssetFilter(" \

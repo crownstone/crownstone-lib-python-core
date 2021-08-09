@@ -94,8 +94,8 @@ class CuckooFilter:
         data.bucketArray = self._cleanBucketArray(0)
         return data
 
-    def getPacket(self):
-        return self.getData().toBuffer()
+    def serialize(self):
+        return self.getData().serialize()
 
     def filterhash(self):
         """
@@ -106,7 +106,7 @@ class CuckooFilter:
 
         returns: FingerprintType
         """
-        return crc16ccitt(self.getPacket())
+        return crc16ccitt(self.serialize())
 
     def hash_to_fingerprint(self, key):
         """

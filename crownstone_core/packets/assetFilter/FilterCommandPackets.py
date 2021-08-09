@@ -21,7 +21,7 @@ class UploadFilterChunkPacket(BasePacket):
         self.chunkSize = chunkSize
         self.chunk = chunk
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.commandProtocolVersion)
         writer.putUInt8(self.filterId)
         writer.putUInt16(self.chunkStartIndex)
@@ -35,7 +35,7 @@ class RemoveFilterPacket(BasePacket):
         self.commandProtocolVersion = ASSET_FILTER_PROTOCOL
         self.filterId = filterId
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.commandProtocolVersion)
         writer.putUInt8(self.filterId)
 
@@ -45,7 +45,7 @@ class CommitFilterChangesPacket(BasePacket):
         self.masterVersion = masterVersion
         self.masterCrc = masterCrc
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.commandProtocolVersion)
         writer.putUInt16(self.masterVersion)
         writer.putUInt32(self.masterCrc)
@@ -58,9 +58,9 @@ class FilterSummariesPacket(BasePacket):
         self.freeSpace = 0
         self.summaries: List[FilterSummaryPacket] = []
         if data is not None:
-            self.parse(data)
+            self.deserialize(data)
 
-    def _parse(self, reader: BufferReader):
+    def _deserialize(self, reader: BufferReader):
         self.commandProtocolVersion = reader.getUInt8()
         self.masterVersion = reader.getUInt16()
         self.masterCrc = reader.getUInt32()
@@ -87,9 +87,9 @@ class FilterSummaryPacket(BasePacket):
         self.id = 0
         self.crc = 0
         if data is not None:
-            self.parse(data)
+            self.deserialize(data)
 
-    def _parse(self, reader: BufferReader):
+    def _deserialize(self, reader: BufferReader):
         self.id = reader.getUInt8()
         self.crc = reader.getUInt32()
 

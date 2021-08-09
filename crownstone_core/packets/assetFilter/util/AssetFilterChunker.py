@@ -8,7 +8,7 @@ class FilterChunker:
 
     def __init__(self, assetFilter: AssetFilter, maxChunkSize=128):
         self.filterId = assetFilter.getFilterId()
-        self.filterBuffer = assetFilter.toBuffer()
+        self.filterBuffer = assetFilter.serialize()
 
         self.index = 0
         self.maxChunkSize = maxChunkSize
@@ -27,6 +27,6 @@ class FilterChunker:
             chunkData = self.filterBuffer[self.index : self.index + chunkSize]
             cmd = UploadFilterChunkPacket(self.filterId, self.index, totalSize, chunkSize, chunkData)
             self.index += self.maxChunkSize
-            return cmd.toBuffer()
+            return cmd.serialize()
         else:
-            return UploadFilterChunkPacket(self.filterId, self.index, totalSize, totalSize, self.filterBuffer).toBuffer()
+            return UploadFilterChunkPacket(self.filterId, self.index, totalSize, totalSize, self.filterBuffer).serialize()

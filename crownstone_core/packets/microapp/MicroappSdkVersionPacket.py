@@ -10,13 +10,13 @@ class MicroappSdkVersionPacket(BasePacket):
 		self.minor = 0
 
 		if data is not None:
-			self.parse(data)
+			self.deserialize(data)
 
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		self.major = reader.getUInt8()
 		self.minor = reader.getUInt8()
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		writer.putUInt8(self.major)
 		writer.putUInt8(self.minor)
 

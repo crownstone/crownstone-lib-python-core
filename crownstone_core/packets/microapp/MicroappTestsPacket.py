@@ -15,9 +15,9 @@ class MicroappTestsPacket(BasePacket):
 		self.reserved = 0
 
 		if data is not None:
-			self.parse(data)
+			self.deserialize(data)
 
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		data1 = reader.getUInt8()
 		data2 = reader.getUInt8()
 		self.raw = [data1, data2]

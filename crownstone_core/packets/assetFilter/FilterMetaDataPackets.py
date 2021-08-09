@@ -22,7 +22,7 @@ class FilterFlags(BasePacket):
     def _calc_bitmask(self):
         self.bitmask = set_bit(self.bitmask, 0, self.exclude)
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         self._calc_bitmask()
         writer.putUInt8(self.bitmask)
 
@@ -48,12 +48,12 @@ class FilterMetaData(BasePacket):
         self.filterInput       = filterInput
         self.filterOutput      = filterOutput
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.type)
-        self.flags.toBuffer(writer)
+        self.flags.serialize(writer)
         writer.putUInt8(self.profileId)
-        self.filterInput.toBuffer(writer)
-        self.filterOutput.toBuffer(writer)
+        self.filterInput.serialize(writer)
+        self.filterOutput.serialize(writer)
 
     def __str__(self):
         return f"FilterMetaData(" \

@@ -3,38 +3,38 @@ from crownstone_core.util.BufferWriter import BufferWriter
 
 
 class BasePacket:
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		"""
 		The deserialization function to be implemented by derived classes.
 		:param reader: The class with data to be parsed.
 		"""
 		raise NotImplementedError
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		"""
 		The serialization function to be implemented by derived classes.
 		:param writer: The class to write the data to.
 		"""
 		raise NotImplementedError
 
-	def parse(self, data):
+	def deserialize(self, data):
 		if isinstance(data, BufferReader):
-			self._parse(data)
+			self._deserialize(data)
 		elif isinstance(data, list):
 			reader = BufferReader(data)
-			self._parse(reader)
+			self._deserialize(reader)
 		else:
 			raise TypeError
 
-	def toBuffer(self, data = None) -> list:
+	def serialize(self, data = None) -> list:
 		if isinstance(data, BufferWriter):
 			writer = data
-			self._toBuffer(writer)
+			self._serialize(writer)
 			buf = writer.getBuffer()
 			return buf
 		else:
 			writer = BufferWriter()
-			self._toBuffer(writer)
+			self._serialize(writer)
 			buf = writer.getBuffer()
 			if data is None:
 				return buf

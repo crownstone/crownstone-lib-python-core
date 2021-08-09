@@ -20,20 +20,20 @@ class MicroappInfoPacket(BasePacket):
 		self.appsStatus: List[MicroappStatusPacket] = []
 
 		if data is not None:
-			self.parse(data)
+			self.deserialize(data)
 
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		self.protocol = reader.getUInt8()
 		self.maxApps = reader.getUInt8()
 		self.maxAppSize = reader.getUInt16()
 		self.maxChunkSize = reader.getUInt16()
 		self.maxRamUsage = reader.getUInt16()
-		self.sdkVersion.parse(reader)
+		self.sdkVersion.deserialize(reader)
 
 		self.appsStatus = []
 		for i in range(0, self.maxApps):
 			statusPacket = MicroappStatusPacket()
-			statusPacket.parse(reader)
+			statusPacket.deserialize(reader)
 			self.appsStatus.append(statusPacket)
 
 	def __str__(self):

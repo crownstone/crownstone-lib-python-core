@@ -17,14 +17,14 @@ class MicroappStatusPacket(BasePacket):
 		self.functionsPassed = []
 
 		if data is not None:
-			self.parse(data)
+			self.deserialize(data)
 
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		self.buildVersion = reader.getUInt32()
-		self.sdkVersion.parse(reader)
+		self.sdkVersion.deserialize(reader)
 		self.checksum = reader.getUInt16()
 		self.checksumHeader = reader.getUInt16()
-		self.tests.parse(reader)
+		self.tests.deserialize(reader)
 		self.functionTrying = reader.getUInt8()
 		self.functionFailed = reader.getUInt8()
 

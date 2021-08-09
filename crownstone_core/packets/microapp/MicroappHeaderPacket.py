@@ -8,11 +8,11 @@ class MicroappHeaderPacket(BasePacket):
 		self.protocol = appIndex
 		self.appIndex = protocol
 
-	def _parse(self, reader: BufferReader):
+	def _deserialize(self, reader: BufferReader):
 		self.protocol = reader.getUInt8()
 		self.appIndex = reader.getUInt8()
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		writer.putUInt8(self.protocol)
 		writer.putUInt8(self.appIndex)
 

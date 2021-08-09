@@ -10,7 +10,7 @@ class CuckooExtendedFingerprint(BasePacket):
 		self.bucketA = 0
 		self.bucketB = 0
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		writer.putUInt16(self.fingerprint)
 		writer.putUInt8(self.bucketA)
 		writer.putUInt8(self.bucketB)
@@ -30,10 +30,10 @@ class CuckooFilterData(FilterData):
 		self.victim = CuckooExtendedFingerprint()
 		self.bucketArray = []
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		writer.putUInt8(self.bucketCountLog2)
 		writer.putUInt8(self.nestsPerBucket)
-		self.victim.toBuffer(writer)
+		self.victim.serialize(writer)
 		for bucket in self.bucketArray:
 			writer.putUInt16(bucket)
 

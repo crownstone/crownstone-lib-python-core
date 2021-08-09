@@ -99,7 +99,7 @@ class AssetFilter(BasePacket):
             bitmask = set_bit(bitmask, len(name) - 1, False)
             asset_name = asset_name[:-1]
         else:
-            # TODO: does this work?
+            # Set all remaining bits. If there is more data, it will be used as input.
             for i in range(len(name), 32):
                 bitmask = set_bit(bitmask, i)
 
@@ -303,7 +303,7 @@ class AssetFilter(BasePacket):
             raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unknown filter type: {self._filterType}")
 
         self._packet = AssetFilterPacket(metaData, filterData)
-        self._crc = crc32(self.toBuffer())
+        self._crc = crc32(self.serialize())
         return self._packet
 
     def _resetCache(self):
@@ -316,9 +316,9 @@ class AssetFilter(BasePacket):
         if self._packet is None:
             self.build()
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         self._buildIfNeeded()
-        self._packet.toBuffer(writer)
+        self._packet.serialize(writer)
 
     def __str__(self):
         self._buildIfNeeded()

@@ -17,7 +17,7 @@ class InputDescriptionPacket(BasePacket):
 	def __init__(self, type: InputDescriptionType):
 		self.type = type
 
-	def _toBuffer(self, writer: BufferWriter):
+	def _serialize(self, writer: BufferWriter):
 		writer.putUInt8(self.type)
 
 
@@ -35,8 +35,8 @@ class InputDescriptionFullAdData(InputDescriptionPacket):
 		super().__init__(InputDescriptionType.AD_DATA)
 		self.adType = adType
 
-	def _toBuffer(self, writer: BufferWriter):
-		super()._toBuffer(writer)
+	def _serialize(self, writer: BufferWriter):
+		super()._serialize(writer)
 		writer.putUInt8(self.adType)
 
 	def __str__(self):
@@ -51,8 +51,8 @@ class InputDescriptionMaskedAdData(InputDescriptionPacket):
 		self.adType = adType
 		self.mask = mask
 
-	def _toBuffer(self, writer: BufferWriter):
-		super()._toBuffer(writer)
+	def _serialize(self, writer: BufferWriter):
+		super()._serialize(writer)
 		writer.putUInt8(self.adType)
 		writer.putUInt32(self.mask)
 

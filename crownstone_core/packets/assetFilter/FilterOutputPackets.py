@@ -19,10 +19,10 @@ class FilterOutputDescription(BasePacket):
         self.outFormat = outFormat
         self.inFormat  = inFormat
 
-    def _toBuffer(self, writer: BufferWriter):
+    def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.outFormat)
         if self.inFormat is not None:
-            self.inFormat.toBuffer(writer)
+            self.inFormat.serialize(writer)
 
     def __str__(self):
         return f"FilterOutputDescription(" \
