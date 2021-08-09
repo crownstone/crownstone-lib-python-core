@@ -126,7 +126,7 @@ class MicroappPacketInternal(object):
             return True
         return False
 
-    def getPacket(self):
+    def serialize(self):
         self.calculateChecksum()
         packet = MicroappUploadPacket(self.data.protocol, self.data.app_id, self.index,
                 self.checksum, self.chunk)

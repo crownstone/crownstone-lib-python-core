@@ -139,7 +139,7 @@ class BehaviourBase:
                 return self
 
 
-    def getPacket(self):
+    def serialize(self):
         arr = []
 
         arr.append(self.behaviourType.value)
@@ -148,8 +148,8 @@ class BehaviourBase:
 
         arr.append(self.activeDays.getMask())
 
-        arr += self.fromTime.getPacket()
-        arr += self.untilTime.getPacket()
+        arr += self.fromTime.serialize()
+        arr += self.untilTime.serialize()
 
         return arr
 
@@ -203,7 +203,7 @@ class BehaviourBase:
         return returnDict
 
     def _getPaddedPacket(self):
-        packet = self.getPacket()
+        packet = self.serialize()
         if len(packet) % 2 != 0:
             packet.append(0)
 

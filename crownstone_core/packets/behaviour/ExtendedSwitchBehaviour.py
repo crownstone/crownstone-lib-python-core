@@ -20,13 +20,13 @@ class ExtendedSwitchBehaviour(SwitchBehaviour):
                                                                     [locationId])
         return self
 
-    def getPacket(self):
-        arr = super().getPacket()
+    def serialize(self):
+        arr = super().serialize()
 
         if self.endCondition is not None:
-            arr += self.endCondition.getPacket()
+            arr += self.endCondition.serialize()
         else:
             anyPresence = BehaviourPresence()
-            arr += anyPresence.getPacket()
+            arr += anyPresence.serialize()
 
         return arr

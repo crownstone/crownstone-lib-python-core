@@ -17,26 +17,26 @@ class ControlPacketsGenerator:
 
     @staticmethod
     def getCommandFactoryResetPacket():
-        return FactoryResetPacket().getPacket()
+        return FactoryResetPacket().serialize()
 
     @staticmethod
     def getSwitchCommandPacket(switchVal: int):
         """
         :param switchVal: percentage [0..100] or special value (SwitchValSpecial).
         """
-        return ControlPacket(ControlType.SWITCH).loadUInt8(switchVal).getPacket()
+        return ControlPacket(ControlType.SWITCH).loadUInt8(switchVal).serialize()
 
     @staticmethod
     def getResetPacket():
-        return ControlPacket(ControlType.RESET).getPacket()
+        return ControlPacket(ControlType.RESET).serialize()
 
     @staticmethod
     def getPutInDFUPacket():
-        return ControlPacket(ControlType.GOTO_DFU).getPacket()
+        return ControlPacket(ControlType.GOTO_DFU).serialize()
 
     @staticmethod
     def getDisconnectPacket():
-        return ControlPacket(ControlType.DISCONNECT).getPacket()
+        return ControlPacket(ControlType.DISCONNECT).serialize()
 
     @staticmethod
     def getRelaySwitchPacket(turnOn: bool):
@@ -47,19 +47,19 @@ class ControlPacketsGenerator:
         if turnOn:
             switchVal = 1
 
-        return ControlPacket(ControlType.RELAY).loadUInt8(switchVal).getPacket()
+        return ControlPacket(ControlType.RELAY).loadUInt8(switchVal).serialize()
 
     @staticmethod
     def getDimmerSwitchPacket(intensity: int):
         """
         :param intensity: percentage [0..100]
         """
-        return ControlPacket(ControlType.PWM).loadUInt8(intensity).getPacket()
+        return ControlPacket(ControlType.PWM).loadUInt8(intensity).serialize()
 
 
     @staticmethod
     def getResetErrorPacket(errorMask):
-        return ControlPacket(ControlType.RESET_ERRORS).loadUInt32(errorMask).getPacket()
+        return ControlPacket(ControlType.RESET_ERRORS).loadUInt32(errorMask).serialize()
 
     @staticmethod
     def getSetTimePacket(time):
@@ -70,7 +70,7 @@ class ControlPacketsGenerator:
         :param time:
         :return:
         """
-        return ControlPacket(ControlType.SET_TIME).loadUInt32(time).getPacket()
+        return ControlPacket(ControlType.SET_TIME).loadUInt32(time).serialize()
 
     @staticmethod
     def getAllowDimmingPacket(allow: bool):
@@ -84,7 +84,7 @@ class ControlPacketsGenerator:
         if allow:
             allowByte = 1
 
-        return ControlPacket(ControlType.ALLOW_DIMMING).loadUInt8(allowByte).getPacket()
+        return ControlPacket(ControlType.ALLOW_DIMMING).loadUInt8(allowByte).serialize()
 
     @staticmethod
     def getLockSwitchPacket(lock: bool):
@@ -97,7 +97,7 @@ class ControlPacketsGenerator:
         if lock:
             lockByte = 1
 
-        return ControlPacket(ControlType.LOCK_SWITCH).loadUInt8(lockByte).getPacket()
+        return ControlPacket(ControlType.LOCK_SWITCH).loadUInt8(lockByte).serialize()
 
     @staticmethod
     def getSetupPacket(
@@ -153,7 +153,7 @@ class ControlPacketsGenerator:
         data += Conversion.uint16_to_uint8_array(ibeaconMajor)
         data += Conversion.uint16_to_uint8_array(ibeaconMinor)
 
-        return ControlPacket(ControlType.SETUP).loadByteArray(data).getPacket()
+        return ControlPacket(ControlType.SETUP).loadByteArray(data).serialize()
 
 
     @staticmethod
@@ -163,7 +163,7 @@ class ControlPacketsGenerator:
         data += Conversion.uint32_to_uint8_array(timestamp)
         data += Conversion.uint16_to_uint8_array(interval)
 
-        return ControlPacket(ControlType.SET_IBEACON_CONFIG_ID).loadByteArray(data).getPacket()
+        return ControlPacket(ControlType.SET_IBEACON_CONFIG_ID).loadByteArray(data).serialize()
 
     @staticmethod
     def getPowerSamplesRequestPacket(samplesType, index):
@@ -171,27 +171,27 @@ class ControlPacketsGenerator:
         buffer.putUInt8(samplesType)
         buffer.putUInt8(index)
         data = buffer.getBuffer()
-        return ControlPacket(ControlType.GET_POWER_SAMPLES).loadByteArray(data).getPacket()
+        return ControlPacket(ControlType.GET_POWER_SAMPLES).loadByteArray(data).serialize()
 
 
     @staticmethod
     def getRemoveFilterPacket(filterId: int) -> [int]:
         removecommand = RemoveFilterPacket(filterId)
-        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.serialize()).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_REMOVE).loadByteArray(removecommand.serialize()).serialize()
 
 
     @staticmethod
     def getGetFilterSummariesPacket() -> [int]:
-        return ControlPacket(ControlType.ASSET_FILTER_GET_SUMMARIES).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_GET_SUMMARIES).serialize()
 
     @staticmethod
     def getCommitFilterChangesPacket(masterVersion: int, masterCrc: int) -> [int]:
         commitcommand = CommitFilterChangesPacket(masterVersion, masterCrc)
-        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.serialize()).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_COMMIT_CHANGES).loadByteArray(commitcommand.serialize()).serialize()
 
     @staticmethod
     def getUploadFilterPacket(chunk: [int]) -> [int]:
         """
         TODO: type chunk param
         """
-        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(chunk).getPacket()
+        return ControlPacket(ControlType.ASSET_FILTER_UPLOAD).loadByteArray(chunk).serialize()

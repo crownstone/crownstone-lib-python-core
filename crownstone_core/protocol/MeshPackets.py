@@ -30,7 +30,7 @@ class _MeshCommandPacket:
         self.flags = mesh_command_mode.value
         self.timeout_or_transmissions = timeout_or_transmissions
 
-    def getPacket(self):
+    def serialize(self):
         writer = BufferWriter()
         writer.putUInt8(self.type)
         writer.putUInt8(self.flags)
@@ -80,7 +80,7 @@ class StoneMultiSwitchPacket:
         self.state = switchVal
 
 
-    def getPacket(self):
+    def serialize(self):
         writer = BufferWriter()
         writer.putUInt8(self.crownstoneId)
         writer.putUInt8(self.state)
@@ -94,9 +94,9 @@ class MeshMultiSwitchPacket:
             packets = []
         self.packets = packets
 
-    def getPacket(self):
+    def serialize(self):
         writer = BufferWriter()
         writer.putUInt8(len(self.packets))
         for stonePacket in self.packets:
-            writer.putBytes(stonePacket.getPacket())
+            writer.putBytes(stonePacket.serialize())
         return writer.getBuffer()

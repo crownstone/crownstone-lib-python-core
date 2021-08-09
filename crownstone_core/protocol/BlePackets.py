@@ -5,7 +5,7 @@ from crownstone_core.util.Conversion import Conversion
 
 SUPPORTED_PROTOCOL_VERSION = 5
 
-# TODO: this isn't just for BLE as the name suggests.
+# TODO: get rid of this class; move to ControlPacket or some base packet that has a payload.
 class BLEPacket:
 
     def __init__(self, packetType):
@@ -66,7 +66,7 @@ class BLEPacket:
         self.lengthAsUint8Array = Conversion.uint16_to_uint8_array(len(self.payload))
         return self
 
-    def getPacket(self):
+    def serialize(self):
         packet = [SUPPORTED_PROTOCOL_VERSION]
         packet += Conversion.uint16_to_uint8_array(self.type)
         packet += self.lengthAsUint8Array
@@ -74,10 +74,13 @@ class BLEPacket:
 
         return packet
 
+
+
 class ControlPacket(BLEPacket):
 
     def __init__(self, packetType):
         super().__init__(packetType)
+
 
 
 class FactoryResetPacket(ControlPacket):
@@ -85,6 +88,8 @@ class FactoryResetPacket(ControlPacket):
     def __init__(self):
         super().__init__(ControlType.FACTORY_RESET)
         self.loadUInt32(0xdeadbeef)
+
+
 
 class ControlStateGetPacket(ControlPacket):
 
@@ -95,7 +100,7 @@ class ControlStateGetPacket(ControlPacket):
         self.persistenceMode = persistenceMode.value
 
 
-    def getPacket(self):
+    def serialize(self):
         # TODO: make use of the base class, now there is a double implementation of the control packet.
         arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
@@ -133,7 +138,7 @@ class ControlStateSetPacket(ControlPacket):
         self.persistenceMode = persistenceMode.value
 
 
-    def getPacket(self):
+    def serialize(self):
         # TODO: make use of the base class, now there is a double implementation of the control packet.
         arr = [SUPPORTED_PROTOCOL_VERSION]
         arr += Conversion.uint16_to_uint8_array(self.type)
@@ -144,4 +149,3 @@ class ControlStateSetPacket(ControlPacket):
         arr.append(0)
         arr += self.payload
         return arr
-

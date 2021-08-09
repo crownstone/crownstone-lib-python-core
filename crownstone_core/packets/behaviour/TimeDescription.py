@@ -56,7 +56,7 @@ class BehaviourTime:
 
         return self
 
-    def getPacket(self):
+    def serialize(self):
         arr = []
 
         arr.append(self.timeType.value)

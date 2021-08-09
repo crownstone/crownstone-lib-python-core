@@ -71,7 +71,7 @@ class BehaviourPresence:
 
         return result
 
-    def getPacket(self):
+    def serialize(self):
         arr = []
 
         arr.append(self.presenceType.value)

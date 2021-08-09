@@ -57,14 +57,14 @@ class SwitchBehaviour(BehaviourBase):
                                                                 delay)
         return self
 
-    def getPacket(self):
-        arr = super().getPacket()
+    def serialize(self):
+        arr = super().serialize()
 
         if self.presence is not None:
-            arr += self.presence.getPacket()
+            arr += self.presence.serialize()
         else:
             anypresence = BehaviourPresence()
-            arr += anypresence.getPacket()
+            arr += anypresence.serialize()
 
         return arr
 
