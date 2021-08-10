@@ -1,5 +1,9 @@
+import logging
+import traceback
 import uuid
 from typing import Callable, Any
+
+_LOGGER = logging.getLogger(__name__)
 
 class EventBus:
 
@@ -18,7 +22,7 @@ class EventBus:
         return subscriptionId
 
     def subscribe(self, topic: str, callback: Callable[[Any], None]) -> str:
-		# Returns a subscriptionId to be used to unsubscribe.
+        # Returns a subscriptionId to be used to unsubscribe.
         if topic not in self.topics:
             self.topics[topic] = {}
 
@@ -32,7 +36,12 @@ class EventBus:
         if topic in self.topics:
             callbackIds = list(self.topics[topic].keys())
             for subscriptionId in callbackIds:
-                self.topics[topic][subscriptionId](data)
+                try:
+                    self.topics[topic][subscriptionId](data)
+                except Exception as e:
+                    # TODO: maybe kill the process, or raise a new exception?
+                    _LOGGER.error(f"Error in callback of subscriptionId={subscriptionId}: {e}")
+                    _LOGGER.info(traceback.format_exc())
 
 
     def unsubscribe(self, subscriptionId: str):
