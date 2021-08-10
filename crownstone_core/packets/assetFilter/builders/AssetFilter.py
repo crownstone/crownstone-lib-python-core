@@ -43,6 +43,7 @@ class AssetFilter(BasePacket):
         self._crc = None
 
     def getCrc(self) -> int:
+        self._buildIfNeeded()
         return self._crc
 
     def getFilterId(self) -> int:
