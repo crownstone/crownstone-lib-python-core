@@ -14,7 +14,7 @@ from crownstone_core.packets.assetFilter.ExactMatchFilter import ExactMatchFilte
 from crownstone_core.packets.assetFilter.FilterOutputPackets import FilterOutputDescriptionType, FilterOutputDescription
 from crownstone_core.packets.assetFilter.InputDescriptionPackets import *
 from crownstone_core.packets.assetFilter.FilterMetaDataPackets import FilterType, FilterMetaData, FilterFlags
-from crownstone_core.packets.assetFilter.builders.AssetIdBuilder import AssetIdBuilder
+from crownstone_core.packets.assetFilter.builders.AssetIdSourceBuilder import AssetIdSourceBuilder
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,7 +32,7 @@ class AssetFilter(BasePacket):
         self._filterType: FilterType = None
         self._input: InputDescriptionPacket = None
         self._outputType: FilterOutputDescriptionType = None
-        self._assetIdBuilder: AssetIdBuilder = None
+        self._assetIdSourceBuilder: AssetIdSourceBuilder = None
         self._assets = []
         self._profileId = 255
         self._exclude = False
@@ -224,7 +224,7 @@ class AssetFilter(BasePacket):
         self._outputType = FilterOutputDescriptionType.MAC_ADDRESS
         return self
 
-    def outputAssetId(self, basedOn: AssetIdBuilder = None) -> AssetIdBuilder:
+    def outputAssetId(self, basedOn: AssetIdSourceBuilder = None) -> AssetIdSourceBuilder:
         """
         If an asset advertisement passes the filter, the Crownstones will attempt to localize it, and will identify it
         by a 3 byte asset ID. The asset ID is a hash over data from the advertisement, which can be different data than
@@ -235,10 +235,10 @@ class AssetFilter(BasePacket):
         self._resetCache()
         self._outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
         if basedOn is None:
-            self._assetIdBuilder = AssetIdBuilder()
+            self._assetIdSourceBuilder = AssetIdSourceBuilder()
         else:
-            self._assetIdBuilder = basedOn
-        return self._assetIdBuilder
+            self._assetIdSourceBuilder = basedOn
+        return self._assetIdSourceBuilder
 
 
 
@@ -257,7 +257,7 @@ class AssetFilter(BasePacket):
             if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
                 output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, None)
             elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
-                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdBuilder.build())
+                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdSourceBuilder.build())
             else:
                 raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
 

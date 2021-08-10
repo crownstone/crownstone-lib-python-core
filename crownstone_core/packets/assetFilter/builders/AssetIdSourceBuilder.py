@@ -1,6 +1,6 @@
 from crownstone_core.packets.assetFilter.InputDescriptionPackets import *
 
-class AssetIdBuilder:
+class AssetIdSourceBuilder:
     def __init__(self):
         self.inFormat: InputDescriptionPacket = None
 
