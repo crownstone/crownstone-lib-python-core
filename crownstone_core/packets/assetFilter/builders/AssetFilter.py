@@ -149,7 +149,7 @@ class AssetFilter(BasePacket):
         """
         Set the ID of this filter, the index at which it is placed on the Crownstones.
 
-        :param: filterId     The ID of this filter.
+        :param filterId:     The ID of this filter.
         """
         self._resetCache()
         self._filterId = filterId
