@@ -163,7 +163,7 @@ class CrownstoneBleException(Exception):
 
     def __init__(self, type, message="", code=0):
         """
-        Type is an enum,
+        Type is an enum: BleError
         """
         self.type = type
         self.message = message
@@ -175,7 +175,7 @@ class CrownstoneException(Exception):
     type    = None
     message = None
     
-    def __init__(self, type: CrownstoneError, message: str, code=0):
+    def __init__(self, type: CrownstoneError, message: str="", code=0):
         # TODO: what is type, and code?
         self.type = type
         self.message = message

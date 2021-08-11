@@ -25,7 +25,7 @@
  """
 import json
 
-from crownstone_core.Exceptions import CrownstoneError
+from crownstone_core.Exceptions import CrownstoneError, CrownstoneException
 from crownstone_core.packets.behaviour.ActiveDays import ActiveDays
 from crownstone_core.packets.behaviour.BehaviourBase import BehaviourBase
 from crownstone_core.packets.behaviour.BehaviourTypes import BehaviourType, DAY_START_TIME_SECONDS_SINCE_MIDNIGHT
@@ -40,20 +40,20 @@ def getFromDict(dict, key):
 
 def BehaviourDictionaryParser(dict, dayStartTimeSecondsSinceMidnight = DAY_START_TIME_SECONDS_SINCE_MIDNIGHT):
     # optional variables
-    profileIndex   = getFromDict(dict, "profileIndex")                                  
+    profileIndex   = getFromDict(dict, "profileIndex")
     typeString     = getFromDict(dict, "type")
-    data           = getFromDict(dict, "data")                          
-    activeDays     = getFromDict(dict, "activeDays")                                  
-    idOnCrownstone = getFromDict(dict, "idOnCrownstone")                                      
+    data           = getFromDict(dict, "data")
+    activeDays     = getFromDict(dict, "activeDays")
+    idOnCrownstone = getFromDict(dict, "idOnCrownstone")
     
-    if profileIndex  is None: raise CrownstoneError.PROFILE_INDEX_MISSING
-    if typeString    is None: raise CrownstoneError.TYPE_MISSING
-    if data          is None: raise CrownstoneError.DATA_MISSING
-    if activeDays    is None: raise CrownstoneError.ACTIVE_DAYS_MISSING
+    if profileIndex  is None: raise CrownstoneException(CrownstoneError.PROFILE_INDEX_MISSING)
+    if typeString    is None: raise CrownstoneException(CrownstoneError.TYPE_MISSING)
+    if data          is None: raise CrownstoneException(CrownstoneError.DATA_MISSING)
+    if activeDays    is None: raise CrownstoneException(CrownstoneError.ACTIVE_DAYS_MISSING)
     
     behaviourType = BehaviourType.behaviour
-    if   typeString == "BEHAVIOUR" : behaviourType = BehaviourType.behaviour
-    elif typeString == "TWILIGHT"  : behaviourType = BehaviourType.twilight
+    if   typeString == "BEHAVIOUR": behaviourType = BehaviourType.behaviour
+    elif typeString == "TWILIGHT":  behaviourType = BehaviourType.twilight
 
     if type(data) == str:
         data = json.loads(data)
@@ -64,13 +64,13 @@ def BehaviourDictionaryParser(dict, dayStartTimeSecondsSinceMidnight = DAY_START
     presence     = getFromDict(data, "presence")
     endCondition = getFromDict(data, "endCondition")
 
-    if actionDict is None: raise CrownstoneError.BEHAVIOUR_ACTION_MISSING
-    if timeDict   is None: raise CrownstoneError.BEHAVIOUR_TIME_MISSING
+    if actionDict is None: raise CrownstoneException(CrownstoneError.BEHAVIOUR_ACTION_MISSING)
+    if timeDict   is None: raise CrownstoneException(CrownstoneError.BEHAVIOUR_TIME_MISSING)
 
   
     intensity = getFromDict(actionDict, "data")
     
-    if intensity is None: raise CrownstoneError.BEHAVIOUR_INTENSITY_MISSING 
+    if intensity is None: raise CrownstoneException(CrownstoneError.BEHAVIOUR_INTENSITY_MISSING)
     
     activeDayObject = ActiveDayParser(activeDays)
     timeObject      = TimeParser(timeDict, dayStartTimeSecondsSinceMidnight)
@@ -87,16 +87,16 @@ def BehaviourDictionaryParser(dict, dayStartTimeSecondsSinceMidnight = DAY_START
         behaviour.idOnCrownstone = idOnCrownstone
         
     if presence is not None:
-        if behaviourType == BehaviourType.twilight :
-            raise CrownstoneError.TWILIGHT_CANT_HAVE_PRESENCE
+        if behaviourType == BehaviourType.twilight:
+            raise CrownstoneException(CrownstoneError.TWILIGHT_CANT_HAVE_PRESENCE)
         
         presenceObject = PresenceParser(presence)
         behaviour.presence = presenceObject
     
     
     if endCondition is not None:
-        if behaviourType == BehaviourType.twilight :
-            raise CrownstoneError.TWILIGHT_CANT_HAVE_END_CONDITION
+        if behaviourType == BehaviourType.twilight:
+            raise CrownstoneException(CrownstoneError.TWILIGHT_CANT_HAVE_END_CONDITION)
         
         endConditionObject = EndConditionParser(endCondition)
         behaviour.endCondition = endConditionObject
@@ -130,11 +130,11 @@ def ActiveDayParser(dict):
         activeDays.Sunday    = Sunday
         
         if activeDays.getMask() == 0:
-            raise CrownstoneError.NO_ACTIVE_DAYS
+            raise CrownstoneException(CrownstoneError.NO_ACTIVE_DAYS)
         
         return activeDays
-    else :
-        raise CrownstoneError.ACTIVE_DAYS_INVALID
+    else:
+        raise CrownstoneException(CrownstoneError.ACTIVE_DAYS_INVALID)
     
 
 
@@ -144,7 +144,7 @@ def ActiveDayParser(dict):
 def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
     type = getFromDict(dict, "type")
 
-    if type is None: raise CrownstoneError.NO_TIME_TYPE
+    if type is None: raise CrownstoneException(CrownstoneError.NO_TIME_TYPE)
 
     if type == "ALL_DAY":
         return BehaviourTimeContainer(
@@ -156,14 +156,14 @@ def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
         fromTime = getFromDict(dict, "from")
         toTime   = getFromDict(dict, "to")
 
-        if fromTime is None: raise CrownstoneError.MISSING_FROM_TIME
-        if toTime   is None: raise CrownstoneError.MISSING_TO_TIME
+        if fromTime is None: raise CrownstoneException(CrownstoneError.MISSING_FROM_TIME)
+        if toTime   is None: raise CrownstoneException(CrownstoneError.MISSING_TO_TIME)
 
         fromTimeType = getFromDict(fromTime, "type")
         toTimeType   = getFromDict(toTime,   "type")
 
-        if fromTimeType is None: raise CrownstoneError.MISSING_FROM_TIME_TYPE
-        if toTimeType   is None: raise CrownstoneError.MISSING_TO_TIME_TYPE
+        if fromTimeType is None: raise CrownstoneException(CrownstoneError.MISSING_FROM_TIME_TYPE)
+        if toTimeType   is None: raise CrownstoneException(CrownstoneError.MISSING_TO_TIME_TYPE)
 
         fromResult = None
         toResult   = None
@@ -171,13 +171,13 @@ def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
         if fromTimeType == "CLOCK":
             fromData = getFromDict(fromTime, "data")
         
-            if fromData is None: raise CrownstoneError.MISSING_FROM_TIME_DATA
+            if fromData is None: raise CrownstoneException(CrownstoneError.MISSING_FROM_TIME_DATA)
 
             hours   = getFromDict(fromData, "hours")
             minutes = getFromDict(fromData, "minutes")
 
-            if hours   is None: raise CrownstoneError.MISSING_FROM_TIME_DATA
-            if minutes is None: raise CrownstoneError.MISSING_FROM_TIME_DATA
+            if hours   is None: raise CrownstoneException(CrownstoneError.MISSING_FROM_TIME_DATA)
+            if minutes is None: raise CrownstoneException(CrownstoneError.MISSING_FROM_TIME_DATA)
 
             fromResult = BehaviourTime().fromTime(hours, minutes)
 
@@ -198,20 +198,20 @@ def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
             fromResult = BehaviourTime().fromType(BehaviourTimeType.afterSunrise, offsetSeconds)
         
         else:
-            raise CrownstoneError.INVALID_TIME_FROM_TYPE
+            raise CrownstoneException(CrownstoneError.INVALID_TIME_FROM_TYPE)
         
         
         
         if toTimeType == "CLOCK":
             toData = getFromDict(toTime, "data")
 
-            if toData is None: raise CrownstoneError.MISSING_TO_TIME_DATA
+            if toData is None: raise CrownstoneException(CrownstoneError.MISSING_TO_TIME_DATA)
 
             hours = getFromDict(toData, "hours")
             minutes = getFromDict(toData, "minutes")
 
-            if hours is None: raise CrownstoneError.INVALID_TO_DATA
-            if minutes is None: raise CrownstoneError.INVALID_TO_DATA
+            if hours is None: raise CrownstoneException(CrownstoneError.INVALID_TO_DATA)
+            if minutes is None: raise CrownstoneException(CrownstoneError.INVALID_TO_DATA)
 
             toResult = BehaviourTime().fromTime(hours, minutes)
 
@@ -232,11 +232,11 @@ def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
             toResult = BehaviourTime().fromType(BehaviourTimeType.afterSunrise, offsetSeconds)
         
         else:
-            raise CrownstoneError.INVALID_TIME_TO_TYPE
+            raise CrownstoneException(CrownstoneError.INVALID_TIME_TO_TYPE)
         
         return BehaviourTimeContainer(fromResult, toResult)
     else:
-        raise CrownstoneError.INVALID_TIME_TYPE
+        raise CrownstoneException(CrownstoneError.INVALID_TIME_TYPE)
     
     
 
@@ -246,39 +246,39 @@ def TimeParser(dict, dayStartTimeSecondsSinceMidnight):
 """
 def PresenceParser(dict):
     type = getFromDict(dict, "type")
-    if type is None: raise CrownstoneError.NO_PRESENCE_TYPE
+    if type is None: raise CrownstoneException(CrownstoneError.NO_PRESENCE_TYPE)
 
     if type == "IGNORE":
         return BehaviourPresence()
     elif type == "SOMEBODY" or type == "NOBODY":
         data = getFromDict(dict, "data")
-        if data is None: raise CrownstoneError.NO_PRESENCE_DATA
+        if data is None: raise CrownstoneException(CrownstoneError.NO_PRESENCE_DATA)
 
         delay = getFromDict(dict, "delay")
-        if delay is None: raise CrownstoneError.NO_PRESENCE_DELAY
+        if delay is None: raise CrownstoneException(CrownstoneError.NO_PRESENCE_DELAY)
 
         dataType = getFromDict(data, "type")
-        if dataType is None: raise CrownstoneError.NO_PRESENCE_TYPE
+        if dataType is None: raise CrownstoneException(CrownstoneError.NO_PRESENCE_TYPE)
 
         if dataType == "SPHERE":
             if type == "SOMEBODY":
                 return BehaviourPresence().setSpherePresence(BehaviourPresenceType.someoneInSphere, delayInSeconds = delay)
-            else :
+            else:
                 return BehaviourPresence().setSpherePresence(BehaviourPresenceType.nobodyInSphere, delayInSeconds = delay)
 
         elif dataType == "LOCATION":
             locationIdArray = getFromDict(data, "locationIds")
-            if locationIdArray is None: raise CrownstoneError.NO_PRESENCE_LOCATION_IDS
+            if locationIdArray is None: raise CrownstoneException(CrownstoneError.NO_PRESENCE_LOCATION_IDS)
 
             if type == "SOMEBODY":
                 return BehaviourPresence().setLocationPresence(BehaviourPresenceType.somoneInLocation, locationIds=locationIdArray, delayInSeconds=delay)
             
-            else :
+            else:
                 return BehaviourPresence().setLocationPresence(BehaviourPresenceType.nobodyInLocation, locationIds=locationIdArray, delayInSeconds=delay)
-        else :
-            raise CrownstoneError.NO_PRESENCE_DATA
-    else :
-        raise CrownstoneError.INVALID_PRESENCE_TYPE
+        else:
+            raise CrownstoneException(CrownstoneError.NO_PRESENCE_DATA)
+    else:
+        raise CrownstoneException(CrownstoneError.INVALID_PRESENCE_TYPE)
     
     
     
@@ -290,8 +290,8 @@ def PresenceParser(dict):
 def EndConditionParser(dict):
     type     = getFromDict(dict, "type")
     presence = getFromDict(dict, "presence")
-    if type     is None: raise CrownstoneError.NO_END_CONDITION_TYPE
-    if presence is None: raise CrownstoneError.NO_END_CONDITION_PRESENCE
+    if type     is None: raise CrownstoneException(CrownstoneError.NO_END_CONDITION_TYPE)
+    if presence is None: raise CrownstoneException(CrownstoneError.NO_END_CONDITION_PRESENCE)
 
     presenceObject = PresenceParser(presence)
     
