@@ -237,7 +237,7 @@ class Conversion:
     @staticmethod
     def uint8_to_hex_string(val):
         if val > 255 or val < 0:
-            raise Exception("Value must be of type uint8")
+            raise Exception(f"Value must be of type uint8. Value = {val}")
         hex_str = "%02x" % val
         return hex_str
 

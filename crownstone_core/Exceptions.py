@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class EncryptionError(Enum):
     CAN_NOT_FIND_SERVICE              = "CAN_NOT_FIND_SERVICE"
     CAN_NOT_FIND_CHACTERISTIC         = "CAN_NOT_FIND_CHACTERISTIC"
@@ -153,9 +152,8 @@ class CrownstoneError(Enum):
     UNKNOWN_SERVICE_DATA                                = "UNKNOWN_SERVICE_DATA"
 
 
-# BART: Why is there a BLE exception in the core lib? How is it different?
-# ALEX: This should not be here. It's a remnant from the initial split. I'd argue we can move away from this one and just use the CrownstoneException.
-# This would however be breaking. We can do this in the next breaking release.
+
+# TODO: Change to CrownstoneException. However, this is a breaking change.
 class CrownstoneBleException(Exception):
     code    = None
     type    = None
@@ -169,7 +167,7 @@ class CrownstoneBleException(Exception):
         self.message = message
         self.code = code
         
-
+# TODO: instead of having CrownstoneError as type, make them derived classes. However, this is a breaking change.
 class CrownstoneException(Exception):
     code    = None
     type    = None

@@ -24,7 +24,7 @@ class BasePacket:
 			reader = BufferReader(data)
 			self._deserialize(reader)
 		else:
-			raise TypeError
+			raise TypeError(f"Invalid type: {type(data)}")
 
 	def serialize(self, data = None) -> list:
 		if isinstance(data, BufferWriter):

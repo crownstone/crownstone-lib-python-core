@@ -46,7 +46,7 @@ def _expand_key(key: bytes, wordsize: int, rounds: int) -> typing.List[int]:
             return 0xB7E15163, 0x9E3779B9
         elif w == 64:
             return 0xB7E151628AED2A6B, 0x9E3779B97F4A7C15
-        raise ValueError("Bad word sie")
+        raise ValueError(f"Invalid word size: {w}")
 
     # Generate pseudo-random list S
     def _extend_key(w: int, r: int) -> typing.List[int]:
