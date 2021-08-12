@@ -55,6 +55,7 @@ class AssetFilterSyncer:
         # Only increase master version if there are any changes.
         if len(self.removeIds) == 0 \
                 and len(self.uploadIds) == 0 \
+                and masterCrc == summaries.masterCrc \
                 and (masterVersion is None or summaries.masterVersion == masterVersion):
             _LOGGER.info("No changes, no commit requried.")
             self.commitRequired = False
