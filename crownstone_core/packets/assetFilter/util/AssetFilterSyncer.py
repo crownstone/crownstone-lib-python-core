@@ -49,7 +49,7 @@ class AssetFilterSyncer:
                 if filter.getFilterId() == summary.id:
                     foundId = True
             if not foundId:
-                _LOGGER.info(f"Not found, upload filderId={summary.id}")
+                _LOGGER.info(f"Not found, upload filderId={filter.getFilterId()}")
                 self.uploadIds.append(filter.getFilterId())
 
         # Only increase master version if there are any changes.
