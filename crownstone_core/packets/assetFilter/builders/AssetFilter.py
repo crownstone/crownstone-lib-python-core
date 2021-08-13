@@ -262,14 +262,10 @@ class AssetFilter(BasePacket):
         if self._input is None:
             raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter input set.")
 
-        # Build output
-        output = None
-        if self._outputType == FilterOutputDescriptionType.FORWARD_MAC_ADDRESS:
-            output = FilterOutputDescription(FilterOutputDescriptionType.FORWARD_MAC_ADDRESS, None)
-        elif self._outputType == FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID:
-            output = FilterOutputDescription(FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID, self._assetIdSourceBuilder.build())
-        else:
-            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
+        # Build output description
+        outputType = self._outputType or FilterOutputDescriptionType.FORWARD_MAC_ADDRESS            # use default output type if necessary
+        sidBuilder = self._assetIdSourceBuilder.build() if self._assetIdSourceBuilder else None     # use builder if assigned
+        output = FilterOutputDescription(outputType, sidBuilder)
 
         # Determine filter type to use if it hasn't been set.
         if self._filterType is None:
