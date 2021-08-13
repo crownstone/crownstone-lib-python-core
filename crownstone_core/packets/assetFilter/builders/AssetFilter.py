@@ -216,16 +216,28 @@ class AssetFilter(BasePacket):
         return self
 
 
-    def outputMacRssiReport(self):
+    def outputForwardRssiReport(self, useAssetId=False) -> AssetIdSourceBuilder:
         """
-        If an asset advertisement passes the filter, the Crownstone will send a report to the hub
-        with the assets' MAC address and the RSSI.
+        If an asset advertisement passes the filter, the Crownstone will send a report to the hub.
+
+        :param useAssetId:  When this is True, the mesh packets will contain an asset id, the filterbitmask and rssi.
+                            Else the packets contain the assets MAC address and the rssi.
+
+        :return:    If useAssetId is true, the return value is an AssetIdSourceBuilder that can be used to configure
+                    which data to use to construct the asset id.
         """
         self._resetCache()
-        self._outputType = FilterOutputDescriptionType.MAC_ADDRESS
-        return self
 
-    def outputAssetId(self, basedOn: AssetIdSourceBuilder = None) -> AssetIdSourceBuilder:
+        if useAssetId:
+            self._outputType = FilterOutputDescriptionType.FORWARD_SHORT_ASSET_ID
+            self._assetIdSourceBuilder = AssetIdSourceBuilder()
+        else:
+            self._outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
+            self._assetIdSourceBuilder = None
+
+        return self._assetIdSourceBuilder
+
+    def outputAssetIdFromNearest(self, basedOn: AssetIdSourceBuilder = None) -> AssetIdSourceBuilder:
         """
         If an asset advertisement passes the filter, the Crownstones will attempt to localize it, and will identify it
         by a 3 byte asset ID. The asset ID is a hash over data from the advertisement, which can be different data than
@@ -234,7 +246,7 @@ class AssetFilter(BasePacket):
         :param basedOn: Determines what data to base the short asset ID on.
         """
         self._resetCache()
-        self._outputType = FilterOutputDescriptionType.SHORT_ASSET_ID
+        self._outputType = FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID
         if basedOn is None:
             self._assetIdSourceBuilder = AssetIdSourceBuilder()
         else:
@@ -251,18 +263,15 @@ class AssetFilter(BasePacket):
             raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter input set.")
 
         # Build output
-        if self._exclude:
-            output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, InputDescriptionMacAddress())
+        output = None
+        if self._outputType == FilterOutputDescriptionType.FORWARD_MAC_ADDRESS:
+            output = FilterOutputDescription(FilterOutputDescriptionType.FORWARD_MAC_ADDRESS, None)
+        elif self._outputType == FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID:
+            output = FilterOutputDescription(FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID, self._assetIdSourceBuilder.build())
         else:
-            output = None
-            if self._outputType == FilterOutputDescriptionType.MAC_ADDRESS:
-                output = FilterOutputDescription(FilterOutputDescriptionType.MAC_ADDRESS, None)
-            elif self._outputType == FilterOutputDescriptionType.SHORT_ASSET_ID:
-                output = FilterOutputDescription(FilterOutputDescriptionType.SHORT_ASSET_ID, self._assetIdSourceBuilder.build())
-            else:
-                raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
+            raise CrownstoneException(CrownstoneError.UNKNOWN_TYPE, f"Unkown or missing output type: {self._outputType}")
 
-        # Determine filter type to use.
+        # Determine filter type to use if it hasn't been set.
         if self._filterType is None:
             equalSize = True
             assetSize = len(self._assets[0])
