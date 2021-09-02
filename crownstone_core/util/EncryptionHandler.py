@@ -24,8 +24,7 @@ class EncryptedPackage:
         self.payload = None
         
         prefixLength = PACKET_NONCE_LENGTH + PACKET_USER_LEVEL_LENGTH
-        # 20 is the minimal size of a packet (3+1+16)
-        if len(dataArray) < 20:
+        if len(dataArray) < prefixLength + BLOCK_LENGTH:
             raise CrownstoneBleException(EncryptionError.INVALID_ENCRYPTION_PACKAGE, "Invalid package for encryption. It is too short (min length 20) got " + str(len(dataArray)) + " bytes.")
 
         self.nonce = [0] * PACKET_NONCE_LENGTH
