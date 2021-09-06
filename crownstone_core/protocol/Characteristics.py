@@ -1,6 +1,6 @@
 class DeviceCharacteristics:
-    HardwareRevision = "2a27"
-    FirmwareRevision = "2a26"
+    HardwareRevision = "00002a27-0000-1000-8000-00805f9b34fb"
+    FirmwareRevision = "00002a26-0000-1000-8000-00805f9b34fb"
 
 
 class CrownstoneCharacteristics:
