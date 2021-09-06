@@ -1,5 +1,6 @@
 import logging
 import math
+from enum import Enum
 from typing import List
 
 from crownstone_core import Conversion
@@ -17,6 +18,13 @@ from crownstone_core.packets.assetFilter.FilterMetaDataPackets import FilterType
 from crownstone_core.packets.assetFilter.builders.AssetIdSourceBuilder import AssetIdSourceBuilder
 
 _LOGGER = logging.getLogger(__name__)
+
+class OptimizeOutputStrategy(Enum):
+    # No optimization.
+    NONE = 0,
+
+    # Only crownstones that believe to be nearest. Note that this is not the same as nearest only, as it takes some time to settle.
+    NEAREST = 1,
 
 class AssetFilter(BasePacket):
     def __init__(self, filterId: int = None):
@@ -215,38 +223,30 @@ class AssetFilter(BasePacket):
         self._maxFilterSize = maxFilterSize
         return self
 
-
-    def outputForwardRssiReport(self, useAssetId=False) -> AssetIdSourceBuilder:
+    def outputMacRssiReport(self):
         """
-        If an asset advertisement passes the filter, the Crownstone will send a report to the hub.
-
-        :param useAssetId:  When this is True, the mesh packets will contain an asset id, the filterbitmask and rssi.
-                            Else the packets contain the assets MAC address and the rssi.
-
-        :return:    If useAssetId is true, the return value is an AssetIdSourceBuilder that can be used to configure
-                    which data to use to construct the asset id.
+        If an asset advertisement passes the filter, the Crownstone will send a report to the hub with the assets' MAC address and the RSSI.
         """
         self._resetCache()
+        self._outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
+        self._assetIdSourceBuilder = None
+        return self
 
-        if useAssetId:
-            self._outputType = FilterOutputDescriptionType.FORWARD_SHORT_ASSET_ID
-            self._assetIdSourceBuilder = AssetIdSourceBuilder()
-        else:
-            self._outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
-            self._assetIdSourceBuilder = None
-
-        return self._assetIdSourceBuilder
-
-    def outputAssetIdFromNearest(self, basedOn: AssetIdSourceBuilder = None) -> AssetIdSourceBuilder:
+    def outputAssetId(self, basedOn: AssetIdSourceBuilder = None, optimizeStrategy: OptimizeOutputStrategy = OptimizeOutputStrategy.NONE) -> AssetIdSourceBuilder:
         """
         If an asset advertisement passes the filter, the Crownstones will attempt to localize it, and will identify it
         by a 3 byte asset ID. The asset ID is a hash over data from the advertisement, which can be different data than
         what it's filtered by. Select this data with the AssetIdBuilder.
 
         :param basedOn: Determines what data to base the short asset ID on.
+        :param optimizeStrategy: Strategy to optimize number of mesh messages.
         """
         self._resetCache()
-        self._outputType = FilterOutputDescriptionType.NEAREST_SHORT_ASSET_ID
+        if optimizeStrategy == OptimizeOutputStrategy.NEAREST:
+            self._outputType = FilterOutputDescriptionType.ASSET_ID_NEAREST_CROWNSTONE
+        else:
+            self._outputType = FilterOutputDescriptionType.FORWARD_ASSET_ID
+
         if basedOn is None:
             self._assetIdSourceBuilder = AssetIdSourceBuilder()
         else:
@@ -261,11 +261,20 @@ class AssetFilter(BasePacket):
             raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter ID set.")
         if self._input is None:
             raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter input set.")
+        if (self._outputType is None) and (not self._exclude):
+            raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter output set.")
 
-        # Build output description
-        outputType = self._outputType or FilterOutputDescriptionType.FORWARD_MAC_ADDRESS            # use default output type if necessary
-        sidBuilder = self._assetIdSourceBuilder.build() if self._assetIdSourceBuilder else None     # use builder if assigned
-        output = FilterOutputDescription(outputType, sidBuilder)
+        # Determine output description
+        outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
+        if self._outputType is not None:
+            outputType = self._outputType
+
+        inFormat = None
+        if self._assetIdSourceBuilder is not None:
+            inFormat = self._assetIdSourceBuilder.build()
+
+        output = FilterOutputDescription(outputType, inFormat)
+
 
         # Determine filter type to use if it hasn't been set.
         if self._filterType is None:

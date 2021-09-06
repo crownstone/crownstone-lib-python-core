@@ -10,8 +10,8 @@ class FilterOutputDescriptionType(IntEnum):
     What type of message should be output.
     """
     FORWARD_MAC_ADDRESS = 0
-    NEAREST_SHORT_ASSET_ID = 1
-    FORWARD_SHORT_ASSET_ID = 2
+    ASSET_ID_NEAREST_CROWNSTONE = 1
+    FORWARD_ASSET_ID = 2
 
 class FilterOutputDescription(BasePacket):
     def __init__(self,
