@@ -1,10 +1,13 @@
-from crownstone_core.Constants import UserLevel
+import logging
 
+from crownstone_core.Constants import UserLevel
 from crownstone_core.Exceptions import CrownstoneBleException, EncryptionError
 from crownstone_core.protocol.BlePackets import SUPPORTED_PROTOCOL_VERSION
 from crownstone_core.util.Conversion import Conversion
 from crownstone_core.util.EncryptionHandler import SESSION_KEY_LENGTH, SESSION_DATA_LENGTH
 
+
+_LOGGER = logging.getLogger(__name__)
 
 class EncryptionSettings:
     
@@ -72,14 +75,13 @@ class EncryptionSettings:
         if protocolVersion != SUPPORTED_PROTOCOL_VERSION:
             print("Warning: Crownstone has protocol version", protocolVersion, "while the library uses", SUPPORTED_PROTOCOL_VERSION, ". Check if you have the correct version of the library for your firmware version.")
 
-
-
     def loadSetupKey(self, setupKey):
+        _LOGGER.debug(f"loadSetupKey")
         self.setupKey  = setupKey
         self.userLevel = UserLevel.setup
 
-
     def exitSetup(self):
+        _LOGGER.debug(f"exitSetup")
         self.setupKey = None
         self.determineUserLevel()
 

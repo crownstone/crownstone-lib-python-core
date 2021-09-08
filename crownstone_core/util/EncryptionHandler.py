@@ -1,5 +1,5 @@
+import logging
 import random
-
 import math
 import pyaes
 
@@ -15,6 +15,7 @@ PACKET_USER_LEVEL_LENGTH = 1
 PACKET_NONCE_LENGTH      = 3
 CHECKSUM                 = 0xcafebabe
 
+_LOGGER = logging.getLogger(__name__)
 
 class EncryptedPackage:
     
@@ -183,7 +184,8 @@ class EncryptionHandler:
         return EncryptionHandler._getKeyForLevel(settings.userLevel, settings)
         
     @staticmethod
-    def _getKeyForLevel(userLevel, settings):
+    def _getKeyForLevel(userLevel: UserLevel, settings):
+        _LOGGER.debug(f"get key for level {userLevel}")
         if settings.initializedKeys == False and userLevel != UserLevel.setup:
             raise CrownstoneBleException(EncryptionError.NO_ENCRYPTION_KEYS_SET, "Could not encrypt: Keys not set.")
     
