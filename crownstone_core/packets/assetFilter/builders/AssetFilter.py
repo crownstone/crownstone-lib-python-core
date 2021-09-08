@@ -72,7 +72,7 @@ class AssetFilter(BasePacket):
 
     def filterByName(self, names: List[str], complete: bool = True):
         """
-        Assets are filtered by their name.
+        Assets are filtered by their name (case sensitive).
         :param names:     List of names to be added filter.
         :param complete:  Whether to look for the complete or shortened name.
         """
@@ -87,7 +87,7 @@ class AssetFilter(BasePacket):
 
     def filterByNameWithWildcards(self, name: str, complete: bool = True):
         """
-        Assets are filtered by their name.
+        Assets are filtered by their name (case sensitive).
         :param name:      Name, with wildcards, to be added filter.
                           '?' matches any single character
                           '*' matches zero or more characters, only at the end of a name.

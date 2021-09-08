@@ -17,6 +17,10 @@ class ExactMatchFilter(FilterData):
 
         :param item: Byte array representation of the item.
         """
+        if item in self.items:
+            # Avoid duplicates
+            return
+
         if self.itemCount:
             if self.itemSize != len(item):
                 raise CrownstoneException(CrownstoneError.INVALID_SIZE, f"Must be same size as other items ({self.itemSize})")
@@ -28,6 +32,7 @@ class ExactMatchFilter(FilterData):
     def _serialize(self, writer: BufferWriter):
         writer.putUInt8(self.itemCount)
         writer.putUInt8(self.itemSize)
+
         self.items.sort()
         for item in self.items:
             writer.putBytes(item)
