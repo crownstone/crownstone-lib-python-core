@@ -12,6 +12,15 @@ def set_bit(bitmask: int, bit: int, flag: bool = True) -> int:
         bitmask &= ~(1 << bit)
     return bitmask
 
+def is_bit_set(bitmask: int, bit: int) -> bool:
+    """
+    Check if Nth bit is set in a bitmask.
+    :param bitmask:     The bitmask.
+    :param bit:         Which bit to check.
+    :returns:           True when bit is set in bitmask.
+    """
+    return (bitmask & (1 << bit)) != 0
+
 def get_bitmask(bits: list) -> int:
     """
     Returns a bitmask with given bits set.
