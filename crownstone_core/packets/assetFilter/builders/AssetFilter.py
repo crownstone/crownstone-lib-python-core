@@ -275,6 +275,12 @@ class AssetFilter(BasePacket):
 
         output = FilterOutputDescription(outputType, inFormat)
 
+        # Remove duplicates.
+        uniqueAssets = []
+        for asset in self._assets:
+            if asset not in uniqueAssets:
+                uniqueAssets.append(asset)
+        self._assets = uniqueAssets
 
         # Determine filter type to use if it hasn't been set.
         if self._filterType is None:
