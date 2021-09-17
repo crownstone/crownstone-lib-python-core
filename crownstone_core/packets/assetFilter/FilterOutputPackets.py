@@ -9,9 +9,9 @@ class FilterOutputDescriptionType(IntEnum):
     """
     What type of message should be output.
     """
-    FORWARD_MAC_ADDRESS = 0
-    ASSET_ID_NEAREST_CROWNSTONE = 1
-    FORWARD_ASSET_ID = 2
+    MAC_ADDRESS = 0
+    ASSET_ID = 1
+    ASSET_ID_NEAREST_CROWNSTONE = 2
 
 class FilterOutputDescription(BasePacket):
     def __init__(self,

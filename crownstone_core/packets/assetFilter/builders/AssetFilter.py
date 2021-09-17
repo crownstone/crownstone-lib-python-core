@@ -228,7 +228,7 @@ class AssetFilter(BasePacket):
         If an asset advertisement passes the filter, the Crownstone will send a report to the hub with the assets' MAC address and the RSSI.
         """
         self._resetCache()
-        self._outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
+        self._outputType = FilterOutputDescriptionType.MAC_ADDRESS
         self._assetIdSourceBuilder = None
         return self
 
@@ -245,7 +245,7 @@ class AssetFilter(BasePacket):
         if optimizeStrategy == OptimizeOutputStrategy.NEAREST:
             self._outputType = FilterOutputDescriptionType.ASSET_ID_NEAREST_CROWNSTONE
         else:
-            self._outputType = FilterOutputDescriptionType.FORWARD_ASSET_ID
+            self._outputType = FilterOutputDescriptionType.ASSET_ID
 
         if basedOn is None:
             self._assetIdSourceBuilder = AssetIdSourceBuilder()
@@ -265,7 +265,7 @@ class AssetFilter(BasePacket):
             raise CrownstoneException(CrownstoneError.DATA_MISSING, f"No filter output set.")
 
         # Determine output description
-        outputType = FilterOutputDescriptionType.FORWARD_MAC_ADDRESS
+        outputType = FilterOutputDescriptionType.MAC_ADDRESS
         if self._outputType is not None:
             outputType = self._outputType
 
