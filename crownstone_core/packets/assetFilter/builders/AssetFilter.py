@@ -24,6 +24,7 @@ class OptimizeOutputStrategy(Enum):
     NONE = 0,
 
     # Only crownstones that believe to be nearest. Note that this is not the same as nearest only, as it takes some time to settle.
+    # Experimental: may be removed or changed in a later release.
     NEAREST = 1,
 
 class AssetFilter(BasePacket):
@@ -239,7 +240,7 @@ class AssetFilter(BasePacket):
         what it's filtered by. Select this data with the AssetIdBuilder.
 
         :param basedOn: Determines what data to base the short asset ID on.
-        :param optimizeStrategy: Strategy to optimize number of mesh messages.
+        :param optimizeStrategy: Strategy to optimize number of mesh messages. Experimental, may be removed or changed in a later release.
         """
         self._resetCache()
         if optimizeStrategy == OptimizeOutputStrategy.NEAREST:
