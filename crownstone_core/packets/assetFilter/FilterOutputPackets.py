@@ -11,7 +11,8 @@ class FilterOutputDescriptionType(IntEnum):
     """
     MAC_ADDRESS = 0
     ASSET_ID = 1
-    ASSET_ID_NEAREST_CROWNSTONE = 2 # Experimental, may be removed or changed in a later release.
+    NONE = 2
+    ASSET_ID_NEAREST_CROWNSTONE = 100 # Experimental, may be removed or changed in a later release.
 
 class FilterOutputDescription(BasePacket):
     def __init__(self,
