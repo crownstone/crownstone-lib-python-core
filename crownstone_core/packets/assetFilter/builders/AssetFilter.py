@@ -254,6 +254,14 @@ class AssetFilter(BasePacket):
             self._assetIdSourceBuilder = basedOn
         return self._assetIdSourceBuilder
 
+    def outputNone(self):
+        """
+        If an asset advertisement passes the filter, the Crownstone will only update its local presence information. No mesh traffic is generated.
+        """
+        self._resetCache()
+        self._outputType = FilterOutputDescriptionType.NONE
+        self._assetIdSourceBuilder = None
+        return self
 
 
     def build(self) -> AssetFilterPacket:
