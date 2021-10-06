@@ -3,19 +3,28 @@ import time
 from crownstone_core.util.Conversion import Conversion
 
 
-def obtainTimestamp(fullTimeStamp, lsb):
-	timestampBytes = Conversion.uint32_to_uint8_array(int(fullTimeStamp))
-	lsbBytes = Conversion.uint16_to_uint8_array(lsb)
+def obtainTimestamp(fullTimeStamp, lsbTimestamp):
+	"""
+	Combines the full timestamp with a partial timestamp.
 
-	restoredTimestamp = Conversion.uint8_array_to_uint32([lsbBytes[0],lsbBytes[1],timestampBytes[2],timestampBytes[3]])
-
+	:param fullTimeStamp:         Full unix timestamp.
+	:param lsbTimestamp:          Partial (least significant) timestamp, as a uint16.
+	:returns:                     Unix timestamp with the least significant bytes set to the partial timestamp.
+	"""
+	restoredTimestamp = (int(fullTimeStamp) & 0xFFFF0000) + (int(lsbTimestamp) & 0x0000FFFF)
 	return restoredTimestamp
 
 
 def reconstructTimestamp(currentTimestamp, lsbTimestamp):
+	"""
+	Reconstructs a timestamp from a partial timestamp, that only has the least significant bytes.
+
+	:param currentTimestamp:      Current time, obtained with time.time().
+	:param lsbTimestamp:          Partial (least significant) timestamp, as a uint16.
+	:returns:                     Reconstructed unix timestamp.
+	"""
 	# embed location data in the timestamp
-	secondsFromGMT = round(time.time() - time.mktime(time.gmtime()))
-	correctedTimestamp = currentTimestamp + secondsFromGMT
+	correctedTimestamp = getCorrectedLocalTimestamp(currentTimestamp)
 
 	# attempt restoration
 	restoredTimestamp = obtainTimestamp(correctedTimestamp, lsbTimestamp)
@@ -35,6 +44,14 @@ def reconstructTimestamp(currentTimestamp, lsbTimestamp):
 	return restoredTimestamp
 
 def getCorrectedLocalTimestamp(currentTimestamp):
-	secondsFromGMT = round(time.time() - time.mktime(time.gmtime()))
+	"""
+	Get a timestamp in seconds from epoch, set to the local time.
+
+	:param currentTimestamp:      Current time, obtained with time.time().
+	:returns:                     Local unix timestamp.
+	"""
+	# This does not work, as mktime() ignores the daylight saving time:
+	#     secondsFromGMT = round(time.time() - time.mktime(time.gmtime()))
+	secondsFromGMT = time.localtime().tm_gmtoff
 	correctedTimestamp = currentTimestamp + secondsFromGMT
 	return correctedTimestamp
