@@ -5,8 +5,8 @@ from crownstone_core.util.BufferWriter import BufferWriter
 
 class MicroappHeaderPacket(BasePacket):
 	def __init__(self, appIndex: int=0, protocol: int=0):
-		self.protocol = appIndex
-		self.appIndex = protocol
+		self.protocol = protocol
+		self.appIndex = appIndex
 
 	def _deserialize(self, reader: BufferReader):
 		self.protocol = reader.getUInt8()
