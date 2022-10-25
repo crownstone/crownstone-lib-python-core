@@ -54,6 +54,7 @@ class ControlType(IntEnum):
     MICROAPP_REMOVE                  = 93
     MICROAPP_ENABLE                  = 94
     MICROAPP_DISABLE                 = 95
+    MICROAPP_MESSAGE                 = 96
     ASSET_FILTER_UPLOAD              = 110
     ASSET_FILTER_REMOVE              = 111
     ASSET_FILTER_COMMIT_CHANGES      = 112
