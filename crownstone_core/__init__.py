@@ -1,3 +1,3 @@
 from crownstone_core.util.Conversion import Conversion
 
-__version__ = "3.1.1-git"
+__version__ = "3.2.0"
