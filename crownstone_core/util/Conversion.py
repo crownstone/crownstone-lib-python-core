@@ -408,6 +408,7 @@ class Conversion:
 
     @staticmethod
     def uint16_to_bit_array(val):
+        # TODO: this might be the wrong order
         result = [False] * 16
         one = 1
 
@@ -418,6 +419,7 @@ class Conversion:
 
     @staticmethod
     def uint32_to_bit_array(val):
+        # TODO: this might be the wrong order
         result = [False] * 32
         one = 1
 
@@ -428,6 +430,7 @@ class Conversion:
 
     @staticmethod
     def uint32_to_bit_array_reversed(val):
+        # TODO: this might be the wrong order
         result = [False] * 32
         one = 1
 
